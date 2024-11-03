@@ -1,0 +1,53 @@
+version: "3.9"
+name: go-race-control
+services:
+    go-race-control-postgres-14.5:
+        image: postgres:14.5
+        container_name: go-race-control-postgres-14.5
+        networks:
+            go_race_control:
+                aliases:
+                    - go-race-control-postgres-14.5
+        environment:
+            - TZ=America/Sao_Paulo
+            - POSTGRES_USER=go_race_control
+            - POSTGRES_PASSWORD=go_race_control
+            - POSTGRES_DB=go_race_control
+            - PGPORT=5432
+        ports:
+            - "5432:5432"
+    go-race-control-migrate:
+        container_name: go-race-control-migrate
+        image: migrate/migrate
+        depends_on:
+            - go-race-control-postgres-14.5
+        networks:
+            - go_race_control
+        volumes:
+            - ../../pkg/database/migration:/migration
+        deploy:
+            restart_policy:
+                condition: on-failure
+                delay: 10s
+                max_attempts: 5
+                window: 120s
+        command:
+            [
+                "-path",
+                "/migration",
+                "-database",
+                "postgres://go_race_control:go_race_control@go-race-control-postgres-14.5:5432/go_race_control?sslmode=disable",
+                "up"
+            ]
+    go-race-control-sqlc:
+        container_name: go-race-control-sqlc
+        image: kjconroy/sqlc:1.16.0
+        depends_on:
+            - go-race-control-postgres-14.5
+        networks:
+            - go_race_control
+        volumes:
+            - ../../pkg/database:/src
+        command: [ "generate", "-f", "/src/sqlc.yaml" ]
+networks:
+    go_race_control:
