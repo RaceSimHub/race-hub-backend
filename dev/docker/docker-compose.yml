@@ -1,30 +1,30 @@
 version: "3.9"
-name: go-race-control
+name: race-hub-backend
 services:
-    go-race-control-postgres-14.5:
+    race-hub-backend-postgres-14.5:
         image: postgres:14.5
-        container_name: go-race-control-postgres-14.5
+        container_name: race-hub-backend-postgres-14.5
         networks:
-            go_race_control:
+            race_hub_backend:
                 aliases:
-                    - go-race-control-postgres-14.5
+                    - race-hub-backend-postgres-14.5
         environment:
             - TZ=America/Sao_Paulo
-            - POSTGRES_USER=go_race_control
-            - POSTGRES_PASSWORD=go_race_control
-            - POSTGRES_DB=go_race_control
+            - POSTGRES_USER=race_hub_backend
+            - POSTGRES_PASSWORD=race_hub_backend
+            - POSTGRES_DB=race_hub_backend
             - PGPORT=5432
         ports:
             - "5432:5432"
-    go-race-control-migrate:
-        container_name: go-race-control-migrate
+    race-hub-backend-migrate:
+        container_name: race-hub-backend-migrate
         image: migrate/migrate
         depends_on:
-            - go-race-control-postgres-14.5
+            - race-hub-backend-postgres-14.5
         networks:
-            - go_race_control
+            - race_hub_backend
         volumes:
-            - ../../pkg/database/migration:/migration
+            - ../../internal/database/migration:/migration
         deploy:
             restart_policy:
                 condition: on-failure
@@ -36,18 +36,18 @@ services:
                 "-path",
                 "/migration",
                 "-database",
-                "postgres://go_race_control:go_race_control@go-race-control-postgres-14.5:5432/go_race_control?sslmode=disable",
+                "postgres://race_hub_backend:race_hub_backend@race-hub-backend-postgres-14.5:5432/race_hub_backend?sslmode=disable",
                 "up"
             ]
-    go-race-control-sqlc:
-        container_name: go-race-control-sqlc
+    race-hub-backend-sqlc:
+        container_name: race-hub-backend-sqlc
         image: kjconroy/sqlc:1.16.0
         depends_on:
-            - go-race-control-postgres-14.5
+            - race-hub-backend-postgres-14.5
         networks:
-            - go_race_control
+            - race_hub_backend
         volumes:
-            - ../../pkg/database:/src
+            - ../../internal/database:/src
         command: [ "generate", "-f", "/src/sqlc.yaml" ]
 networks:
-    go_race_control:
+    race_hub_backend:

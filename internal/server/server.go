@@ -1,8 +1,10 @@
 package server
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/pkg/config"
-	"github.com/RaceSimHub/race-hub-backend/pkg/server/routes"
+	"github.com/RaceSimHub/race-hub-backend/internal/config"
+	"github.com/RaceSimHub/race-hub-backend/internal/database"
+	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
+	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -52,12 +54,14 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	notification := routes.Notification{}
-	router.POST("/notification", notification.Post)
-	router.PUT("/notification/:id", notification.Put)
-	router.DELETE("/notification/:id", notification.Delete)
-	router.GET("/notification/last", notification.GetLastMessage)
-	router.GET("/notification", notification.GetList)
+	routerGroup := router.Group(config.ApiVersion)
+
+	notification := serverNotification.NewNotification(serviceNotification.NewNotification(database.DbQuerier))
+	routerGroup.POST("/notification", notification.Post)
+	routerGroup.PUT("/notification/:id", notification.Put)
+	routerGroup.DELETE("/notification/:id", notification.Delete)
+	routerGroup.GET("/notification/last", notification.GetLastMessage)
+	routerGroup.GET("/notification", notification.GetList)
 
 	return
 }

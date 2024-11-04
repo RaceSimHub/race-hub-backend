@@ -3,8 +3,8 @@ package database
 import (
 	"database/sql"
 
-	"github.com/RaceSimHub/race-hub-backend/pkg/config"
-	"github.com/RaceSimHub/race-hub-backend/pkg/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/internal/config"
+	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 	"github.com/sirupsen/logrus"
 
 	_ "github.com/lib/pq"

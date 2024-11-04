@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/pkg/database"
-	"github.com/RaceSimHub/race-hub-backend/pkg/server"
+	"github.com/RaceSimHub/race-hub-backend/internal/database"
+	"github.com/RaceSimHub/race-hub-backend/internal/server"
 	"github.com/sirupsen/logrus"
 )
 

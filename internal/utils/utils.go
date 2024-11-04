@@ -151,28 +151,6 @@ func (su Utils) GetPathParamInt(ctx *gin.Context, values url.Values, name string
 	return 0, nil
 }
 
-func (su Utils) GetPathParamBoolean(ctx *gin.Context, values url.Values, name string, required bool) (bool, error) {
-	for parameter, value := range values {
-		if strings.EqualFold(parameter, name) {
-			v, err := strconv.ParseBool(value[0])
-			if err != nil {
-				su.ResponseError(ctx, errors.New("error.request.parameter.invalid_value: "+name))
-				return false, err
-			}
-
-			return v, nil
-		}
-	}
-
-	if required {
-		err := errors.New("error.request.parameter.invalid: " + name)
-		su.ResponseError(ctx, err)
-		return false, err
-	}
-
-	return false, nil
-}
-
 func (su Utils) BindJson(ctx *gin.Context, obj any) error {
 	err := ctx.ShouldBindJSON(obj)
 	if err != nil {
