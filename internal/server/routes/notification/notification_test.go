@@ -26,7 +26,6 @@ type NotificationSuite struct {
 	mockDB            *mockDb.QuerierNotification
 }
 
-// Configuração inicial dos testes
 func (suite *NotificationSuite) SetupSuite() {
 	suite.mockDB = new(mockDb.QuerierNotification)
 	suite.mockService = notificationService.NewNotification(suite.mockDB)

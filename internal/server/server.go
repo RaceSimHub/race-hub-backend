@@ -56,7 +56,7 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	routerGroup := router.Group(config.ApiVersion)
 
-	notification := serverNotification.NewNotification(serviceNotification.NewNotification(database.DbQuerier))
+	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	routerGroup.POST("/notification", notification.Post)
 	routerGroup.PUT("/notification/:id", notification.Put)
 	routerGroup.DELETE("/notification/:id", notification.Delete)
