@@ -21,7 +21,7 @@ import (
 type NotificationSuite struct {
 	suite.Suite
 	router            *gin.Engine
-	mockService       *notificationService.NotificationImpl
+	mockService       *notificationService.Notification
 	notificationRoute *notification.Notification
 	mockDB            *mockDb.QuerierNotification
 }
@@ -30,7 +30,7 @@ type NotificationSuite struct {
 func (suite *NotificationSuite) SetupSuite() {
 	suite.mockDB = new(mockDb.QuerierNotification)
 	suite.mockService = notificationService.NewNotification(suite.mockDB)
-	suite.notificationRoute = notification.NewNotification(suite.mockService)
+	suite.notificationRoute = notification.NewNotification(*suite.mockService)
 
 	suite.router = gin.Default()
 	notificationGroup := suite.router.Group("/notifications")

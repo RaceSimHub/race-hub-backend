@@ -13,7 +13,7 @@ import (
 
 type NotificationSuite struct {
 	suite.Suite
-	notificationService *notification.NotificationImpl
+	notificationService *notification.Notification
 	mockDB              *mockDb.QuerierNotification
 }
 

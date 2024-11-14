@@ -7,15 +7,15 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 )
 
-type NotificationImpl struct {
+type Notification struct {
 	db sqlc.Querier
 }
 
-func NewNotification(db sqlc.Querier) *NotificationImpl {
-	return &NotificationImpl{db: db}
+func NewNotification(db sqlc.Querier) *Notification {
+	return &Notification{db: db}
 }
 
-func (n *NotificationImpl) Create(message, firstDriver, secondDriver, thirdDriver string, licensePoints int) (int64, error) {
+func (n *Notification) Create(message, firstDriver, secondDriver, thirdDriver string, licensePoints int) (int64, error) {
 	return n.db.InsertNotification(context.Background(), sqlc.InsertNotificationParams{
 		Message:       message,
 		FirstDriver:   firstDriver,
@@ -26,7 +26,7 @@ func (n *NotificationImpl) Create(message, firstDriver, secondDriver, thirdDrive
 	})
 }
 
-func (n *NotificationImpl) Update(id int, message, firstDriver, secondDriver, thirdDriver string, licensePoints int) error {
+func (n *Notification) Update(id int, message, firstDriver, secondDriver, thirdDriver string, licensePoints int) error {
 	return n.db.UpdateNotification(context.Background(), sqlc.UpdateNotificationParams{
 		ID:            int64(id),
 		Message:       message,
@@ -37,15 +37,15 @@ func (n *NotificationImpl) Update(id int, message, firstDriver, secondDriver, th
 	})
 }
 
-func (n *NotificationImpl) Delete(id int) error {
+func (n *Notification) Delete(id int) error {
 	return n.db.DeleteNotification(context.Background(), int64(id))
 }
 
-func (n *NotificationImpl) GetLastMessage() (string, error) {
+func (n *Notification) GetLastMessage() (string, error) {
 	return n.db.GetLastNotificationMessage(context.Background())
 }
 
-func (n *NotificationImpl) GetList(offset, limit int) ([]sqlc.SelectListNotificationsRow, error) {
+func (n *Notification) GetList(offset, limit int) ([]sqlc.SelectListNotificationsRow, error) {
 	return n.db.SelectListNotifications(context.Background(), sqlc.SelectListNotificationsParams{
 		Column1: int32(offset),
 		Column2: int32(limit),
