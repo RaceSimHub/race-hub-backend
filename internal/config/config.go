@@ -17,4 +17,6 @@ var (
 	ApiVersion = os.Getenv("API_VERSION")
 
 	SwaggerServerHost = os.Getenv("SWAGGER_SERVER_HOST")
+
+	JwtSecret = os.Getenv("JWT_SECRET")
 )

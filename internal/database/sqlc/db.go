@@ -33,8 +33,14 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.insertNotificationStmt, err = db.PrepareContext(ctx, insertNotification); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertNotification: %w", err)
 	}
+	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
+		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
+	}
 	if q.selectListNotificationsStmt, err = db.PrepareContext(ctx, selectListNotifications); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectListNotifications: %w", err)
+	}
+	if q.selectUserIDAndPasswordByEmailStmt, err = db.PrepareContext(ctx, selectUserIDAndPasswordByEmail); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectUserIDAndPasswordByEmail: %w", err)
 	}
 	if q.updateNotificationStmt, err = db.PrepareContext(ctx, updateNotification); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateNotification: %w", err)
@@ -59,9 +65,19 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing insertNotificationStmt: %w", cerr)
 		}
 	}
+	if q.insertUserStmt != nil {
+		if cerr := q.insertUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing insertUserStmt: %w", cerr)
+		}
+	}
 	if q.selectListNotificationsStmt != nil {
 		if cerr := q.selectListNotificationsStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectListNotificationsStmt: %w", cerr)
+		}
+	}
+	if q.selectUserIDAndPasswordByEmailStmt != nil {
+		if cerr := q.selectUserIDAndPasswordByEmailStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectUserIDAndPasswordByEmailStmt: %w", cerr)
 		}
 	}
 	if q.updateNotificationStmt != nil {
@@ -106,23 +122,27 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                             DBTX
-	tx                             *sql.Tx
-	deleteNotificationStmt         *sql.Stmt
-	getLastNotificationMessageStmt *sql.Stmt
-	insertNotificationStmt         *sql.Stmt
-	selectListNotificationsStmt    *sql.Stmt
-	updateNotificationStmt         *sql.Stmt
+	db                                 DBTX
+	tx                                 *sql.Tx
+	deleteNotificationStmt             *sql.Stmt
+	getLastNotificationMessageStmt     *sql.Stmt
+	insertNotificationStmt             *sql.Stmt
+	insertUserStmt                     *sql.Stmt
+	selectListNotificationsStmt        *sql.Stmt
+	selectUserIDAndPasswordByEmailStmt *sql.Stmt
+	updateNotificationStmt             *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                             tx,
-		tx:                             tx,
-		deleteNotificationStmt:         q.deleteNotificationStmt,
-		getLastNotificationMessageStmt: q.getLastNotificationMessageStmt,
-		insertNotificationStmt:         q.insertNotificationStmt,
-		selectListNotificationsStmt:    q.selectListNotificationsStmt,
-		updateNotificationStmt:         q.updateNotificationStmt,
+		db:                                 tx,
+		tx:                                 tx,
+		deleteNotificationStmt:             q.deleteNotificationStmt,
+		getLastNotificationMessageStmt:     q.getLastNotificationMessageStmt,
+		insertNotificationStmt:             q.insertNotificationStmt,
+		insertUserStmt:                     q.insertUserStmt,
+		selectListNotificationsStmt:        q.selectListNotificationsStmt,
+		selectUserIDAndPasswordByEmailStmt: q.selectUserIDAndPasswordByEmailStmt,
+		updateNotificationStmt:             q.updateNotificationStmt,
 	}
 }

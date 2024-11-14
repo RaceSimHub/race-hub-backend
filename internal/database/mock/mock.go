@@ -10,6 +10,16 @@ type QuerierNotification struct {
 	mock.Mock
 }
 
+func (m *QuerierNotification) InsertUser(ctx context.Context, arg sqlc.InsertUserParams) (int64, error) {
+	args := m.Called(ctx, arg)
+	return args.Get(0).(int64), args.Error(1)
+}
+
+func (m *QuerierNotification) SelectUserIDByEmailAndPassword(ctx context.Context, arg sqlc.SelectUserIDByEmailAndPasswordParams) (int64, error) {
+	args := m.Called(ctx, arg)
+	return args.Get(0).(int64), args.Error(1)
+}
+
 func (m *QuerierNotification) InsertNotification(ctx context.Context, arg sqlc.InsertNotificationParams) (int64, error) {
 	args := m.Called(ctx, arg)
 	return args.Get(0).(int64), args.Error(1)

@@ -17,3 +17,11 @@ type Notification struct {
 	LicensePoints sql.NullInt32
 	CreatedDate   sql.NullTime
 }
+
+type User struct {
+	ID          int64
+	Email       string
+	Name        string
+	Password    string
+	CreatedDate sql.NullTime
+}

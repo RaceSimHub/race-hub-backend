@@ -3,6 +3,10 @@ package utils
 import (
 	"encoding/json"
 	"errors"
+	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
+	"github.com/golang-jwt/jwt"
+	"golang.org/x/crypto/bcrypt"
+	"time"
 
 	"fmt"
 	"io"
@@ -16,15 +20,15 @@ import (
 
 type Utils struct{}
 
-func (su Utils) ResponseForbidden(ctx *gin.Context) {
+func (u Utils) ResponseForbidden(ctx *gin.Context) {
 	err := errors.New("error.request.forbidden")
 
 	bodyResponse := Exception{}.Make(err.Error())
 
-	su.Response(ctx, http.StatusForbidden, bodyResponse)
+	u.Response(ctx, http.StatusForbidden, bodyResponse)
 }
 
-func (su Utils) ResponseError(ctx *gin.Context, err error) {
+func (u Utils) ResponseError(ctx *gin.Context, err error) {
 	bodyResponse := Exception{}.Make(err.Error())
 
 	statusCode := http.StatusBadRequest
@@ -33,26 +37,26 @@ func (su Utils) ResponseError(ctx *gin.Context, err error) {
 		statusCode = http.StatusBadRequest
 	}
 
-	su.Response(ctx, statusCode, bodyResponse)
+	u.Response(ctx, statusCode, bodyResponse)
 }
-func (su Utils) ResponseNotFound(ctx *gin.Context, err error) {
+func (u Utils) ResponseNotFound(ctx *gin.Context, err error) {
 	bodyResponse := Exception{}.Make(err.Error())
 
-	su.Response(ctx, http.StatusNotFound, bodyResponse)
+	u.Response(ctx, http.StatusNotFound, bodyResponse)
 }
 
-func (su Utils) ResponseCreated(ctx *gin.Context, id int) {
+func (u Utils) ResponseCreated(ctx *gin.Context, id int) {
 	var bodyResponse = Id{Id: id}
 
-	su.Response(ctx, http.StatusCreated, bodyResponse)
+	u.Response(ctx, http.StatusCreated, bodyResponse)
 }
 
-func (su Utils) ResponseCreatedObj(ctx *gin.Context, bodyResponse interface{}) {
-	su.Response(ctx, http.StatusCreated, bodyResponse)
+func (u Utils) ResponseCreatedObj(ctx *gin.Context, bodyResponse interface{}) {
+	u.Response(ctx, http.StatusCreated, bodyResponse)
 }
 
-func (su Utils) ResponseOK(ctx *gin.Context, bodyResponse interface{}) {
-	su.Response(ctx, http.StatusOK, bodyResponse)
+func (u Utils) ResponseOK(ctx *gin.Context, bodyResponse interface{}) {
+	u.Response(ctx, http.StatusOK, bodyResponse)
 }
 
 func (Utils) ResponseNoContent(ctx *gin.Context) {
@@ -72,11 +76,11 @@ func (Utils) ResponseListOk(ctx *gin.Context, bodyResponse any, total, limit, of
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (su Utils) Response(ctx *gin.Context, statusCode int, bodyResponse interface{}) {
+func (u Utils) Response(ctx *gin.Context, statusCode int, bodyResponse interface{}) {
 	jsonResponse, err := json.Marshal(bodyResponse)
 
 	if err != nil {
-		su.ResponseError(ctx, errors.New("error.system.json: "+err.Error()))
+		u.ResponseError(ctx, errors.New("error.system.json: "+err.Error()))
 		return
 	}
 
@@ -91,37 +95,37 @@ func (su Utils) Response(ctx *gin.Context, statusCode int, bodyResponse interfac
 	_, _ = fmt.Fprint(ctx.Writer, bodyResponse)
 }
 
-func (su Utils) ParseBody(ctx *gin.Context, b io.Reader, dto interface{}) error {
+func (u Utils) ParseBody(ctx *gin.Context, b io.Reader, dto interface{}) error {
 	err := json.NewDecoder(b).Decode(dto)
 
 	if err != nil {
-		su.ResponseError(ctx, errors.New("error.system.json: "+err.Error()))
+		u.ResponseError(ctx, errors.New("error.system.json: "+err.Error()))
 		return err
 	}
 
 	return nil
 }
 
-func (su Utils) BindParam(ctx *gin.Context, key string, required bool) (value string, err error) {
+func (u Utils) BindParam(ctx *gin.Context, key string, required bool) (value string, err error) {
 	value = ctx.Param(key)
 
 	if required && len(strings.TrimSpace(value)) == 0 {
 		err = errors.New("error.request.parameter.invalid: Param " + key + " has value invalid")
-		su.ResponseBadRequest(ctx, err)
+		u.ResponseBadRequest(ctx, err)
 	}
 
 	return
 }
 
-func (su Utils) GetPathVariableString(ctx *gin.Context, name string) (value string, err error) {
-	value, err = su.BindParam(ctx, name, true)
+func (u Utils) GetPathVariableString(ctx *gin.Context, name string) (value string, err error) {
+	value, err = u.BindParam(ctx, name, true)
 	if err != nil {
 		return
 	}
 
 	if value == "" {
 		err := errors.New("error.request.variable.path_invalid")
-		su.ResponseError(ctx, err)
+		u.ResponseError(ctx, err)
 
 		return "", err
 	}
@@ -129,12 +133,12 @@ func (su Utils) GetPathVariableString(ctx *gin.Context, name string) (value stri
 	return value, nil
 }
 
-func (su Utils) GetPathParamInt(ctx *gin.Context, values url.Values, name string, required bool) (int, error) {
+func (u Utils) GetPathParamInt(ctx *gin.Context, values url.Values, name string, required bool) (int, error) {
 	for parameter, value := range values {
 		if strings.EqualFold(parameter, name) {
 			v, err := strconv.ParseInt(value[0], 10, 64)
 			if err != nil {
-				su.ResponseError(ctx, errors.New("error.request.parameter.invalid_value: "+name))
+				u.ResponseError(ctx, errors.New("error.request.parameter.invalid_value: "+name))
 				return 0, err
 			}
 
@@ -144,24 +148,24 @@ func (su Utils) GetPathParamInt(ctx *gin.Context, values url.Values, name string
 
 	if required {
 		err := errors.New("error.request.parameter.invalid: " + name)
-		su.ResponseError(ctx, err)
+		u.ResponseError(ctx, err)
 		return 0, err
 	}
 
 	return 0, nil
 }
 
-func (su Utils) BindJson(ctx *gin.Context, obj any) error {
+func (u Utils) BindJson(ctx *gin.Context, obj any) error {
 	err := ctx.ShouldBindJSON(obj)
 	if err != nil {
 		err := errors.New("error.request.invalid: " + err.Error())
-		su.ResponseBadRequest(ctx, err)
+		u.ResponseBadRequest(ctx, err)
 	}
 	return err
 }
 
-func (su Utils) GetListParams(ctx *gin.Context) (offset int, limit int, err error) {
-	limit, err = su.bindQueryParamInt(ctx, "limit", false)
+func (u Utils) GetListParams(ctx *gin.Context) (offset int, limit int, err error) {
+	limit, err = u.bindQueryParamInt(ctx, "limit", false)
 	if err != nil {
 		return
 	}
@@ -170,7 +174,7 @@ func (su Utils) GetListParams(ctx *gin.Context) (offset int, limit int, err erro
 		limit = 20
 	}
 
-	offset, err = su.bindQueryParamInt(ctx, "offset", false)
+	offset, err = u.bindQueryParamInt(ctx, "offset", false)
 	if err != nil {
 		return
 	}
@@ -178,43 +182,66 @@ func (su Utils) GetListParams(ctx *gin.Context) (offset int, limit int, err erro
 	return
 }
 
-func (su Utils) bindQueryParamInt(ctx *gin.Context, key string, required bool) (int, error) {
-	param, err := su.BindQueryParam(ctx, key, required)
+func (u Utils) bindQueryParamInt(ctx *gin.Context, key string, required bool) (int, error) {
+	param, err := u.BindQueryParam(ctx, key, required)
 	if err != nil {
 		return 0, err
 	}
 
 	value, err := strconv.Atoi(param)
 	if err != nil && required {
-		su.ResponseBadRequest(ctx, err)
+		u.ResponseBadRequest(ctx, err)
 		return 0, err
 	}
 
 	return value, nil
 }
 
-func (su Utils) BindQueryParam(ctx *gin.Context, key string, required bool) (value string, err error) {
+func (u Utils) BindQueryParam(ctx *gin.Context, key string, required bool) (value string, err error) {
 	value = ctx.Query(key)
 
 	if required && len(strings.TrimSpace(value)) == 0 {
 		err = errors.New("error.request.query.param.invalid: " + key)
-		su.ResponseBadRequest(ctx, err)
+		u.ResponseBadRequest(ctx, err)
 	}
 
 	return
 }
 
-func (su Utils) BindParamInt(ctx *gin.Context, key string, required bool) (int, error) {
-	param, err := su.BindParam(ctx, key, required)
+func (u Utils) BindParamInt(ctx *gin.Context, key string, required bool) (int, error) {
+	param, err := u.BindParam(ctx, key, required)
 	if err != nil {
 		return 0, err
 	}
 
 	value, err := strconv.Atoi(param)
 	if err != nil && required {
-		su.ResponseBadRequest(ctx, errors.New("error.param.invalid: "+err.Error()))
+		u.ResponseBadRequest(ctx, errors.New("error.param.invalid: "+err.Error()))
 		return 0, err
 	}
 
 	return value, nil
+}
+
+func GenerateToken(userID int) (string, error) {
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(middleware.JwtSecret)
+}
+
+func HashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+
+	return string(hashedPassword), nil
+}
+
+func CheckPasswordHash(password, hashedPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
 }

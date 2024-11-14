@@ -3,8 +3,11 @@ package server
 import (
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
+	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
+	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
+	serviceUser "github.com/RaceSimHub/race-hub-backend/internal/service/user"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -54,14 +57,20 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	routerGroup := router.Group(config.ApiVersion)
+	freeRouterGroup := router.Group(config.ApiVersion)
+
+	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
+	freeRouterGroup.POST("/login", user.PostLogin)
+
+	authRouterGroup := freeRouterGroup.Use(middleware.JWTMiddleware())
+	authRouterGroup.POST("/users", user.Post)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
-	routerGroup.POST("/notification", notification.Post)
-	routerGroup.PUT("/notification/:id", notification.Put)
-	routerGroup.DELETE("/notification/:id", notification.Delete)
-	routerGroup.GET("/notification/last", notification.GetLastMessage)
-	routerGroup.GET("/notification", notification.GetList)
+	authRouterGroup.POST("/notifications", notification.Post)
+	authRouterGroup.PUT("/notifications/:id", notification.Put)
+	authRouterGroup.DELETE("/notifications/:id", notification.Delete)
+	authRouterGroup.GET("/notifications/last", notification.GetLastMessage)
+	authRouterGroup.GET("/notifications", notification.GetList)
 
 	return
 }

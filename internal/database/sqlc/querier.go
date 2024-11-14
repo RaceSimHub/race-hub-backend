@@ -12,7 +12,9 @@ type Querier interface {
 	DeleteNotification(ctx context.Context, id int64) error
 	GetLastNotificationMessage(ctx context.Context) (string, error)
 	InsertNotification(ctx context.Context, arg InsertNotificationParams) (int64, error)
+	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
+	SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error)
 	UpdateNotification(ctx context.Context, arg UpdateNotificationParams) error
 }
 
