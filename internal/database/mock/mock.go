@@ -15,7 +15,7 @@ func (m *QuerierNotification) InsertUser(ctx context.Context, arg sqlc.InsertUse
 	return args.Get(0).(int64), args.Error(1)
 }
 
-func (m *QuerierNotification) SelectUserIDByEmailAndPassword(ctx context.Context, email string) (int64, error) {
+func (m *QuerierNotification) SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (int64, error) {
 	args := m.Called(ctx, email)
 	return args.Get(0).(int64), args.Error(1)
 }
