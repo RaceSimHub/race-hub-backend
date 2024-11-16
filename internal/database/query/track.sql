@@ -1,0 +1,36 @@
+-- name: InsertTrack :one
+INSERT INTO track (
+    name,
+    country,
+    fk_created_by_user_id
+) VALUES (
+    @name::VARCHAR,
+    @country::VARCHAR,
+    @fk_created_by_user_id::BIGINT
+) RETURNING id;
+
+-- name: UpdateTrack :exec
+UPDATE track SET
+    name = COALESCE(@name::VARCHAR, name),
+    country = COALESCE(@country::VARCHAR, country),
+    fk_updated_by_user_id = @fk_updated_by_user_id::BIGINT
+WHERE 
+    id = @id::BIGINT;
+
+-- name: DeleteTrack :exec
+DELETE FROM
+    track
+WHERE
+    id = @id::BIGINT;
+
+-- name: SelectListTracks :many
+SELECT
+    id::BIGINT,
+    name::VARCHAR,
+    country::VARCHAR,
+    created_date::TIMESTAMP,
+    updated_date::TIMESTAMP
+FROM
+    track
+OFFSET $1::INTEGER
+LIMIT $2::INTEGER;

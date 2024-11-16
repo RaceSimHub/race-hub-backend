@@ -3,7 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"errors"
-	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
+	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -229,7 +229,8 @@ func GenerateToken(userID int) (string, error) {
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(middleware.JwtSecret)
+
+	return token.SignedString(config.JwtSecret)
 }
 
 func HashPassword(password string) (string, error) {

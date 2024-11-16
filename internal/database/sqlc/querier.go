@@ -10,12 +10,16 @@ import (
 
 type Querier interface {
 	DeleteNotification(ctx context.Context, id int64) error
+	DeleteTrack(ctx context.Context, id int64) error
 	GetLastNotificationMessage(ctx context.Context) (string, error)
 	InsertNotification(ctx context.Context, arg InsertNotificationParams) (int64, error)
+	InsertTrack(ctx context.Context, arg InsertTrackParams) (int64, error)
 	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
+	SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error)
 	SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error)
 	UpdateNotification(ctx context.Context, arg UpdateNotificationParams) error
+	UpdateTrack(ctx context.Context, arg UpdateTrackParams) error
 }
 
 var _ Querier = (*Queries)(nil)

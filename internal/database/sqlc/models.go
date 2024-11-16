@@ -6,16 +6,28 @@ package sqlc
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Notification struct {
-	ID            int64
-	Message       sql.NullString
-	FirstDriver   sql.NullString
-	SecondDriver  sql.NullString
-	ThirdDriver   sql.NullString
-	LicensePoints sql.NullInt32
-	CreatedDate   sql.NullTime
+	ID                int64
+	FkCreatedByUserID sql.NullInt64
+	Message           sql.NullString
+	FirstDriver       sql.NullString
+	SecondDriver      sql.NullString
+	ThirdDriver       sql.NullString
+	LicensePoints     sql.NullInt32
+	CreatedDate       time.Time
+}
+
+type Track struct {
+	ID                int64
+	FkCreatedByUserID sql.NullInt64
+	FkUpdatedByUserID sql.NullInt64
+	Name              string
+	Country           string
+	CreatedDate       time.Time
+	UpdatedDate       sql.NullTime
 }
 
 type User struct {
@@ -23,5 +35,5 @@ type User struct {
 	Email       string
 	Name        string
 	Password    string
-	CreatedDate sql.NullTime
+	CreatedDate time.Time
 }

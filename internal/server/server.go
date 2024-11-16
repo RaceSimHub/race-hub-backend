@@ -5,8 +5,10 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
+	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
 	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
+	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
 	serviceUser "github.com/RaceSimHub/race-hub-backend/internal/service/user"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -64,6 +66,12 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	authRouterGroup := freeRouterGroup.Use(middleware.JWTMiddleware())
 	authRouterGroup.POST("/users", user.Post)
+
+	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
+	authRouterGroup.POST("/tracks", track.Post)
+	authRouterGroup.PUT("/tracks/:id", track.Put)
+	authRouterGroup.DELETE("/tracks/:id", track.Delete)
+	authRouterGroup.GET("/tracks", track.GetList)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authRouterGroup.POST("/notifications", notification.Post)
