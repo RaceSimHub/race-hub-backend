@@ -24,7 +24,7 @@ services:
         networks:
             - race_hub_backend
         volumes:
-            - ../../internal/database/migration:/migration
+            - ./internal/database/migration:/migration
         deploy:
             restart_policy:
                 condition: on-failure
@@ -43,11 +43,31 @@ services:
         container_name: race-hub-backend-sqlc
         image: kjconroy/sqlc:1.16.0
         depends_on:
-            - race-hub-backend-postgres-14.5
+        - race-hub-backend-postgres-14.5
+        networks:
+        - race_hub_backend
+        volumes:
+        - ./internal/database:/src
+        command: [ "generate", "-f", "/src/sqlc.yaml" ]
+    race-hub-backend-mockgen:
+        container_name: race-hub-backend-mockgen
+        image: golang:1.22
+        depends_on:
+            - race-hub-backend-sqlc
         networks:
             - race_hub_backend
         volumes:
-            - ../../internal/database:/src
-        command: [ "generate", "-f", "/src/sqlc.yaml" ]
+            - .:/src
+        working_dir: /src
+        command: >
+            sh -c " 
+            echo 'Iniciando a instalação do mockgen...' && 
+            go install go.uber.org/mock/mockgen@latest && 
+            echo 'Mockgen instalado com sucesso.' && 
+            echo 'Baixando dependências Go...' && 
+            echo 'Gerando mocks...' && 
+            cd /src/internal/database/sqlc &&
+            mockgen . Querier > /src/internal/database/mock/mock.go && 
+            echo 'Mocks gerados com sucesso.'"
 networks:
     race_hub_backend:

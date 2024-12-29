@@ -1,67 +1,61 @@
 package notification_test
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
-	"github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	"testing"
 	"time"
 
+	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/internal/service/notification"
+	"go.uber.org/mock/gomock"
+
 	mockDb "github.com/RaceSimHub/race-hub-backend/internal/database/mock"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
 type NotificationSuite struct {
 	suite.Suite
 	notificationService *notification.Notification
-	mockDB              *mockDb.QuerierNotification
+	mockDB              *mockDb.MockQuerier
 }
 
 func (suite *NotificationSuite) SetupTest() {
-	suite.mockDB = new(mockDb.QuerierNotification)
+	ctrl := gomock.NewController(suite.T())
+	suite.mockDB = mockDb.NewMockQuerier(ctrl)
 	suite.notificationService = notification.NewNotification(suite.mockDB)
 }
 
 func (suite *NotificationSuite) TestCreateNotification() {
-	suite.mockDB.On("InsertNotification", mock.Anything, mock.AnythingOfType("sqlc.InsertNotificationParams")).Return(int64(1), nil)
+	suite.mockDB.EXPECT().InsertNotification(gomock.Any(), gomock.Any()).Return(int64(1), nil)
 
 	id, err := suite.notificationService.Create("Test message", "Driver1", "Driver2", "Driver3", 10)
 	suite.NoError(err)
 	suite.Equal(int64(1), id)
-
-	suite.mockDB.AssertExpectations(suite.T())
 }
 
 func (suite *NotificationSuite) TestUpdateNotification() {
-	suite.mockDB.On("UpdateNotification", mock.Anything, mock.AnythingOfType("sqlc.UpdateNotificationParams")).Return(nil)
+	suite.mockDB.EXPECT().UpdateNotification(gomock.Any(), gomock.Any()).Return(nil)
 
 	err := suite.notificationService.Update(1, "Test message", "Driver1", "Driver2", "Driver3", 10)
 	suite.NoError(err)
-
-	suite.mockDB.AssertExpectations(suite.T())
 }
 
 func (suite *NotificationSuite) TestDeleteNotification() {
-	suite.mockDB.On("DeleteNotification", mock.Anything, int64(1)).Return(nil)
+	suite.mockDB.EXPECT().DeleteNotification(gomock.Any(), int64(1)).Return(nil)
 
 	err := suite.notificationService.Delete(1)
 	suite.NoError(err)
-
-	suite.mockDB.AssertExpectations(suite.T())
 }
 
 func (suite *NotificationSuite) TestGetLastMessage() {
-	suite.mockDB.On("GetLastNotificationMessage", mock.Anything).Return("Test message", nil)
+	suite.mockDB.EXPECT().GetLastNotificationMessage(gomock.Any()).Return("Test message", nil)
 
 	message, err := suite.notificationService.GetLastMessage()
 	suite.NoError(err)
 	suite.Equal("Test message", message)
-
-	suite.mockDB.AssertExpectations(suite.T())
 }
 
 func (suite *NotificationSuite) TestGetList() {
-	suite.mockDB.On("SelectListNotifications", mock.Anything, mock.AnythingOfType("sqlc.SelectListNotificationsParams")).Return([]sqlc.SelectListNotificationsRow{
+	suite.mockDB.EXPECT().SelectListNotifications(gomock.Any(), gomock.Any()).Return([]sqlc.SelectListNotificationsRow{
 		{
 			ID:            1,
 			Message:       "Test message",
@@ -76,8 +70,6 @@ func (suite *NotificationSuite) TestGetList() {
 	list, err := suite.notificationService.GetList(0, 10)
 	suite.NoError(err)
 	suite.Len(list, 1)
-
-	suite.mockDB.AssertExpectations(suite.T())
 }
 
 func TestNotificationSuite(t *testing.T) {
