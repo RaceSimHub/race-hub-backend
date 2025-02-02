@@ -26,3 +26,15 @@ CREATE TABLE notification (
     license_points INTEGER,
     created_date TIMESTAMP NOT NULL DEFAULT now()
 );
+
+CREATE TABLE driver (
+    id BIGSERIAL PRIMARY KEY,
+    fk_created_by_user_id BIGINT REFERENCES "user"(id),
+    fk_updated_by_user_id BIGINT REFERENCES "user"(id),
+    name VARCHAR(255) NOT NULL,
+    race_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(255) NOT NULL,
+    created_date TIMESTAMP NOT NULL DEFAULT now(),
+    updated_date TIMESTAMP
+)

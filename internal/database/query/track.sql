@@ -34,3 +34,15 @@ FROM
     track
 OFFSET $1::INTEGER
 LIMIT $2::INTEGER;
+
+-- name: SelectTrackById :one
+SELECT
+    id::BIGINT,
+    name::VARCHAR,
+    country::VARCHAR,
+    created_date::TIMESTAMP,
+    updated_date::TIMESTAMP
+FROM
+    track
+WHERE
+    id = $1::BIGINT;

@@ -9,15 +9,21 @@ import (
 )
 
 type Querier interface {
+	DeleteDriver(ctx context.Context, id int64) error
 	DeleteNotification(ctx context.Context, id int64) error
 	DeleteTrack(ctx context.Context, id int64) error
+	GetDriver(ctx context.Context, dollar_1 int64) (GetDriverRow, error)
 	GetLastNotificationMessage(ctx context.Context) (string, error)
+	InsertDriver(ctx context.Context, arg InsertDriverParams) (int64, error)
 	InsertNotification(ctx context.Context, arg InsertNotificationParams) (int64, error)
 	InsertTrack(ctx context.Context, arg InsertTrackParams) (int64, error)
 	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
+	SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
 	SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error)
+	SelectTrackById(ctx context.Context, dollar_1 int64) (SelectTrackByIdRow, error)
 	SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error)
+	UpdateDriver(ctx context.Context, arg UpdateDriverParams) error
 	UpdateNotification(ctx context.Context, arg UpdateNotificationParams) error
 	UpdateTrack(ctx context.Context, arg UpdateTrackParams) error
 }

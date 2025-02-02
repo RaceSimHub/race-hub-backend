@@ -1,3 +1,4 @@
+//go:generate mockgen -destination=./mock/user_mock.go -package=mock . Contract
 package user
 
 type Contract interface {

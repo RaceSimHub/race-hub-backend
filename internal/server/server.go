@@ -4,9 +4,11 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
+	serverDriver "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
 	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
 	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
+	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
 	serviceUser "github.com/RaceSimHub/race-hub-backend/internal/service/user"
@@ -72,6 +74,14 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup.PUT("/tracks/:id", track.Put)
 	authRouterGroup.DELETE("/tracks/:id", track.Delete)
 	authRouterGroup.GET("/tracks", track.GetList)
+	authRouterGroup.GET("/tracks/:id", track.GetByID)
+
+	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
+	authRouterGroup.POST("/drivers", driver.Post)
+	authRouterGroup.PUT("/drivers/:id", driver.Put)
+	authRouterGroup.DELETE("/drivers/:id", driver.Delete)
+	authRouterGroup.GET("/drivers", driver.GetList)
+	authRouterGroup.GET("/drivers/:id", driver.GetByID)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authRouterGroup.POST("/notifications", notification.Post)

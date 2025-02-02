@@ -102,6 +102,40 @@ func (q *Queries) SelectListTracks(ctx context.Context, arg SelectListTracksPara
 	return items, nil
 }
 
+const selectTrackById = `-- name: SelectTrackById :one
+SELECT
+    id::BIGINT,
+    name::VARCHAR,
+    country::VARCHAR,
+    created_date::TIMESTAMP,
+    updated_date::TIMESTAMP
+FROM
+    track
+WHERE
+    id = $1::BIGINT
+`
+
+type SelectTrackByIdRow struct {
+	ID          int64
+	Name        string
+	Country     string
+	CreatedDate time.Time
+	UpdatedDate time.Time
+}
+
+func (q *Queries) SelectTrackById(ctx context.Context, dollar_1 int64) (SelectTrackByIdRow, error) {
+	row := q.queryRow(ctx, q.selectTrackByIdStmt, selectTrackById, dollar_1)
+	var i SelectTrackByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Country,
+		&i.CreatedDate,
+		&i.UpdatedDate,
+	)
+	return i, err
+}
+
 const updateTrack = `-- name: UpdateTrack :exec
 UPDATE track SET
     name = COALESCE($1::VARCHAR, name),

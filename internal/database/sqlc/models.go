@@ -9,6 +9,18 @@ import (
 	"time"
 )
 
+type Driver struct {
+	ID                int64
+	FkCreatedByUserID sql.NullInt64
+	FkUpdatedByUserID sql.NullInt64
+	Name              string
+	RaceName          string
+	Email             string
+	Phone             string
+	CreatedDate       time.Time
+	UpdatedDate       sql.NullTime
+}
+
 type Notification struct {
 	ID                int64
 	FkCreatedByUserID sql.NullInt64

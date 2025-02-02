@@ -1,3 +1,4 @@
+//go:generate mockgen -destination=./mock/notification_mock.go -package=mock . Contract
 package notification
 
 import "github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"

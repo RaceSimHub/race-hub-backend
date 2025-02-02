@@ -41,6 +41,20 @@ func (m *MockQuerier) EXPECT() *MockQuerierMockRecorder {
 	return m.recorder
 }
 
+// DeleteDriver mocks base method.
+func (m *MockQuerier) DeleteDriver(ctx context.Context, id int64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteDriver", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteDriver indicates an expected call of DeleteDriver.
+func (mr *MockQuerierMockRecorder) DeleteDriver(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteDriver", reflect.TypeOf((*MockQuerier)(nil).DeleteDriver), ctx, id)
+}
+
 // DeleteNotification mocks base method.
 func (m *MockQuerier) DeleteNotification(ctx context.Context, id int64) error {
 	m.ctrl.T.Helper()
@@ -69,6 +83,21 @@ func (mr *MockQuerierMockRecorder) DeleteTrack(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteTrack", reflect.TypeOf((*MockQuerier)(nil).DeleteTrack), ctx, id)
 }
 
+// GetDriver mocks base method.
+func (m *MockQuerier) GetDriver(ctx context.Context, dollar_1 int64) (sqlc.GetDriverRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDriver", ctx, dollar_1)
+	ret0, _ := ret[0].(sqlc.GetDriverRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDriver indicates an expected call of GetDriver.
+func (mr *MockQuerierMockRecorder) GetDriver(ctx, dollar_1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDriver", reflect.TypeOf((*MockQuerier)(nil).GetDriver), ctx, dollar_1)
+}
+
 // GetLastNotificationMessage mocks base method.
 func (m *MockQuerier) GetLastNotificationMessage(ctx context.Context) (string, error) {
 	m.ctrl.T.Helper()
@@ -82,6 +111,21 @@ func (m *MockQuerier) GetLastNotificationMessage(ctx context.Context) (string, e
 func (mr *MockQuerierMockRecorder) GetLastNotificationMessage(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLastNotificationMessage", reflect.TypeOf((*MockQuerier)(nil).GetLastNotificationMessage), ctx)
+}
+
+// InsertDriver mocks base method.
+func (m *MockQuerier) InsertDriver(ctx context.Context, arg sqlc.InsertDriverParams) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertDriver", ctx, arg)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertDriver indicates an expected call of InsertDriver.
+func (mr *MockQuerierMockRecorder) InsertDriver(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertDriver", reflect.TypeOf((*MockQuerier)(nil).InsertDriver), ctx, arg)
 }
 
 // InsertNotification mocks base method.
@@ -129,6 +173,21 @@ func (mr *MockQuerierMockRecorder) InsertUser(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockQuerier)(nil).InsertUser), ctx, arg)
 }
 
+// SelectListDrivers mocks base method.
+func (m *MockQuerier) SelectListDrivers(ctx context.Context, arg sqlc.SelectListDriversParams) ([]sqlc.SelectListDriversRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectListDrivers", ctx, arg)
+	ret0, _ := ret[0].([]sqlc.SelectListDriversRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectListDrivers indicates an expected call of SelectListDrivers.
+func (mr *MockQuerierMockRecorder) SelectListDrivers(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectListDrivers", reflect.TypeOf((*MockQuerier)(nil).SelectListDrivers), ctx, arg)
+}
+
 // SelectListNotifications mocks base method.
 func (m *MockQuerier) SelectListNotifications(ctx context.Context, arg sqlc.SelectListNotificationsParams) ([]sqlc.SelectListNotificationsRow, error) {
 	m.ctrl.T.Helper()
@@ -159,6 +218,21 @@ func (mr *MockQuerierMockRecorder) SelectListTracks(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectListTracks", reflect.TypeOf((*MockQuerier)(nil).SelectListTracks), ctx, arg)
 }
 
+// SelectTrackById mocks base method.
+func (m *MockQuerier) SelectTrackById(ctx context.Context, dollar_1 int64) (sqlc.SelectTrackByIdRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectTrackById", ctx, dollar_1)
+	ret0, _ := ret[0].(sqlc.SelectTrackByIdRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectTrackById indicates an expected call of SelectTrackById.
+func (mr *MockQuerierMockRecorder) SelectTrackById(ctx, dollar_1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTrackById", reflect.TypeOf((*MockQuerier)(nil).SelectTrackById), ctx, dollar_1)
+}
+
 // SelectUserIDAndPasswordByEmail mocks base method.
 func (m *MockQuerier) SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (sqlc.SelectUserIDAndPasswordByEmailRow, error) {
 	m.ctrl.T.Helper()
@@ -172,6 +246,20 @@ func (m *MockQuerier) SelectUserIDAndPasswordByEmail(ctx context.Context, email 
 func (mr *MockQuerierMockRecorder) SelectUserIDAndPasswordByEmail(ctx, email any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUserIDAndPasswordByEmail", reflect.TypeOf((*MockQuerier)(nil).SelectUserIDAndPasswordByEmail), ctx, email)
+}
+
+// UpdateDriver mocks base method.
+func (m *MockQuerier) UpdateDriver(ctx context.Context, arg sqlc.UpdateDriverParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateDriver", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateDriver indicates an expected call of UpdateDriver.
+func (mr *MockQuerierMockRecorder) UpdateDriver(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDriver", reflect.TypeOf((*MockQuerier)(nil).UpdateDriver), ctx, arg)
 }
 
 // UpdateNotification mocks base method.

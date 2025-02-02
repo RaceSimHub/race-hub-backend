@@ -2,6 +2,7 @@ package track
 
 import (
 	"context"
+
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 )
 
@@ -37,4 +38,8 @@ func (n *Track) GetList(offset, limit int) ([]sqlc.SelectListTracksRow, error) {
 		Column1: int32(offset),
 		Column2: int32(limit),
 	})
+}
+
+func (n *Track) GetByID(id int) (sqlc.SelectTrackByIdRow, error) {
+	return n.db.SelectTrackById(context.Background(), int64(id))
 }
