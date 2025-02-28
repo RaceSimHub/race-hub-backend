@@ -25,8 +25,11 @@ func (t Template) Home(c *gin.Context) {
 }
 
 func (Template) Render(c *gin.Context, templateName string, data interface{}) {
-	basePath, _ := os.Getwd()
-
+	basePath, err := os.Getwd()
+	if err != nil {
+		c.String(500, "Internal Server Error")
+		return
+	}
 	parentPath := filepath.Dir(basePath)
 
 	templates := template.Must(template.ParseFiles(
