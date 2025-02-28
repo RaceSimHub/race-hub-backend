@@ -6,6 +6,7 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverDriver "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
+	serverTemplate "github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
 	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
@@ -61,6 +62,15 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	template := serverTemplate.NewTemplate(database.DbQuerier)
+	router.GET("/", template.Home)
+
+	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
+	router.GET("/drivers", driver.GetList)
+	router.POST("/drivers", driver.Post)
+	router.GET("/drivers/:id", driver.GetByID)
+	router.PUT("/drivers/:id", driver.Put)
+
 	freeRouterGroup := router.Group(config.ApiVersion)
 
 	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
@@ -75,13 +85,6 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup.DELETE("/tracks/:id", track.Delete)
 	authRouterGroup.GET("/tracks", track.GetList)
 	authRouterGroup.GET("/tracks/:id", track.GetByID)
-
-	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
-	authRouterGroup.POST("/drivers", driver.Post)
-	authRouterGroup.PUT("/drivers/:id", driver.Put)
-	authRouterGroup.DELETE("/drivers/:id", driver.Delete)
-	authRouterGroup.GET("/drivers", driver.GetList)
-	authRouterGroup.GET("/drivers/:id", driver.GetByID)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authRouterGroup.POST("/notifications", notification.Post)

@@ -37,4 +37,4 @@ CREATE TABLE driver (
     phone VARCHAR(255) NOT NULL,
     created_date TIMESTAMP NOT NULL DEFAULT now(),
     updated_date TIMESTAMP
-)
+);

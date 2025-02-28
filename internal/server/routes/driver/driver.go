@@ -1,7 +1,9 @@
 package driver
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
+	"net/http"
+
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	"github.com/RaceSimHub/race-hub-backend/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -15,74 +17,54 @@ func NewDriver(serviceDriver serviceDriver.Driver) *Driver {
 	return &Driver{serviceDriver: serviceDriver}
 }
 
-func (d *Driver) Post(c *gin.Context) {
-	bodyRequest := request.PostDriver{}
-	err := utils.Utils{}.BindJson(c, &bodyRequest)
+func (d Driver) GetList(c *gin.Context) {
+	drivers, err := d.serviceDriver.GetList(0, 10)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	id, err := d.serviceDriver.Create(bodyRequest.Name, bodyRequest.RaceName, bodyRequest.Email, bodyRequest.Phone)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
+	data := map[string]interface{}{
+		"Drivers": drivers,
 	}
-
-	utils.Utils{}.ResponseCreated(c, int(id))
+	template.Template{}.Render(c, "driver/driver_list", data)
 }
 
-func (d *Driver) Put(c *gin.Context) {
+func (d Driver) Put(c *gin.Context) {
 	id, err := utils.Utils{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	bodyRequest := request.PutDriver{}
-	err = utils.Utils{}.BindJson(c, &bodyRequest)
+	name := c.PostForm("name")
+	raceName := c.PostForm("race_name")
+	email := c.PostForm("email")
+	phone := c.PostForm("phone")
+
+	err = d.serviceDriver.Update(id, name, raceName, email, phone)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	err = d.serviceDriver.Update(id, bodyRequest.Name, bodyRequest.RaceName, bodyRequest.Email, bodyRequest.Phone)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
-	}
-
-	utils.Utils{}.ResponseNoContent(c)
+	d.GetList(c)
 }
 
-func (d *Driver) Delete(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+func (d Driver) Post(c *gin.Context) {
+	name := c.PostForm("name")
+	raceName := c.PostForm("race_name")
+	email := c.PostForm("email")
+	phone := c.PostForm("phone")
+	_, err := d.serviceDriver.Create(name, raceName, email, phone)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	err = d.serviceDriver.Delete(id)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
-	}
-
-	utils.Utils{}.ResponseNoContent(c)
+	d.GetList(c)
 }
 
-func (d *Driver) GetList(c *gin.Context) {
-	offset, limit, err := utils.Utils{}.GetListParams(c)
-	if err != nil {
-		return
-	}
-
-	drivers, err := d.serviceDriver.GetList(offset, limit)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
-	}
-
-	utils.Utils{}.ResponseOK(c, drivers)
-}
-
-func (d *Driver) GetByID(c *gin.Context) {
+func (d Driver) GetByID(c *gin.Context) {
 	id, err := utils.Utils{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
@@ -90,9 +72,14 @@ func (d *Driver) GetByID(c *gin.Context) {
 
 	driver, err := d.serviceDriver.GetByID(id)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	utils.Utils{}.ResponseOK(c, driver)
+	data := map[string]interface{}{
+		"Title":  driver.Name,
+		"Driver": driver,
+	}
+
+	template.Template{}.Render(c, "driver/driver_edit", data)
 }

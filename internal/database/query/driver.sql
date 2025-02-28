@@ -48,9 +48,9 @@ SELECT
     email::VARCHAR,
     phone::VARCHAR,
     fk_created_by_user_id::BIGINT,
-    fk_updated_by_user_id::BIGINT,
+    fk_updated_by_user_id,
     created_date::TIMESTAMP,
-    updated_date::TIMESTAMP
+    updated_date
 FROM
     driver
 WHERE id = $1::BIGINT;

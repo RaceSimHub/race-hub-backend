@@ -7,6 +7,7 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -30,9 +31,9 @@ SELECT
     email::VARCHAR,
     phone::VARCHAR,
     fk_created_by_user_id::BIGINT,
-    fk_updated_by_user_id::BIGINT,
+    fk_updated_by_user_id,
     created_date::TIMESTAMP,
-    updated_date::TIMESTAMP
+    updated_date
 FROM
     driver
 WHERE id = $1::BIGINT
@@ -45,9 +46,9 @@ type GetDriverRow struct {
 	Email             string
 	Phone             string
 	FkCreatedByUserID int64
-	FkUpdatedByUserID int64
+	FkUpdatedByUserID sql.NullInt64
 	CreatedDate       time.Time
-	UpdatedDate       time.Time
+	UpdatedDate       sql.NullTime
 }
 
 func (q *Queries) GetDriver(ctx context.Context, dollar_1 int64) (GetDriverRow, error) {

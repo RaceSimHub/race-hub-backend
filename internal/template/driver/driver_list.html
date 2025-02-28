@@ -1,0 +1,30 @@
+{{ define "content" }}
+<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800">Lista de Pilotos</h2>
+
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-blue-600 text-white">
+                    <th class="p-3 text-left">ID</th>
+                    <th class="p-3 text-left">Nome</th>
+                    <th class="p-3 text-left">Ações</th>
+                </tr>
+            </thead>
+            <tbody id="driver-list" class="bg-white divide-y divide-gray-200">
+                {{ range .Drivers }}
+                <tr class="hover:bg-gray-100 transition">
+                    <td class="p-3">{{ .ID }}</td>
+                    <td class="p-3">{{ .Name }}</td>
+                    <td class="p-3">
+                        <a href="/drivers/{{ .ID }}" class="text-blue-600 hover:underline"> 
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{ end }}

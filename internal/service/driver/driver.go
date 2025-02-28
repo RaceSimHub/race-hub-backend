@@ -2,6 +2,7 @@ package driver
 
 import (
 	"context"
+	"time"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 )
@@ -16,20 +17,23 @@ func NewDriver(db sqlc.Querier) *Driver {
 
 func (d *Driver) Create(name, raceName, email, phone string) (int64, error) {
 	return d.db.InsertDriver(context.Background(), sqlc.InsertDriverParams{
-		Name:     name,
-		RaceName: raceName,
-		Email:    email,
-		Phone:    phone,
+		Name:              name,
+		RaceName:          raceName,
+		Email:             email,
+		Phone:             phone,
+		FkCreatedByUserID: 1,
 	})
 }
 
 func (d *Driver) Update(id int, name, raceName, email, phone string) error {
 	return d.db.UpdateDriver(context.Background(), sqlc.UpdateDriverParams{
-		ID:       int64(id),
-		Name:     name,
-		RaceName: raceName,
-		Email:    email,
-		Phone:    phone,
+		ID:                int64(id),
+		Name:              name,
+		RaceName:          raceName,
+		Email:             email,
+		Phone:             phone,
+		FkUpdatedByUserID: 1,
+		UpdatedDate:       time.Now(),
 	})
 }
 
