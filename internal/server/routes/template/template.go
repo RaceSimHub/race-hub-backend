@@ -18,13 +18,13 @@ func NewTemplate(db sqlc.Querier) *Template {
 }
 
 func (t Template) Home(c *gin.Context) {
-	data := map[string]interface{}{
+	data := map[string]any{
 		"Title": "Home - Race Hub",
 	}
 	t.Render(c, "index", data)
 }
 
-func (Template) Render(c *gin.Context, templateName string, data interface{}) {
+func (Template) Render(c *gin.Context, templateName string, data any) {
 	basePath, err := os.Getwd()
 	if err != nil {
 		c.String(500, "Internal Server Error")

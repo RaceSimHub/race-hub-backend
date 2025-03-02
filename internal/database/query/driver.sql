@@ -1,26 +1,84 @@
 -- name: InsertDriver :one
 INSERT INTO driver (
     name,
-    race_name,
     email,
+    secondary_email,
     phone,
+    secondary_phone,
+    license,
+    number,
+    secondary_number,
+    neighborhood,
+    state,
+    city,
+    cep,
+    address,
+    address_number,
+    country,
+    team,
+    id_iracing,
+    id_steam,
+    instagram,
+    facebook,
+    twitch,
+    photo_url,
     fk_created_by_user_id,
-    created_date
+    created_date,
+    fk_updated_by_user_id,
+    updated_date
 ) VALUES (
     @name::VARCHAR,
-    @race_name::VARCHAR,
     @email::VARCHAR,
-    @phone::VARCHAR,
+    @secondary_email,
+    @phone,
+    @secondary_phone,
+    @license,
+    @number,
+    @secondary_number,
+    @neighborhood,
+    @state,
+    @city,
+    @cep,
+    @address,
+    @address_number,
+    @country,
+    @team,
+    @id_iracing,
+    @id_steam,
+    @instagram,
+    @facebook,
+    @twitch,
+    @photo_url,
+    @fk_created_by_user_id::BIGINT,
+    @created_date::TIMESTAMP,
     @fk_created_by_user_id::BIGINT,
     @created_date::TIMESTAMP
-) RETURNING id;
+) RETURNING id::BIGINT;
 
 -- name: UpdateDriver :exec
 UPDATE driver SET 
-    name = COALESCE(@name::VARCHAR, name),
-    race_name = COALESCE(@race_name::VARCHAR, race_name),
-    email = COALESCE(@email::VARCHAR, email),
-    phone = COALESCE(@phone::VARCHAR, phone),
+    name = @name::VARCHAR,
+    email = @email::VARCHAR,
+    secondary_email = @secondary_email,
+    phone = @phone,
+    secondary_phone = @secondary_phone,
+    license = @license,
+    number = @number,
+    secondary_number = @secondary_number,
+    neighborhood = @neighborhood,
+    state = @state,
+    city = @city,
+    cep = @cep,
+    address = @address,
+    address_number = @address_number,
+    country = @country,
+    team = @team,
+    id_iracing = @id_iracing,
+    id_steam = @id_steam,
+    instagram = @instagram,
+    facebook = @facebook,
+    twitch = @twitch,
+    photo_url = @photo_url,
     fk_updated_by_user_id = @fk_updated_by_user_id::BIGINT,
     updated_date = @updated_date::TIMESTAMP
 WHERE id = @id::BIGINT;
@@ -34,23 +92,44 @@ WHERE
 -- name: SelectListDrivers :many
 SELECT 
     id::BIGINT,
-    name::VARCHAR
+    name::VARCHAR,
+    email::VARCHAR,
+    phone,
+    team
 FROM
     driver
-OFFSET $1::INTEGER
-LIMIT $2::INTEGER;
+OFFSET $1
+LIMIT $2;
 
 -- name: GetDriver :one
 SELECT 
     id::BIGINT,
     name::VARCHAR,
-    race_name::VARCHAR,
     email::VARCHAR,
-    phone::VARCHAR,
+    secondary_email,
+    phone,
+    secondary_phone,
+    license,
+    number,
+    secondary_number,
+    neighborhood,
+    state,
+    city,
+    cep,
+    address,
+    address_number,
+    country,
+    team,
+    id_iracing,
+    id_steam,
+    instagram,
+    facebook,
+    twitch,
+    photo_url,
     fk_created_by_user_id::BIGINT,
-    fk_updated_by_user_id,
+    fk_updated_by_user_id::BIGINT,
     created_date::TIMESTAMP,
-    updated_date
+    updated_date::TIMESTAMP
 FROM
     driver
 WHERE id = $1::BIGINT;

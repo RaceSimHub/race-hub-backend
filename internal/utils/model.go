@@ -27,8 +27,8 @@ func (e Exception) Make(m string) Exception {
 }
 
 type List struct {
-	Pagination Pagination  `json:"pagination"`
-	Data       interface{} `json:"data"`
+	Pagination Pagination `json:"pagination"`
+	Data       any        `json:"data"`
 }
 
 type Pagination struct {

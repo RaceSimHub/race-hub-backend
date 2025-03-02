@@ -29,7 +29,7 @@ type Server struct {
 
 // NewServer creates a new http server and setup routing
 func NewServer() (s Server) {
-	if config.ENVIRONMENT != "DEV" {
+	if config.Environment != "DEV" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -70,6 +70,8 @@ func (Server) setupRouter() (router *gin.Engine) {
 	router.POST("/drivers", driver.Post)
 	router.GET("/drivers/:id", driver.GetByID)
 	router.PUT("/drivers/:id", driver.Put)
+	router.GET("/drivers/new", driver.New)
+	router.GET("/drivers/delete/:id", driver.Delete)
 
 	freeRouterGroup := router.Group(config.ApiVersion)
 

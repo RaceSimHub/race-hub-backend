@@ -15,26 +15,19 @@ func NewDriver(db sqlc.Querier) *Driver {
 	return &Driver{db: db}
 }
 
-func (d *Driver) Create(name, raceName, email, phone string) (int64, error) {
-	return d.db.InsertDriver(context.Background(), sqlc.InsertDriverParams{
-		Name:              name,
-		RaceName:          raceName,
-		Email:             email,
-		Phone:             phone,
-		FkCreatedByUserID: 1,
-	})
+func (d *Driver) Create(driver sqlc.InsertDriverParams, createdById int64) (int64, error) {
+	driver.FkCreatedByUserID = createdById
+	driver.CreatedDate = time.Now()
+
+	return d.db.InsertDriver(context.Background(), driver)
 }
 
-func (d *Driver) Update(id int, name, raceName, email, phone string) error {
-	return d.db.UpdateDriver(context.Background(), sqlc.UpdateDriverParams{
-		ID:                int64(id),
-		Name:              name,
-		RaceName:          raceName,
-		Email:             email,
-		Phone:             phone,
-		FkUpdatedByUserID: 1,
-		UpdatedDate:       time.Now(),
-	})
+func (d *Driver) Update(id int, driver sqlc.UpdateDriverParams, updatedById int64) error {
+	driver.ID = int64(id)
+	driver.FkUpdatedByUserID = updatedById
+	driver.UpdatedDate = time.Now()
+
+	return d.db.UpdateDriver(context.Background(), driver)
 }
 
 func (d *Driver) Delete(id int) error {
@@ -43,8 +36,8 @@ func (d *Driver) Delete(id int) error {
 
 func (d *Driver) GetList(offset, limit int) ([]sqlc.SelectListDriversRow, error) {
 	return d.db.SelectListDrivers(context.Background(), sqlc.SelectListDriversParams{
-		Column1: int32(offset),
-		Column2: int32(limit),
+		Offset: int32(offset),
+		Limit:  int32(limit),
 	})
 }
 

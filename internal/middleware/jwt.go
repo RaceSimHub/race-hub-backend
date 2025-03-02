@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
+	"strings"
+
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"net/http"
-	"strings"
 )
 
 var JwtSecret = []byte(config.JwtSecret)
@@ -27,7 +28,7 @@ func JWTMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (any, error) {
 			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, gin.Error{Err: fmt.Errorf("unexpected signing method: %v", t.Header["alg"])}
 			}

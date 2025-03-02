@@ -1,24 +1,32 @@
 {{ define "content" }}
-<div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800">Lista de Pilotos</h2>
+<div class="max-w-4xl mx-auto p-6 bg-white text-gray-900 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-900">Lista de Pilotos</h2>
+        <a href="/drivers/new" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-600 transition shadow">
+            + Criar Novo Piloto
+        </a>
+    </div>
 
     <div class="overflow-x-auto">
-        <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden">
+        <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden bg-gray-100 text-gray-900">
             <thead>
-                <tr class="bg-blue-600 text-white">
+                <tr class="bg-gray-800 text-white">
                     <th class="p-3 text-left">ID</th>
                     <th class="p-3 text-left">Nome</th>
                     <th class="p-3 text-left">Ações</th>
                 </tr>
             </thead>
-            <tbody id="driver-list" class="bg-white divide-y divide-gray-200">
+            <tbody id="driver-list" class="divide-y divide-gray-300">
                 {{ range .Drivers }}
-                <tr class="hover:bg-gray-100 transition">
+                <tr class="hover:bg-gray-200 transition">
                     <td class="p-3">{{ .ID }}</td>
                     <td class="p-3">{{ .Name }}</td>
                     <td class="p-3">
-                        <a href="/drivers/{{ .ID }}" class="text-blue-600 hover:underline"> 
+                        <a href="/drivers/{{ .ID }}" class="text-gray-800 hover:text-red-600">
                             <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a href="/drivers/delete/{{ .ID }}" class="text-gray-800 hover:text-red-600" onclick="return confirm('Tem certeza que deseja excluir este piloto?')">
+                            <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
                 </tr>

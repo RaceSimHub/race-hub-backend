@@ -1,12 +1,14 @@
 package utils
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
+	"time"
+
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
-	"time"
 
 	"fmt"
 	"io"
@@ -51,11 +53,11 @@ func (u Utils) ResponseCreated(ctx *gin.Context, id int) {
 	u.Response(ctx, http.StatusCreated, bodyResponse)
 }
 
-func (u Utils) ResponseCreatedObj(ctx *gin.Context, bodyResponse interface{}) {
+func (u Utils) ResponseCreatedObj(ctx *gin.Context, bodyResponse any) {
 	u.Response(ctx, http.StatusCreated, bodyResponse)
 }
 
-func (u Utils) ResponseOK(ctx *gin.Context, bodyResponse interface{}) {
+func (u Utils) ResponseOK(ctx *gin.Context, bodyResponse any) {
 	u.Response(ctx, http.StatusOK, bodyResponse)
 }
 
@@ -76,7 +78,7 @@ func (Utils) ResponseListOk(ctx *gin.Context, bodyResponse any, total, limit, of
 	ctx.JSON(http.StatusOK, list)
 }
 
-func (u Utils) Response(ctx *gin.Context, statusCode int, bodyResponse interface{}) {
+func (u Utils) Response(ctx *gin.Context, statusCode int, bodyResponse any) {
 	jsonResponse, err := json.Marshal(bodyResponse)
 
 	if err != nil {
@@ -95,7 +97,7 @@ func (u Utils) Response(ctx *gin.Context, statusCode int, bodyResponse interface
 	_, _ = fmt.Fprint(ctx.Writer, bodyResponse)
 }
 
-func (u Utils) ParseBody(ctx *gin.Context, b io.Reader, dto interface{}) error {
+func (u Utils) ParseBody(ctx *gin.Context, b io.Reader, dto any) error {
 	err := json.NewDecoder(b).Decode(dto)
 
 	if err != nil {
@@ -245,4 +247,17 @@ func HashPassword(password string) (string, error) {
 func CheckPasswordHash(password, hashedPassword string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 	return err == nil
+}
+
+func (u Utils) StringToNullInt(value string) sql.NullInt32 {
+	if value == "" {
+		return sql.NullInt32{}
+	}
+
+	number, err := strconv.Atoi(value)
+	if err != nil {
+		return sql.NullInt32{}
+	}
+
+	return sql.NullInt32{Int32: int32(number), Valid: true}
 }

@@ -3,7 +3,7 @@ package config
 import "os"
 
 var (
-	ENVIRONMENT = os.Getenv("ENVIRONMENT")
+	Environment = os.Getenv("ENVIRONMENT")
 
 	DatabaseDriver = os.Getenv("DATABASE_DRIVER")
 	DatabaseUser   = os.Getenv("DATABASE_USER")
