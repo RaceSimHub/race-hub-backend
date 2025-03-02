@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/model"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	"github.com/RaceSimHub/race-hub-backend/internal/utils"
@@ -29,25 +30,44 @@ func (d Driver) GetList(c *gin.Context) {
 
 	search := c.DefaultQuery("search", "")
 
+	mapFields := map[string]string{
+		"ID":   "ID",
+		"Name": "Nome",
+	}
+
 	drivers, total, err := d.serviceDriver.GetList(search, offset, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
+	driversAny := make([]any, len(drivers))
+	for i, driver := range drivers {
+		driversAny[i] = driver
+	}
+
+	headers, rows := utils.Utils{}.MapTableData(driversAny, mapFields)
+
 	extraPage := 0
 	if int(total)%limit != 0 {
 		extraPage = 1
 	}
 
-	data := map[string]any{
-		"Drivers":   drivers,
-		"Total":     int(total),
-		"Limit":     limit,
-		"Offset":    offset,
-		"ExtraPage": extraPage,
-		"Search":    search,
+	data := model.ListTemplateData{
+		Title:     "Lista de Pilotos",
+		NewURL:    "/drivers/new",
+		SearchURL: "/drivers",
+		EditURL:   "/drivers",
+		DeleteURL: "/drivers/delete",
+		Columns:   headers,
+		Items:     rows,
+		Search:    search,
+		Offset:    offset,
+		Limit:     limit,
+		Total:     int(total),
+		ExtraPage: extraPage,
 	}
+
 	template.Template{}.Render(c, "driver/driver_list", data)
 }
 

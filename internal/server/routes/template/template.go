@@ -57,6 +57,7 @@ func (Template) Render(c *gin.Context, templateName string, data any) {
 		filepath.Join(parentPath, "internal", "template", "partial", "header.html"),
 		filepath.Join(parentPath, "internal", "template", "partial", "footer.html"),
 		filepath.Join(parentPath, "internal", "template", "partial", "sidebar.html"),
+		filepath.Join(parentPath, "internal", "template", "list.html"),
 	)
 
 	if err != nil {

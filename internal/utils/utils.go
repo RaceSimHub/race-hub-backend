@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"reflect"
 	"time"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
@@ -260,4 +261,46 @@ func (u Utils) StringToNullInt(value string) sql.NullInt32 {
 	}
 
 	return sql.NullInt32{Int32: int32(number), Valid: true}
+}
+
+func (u Utils) MapTableData(data []any, columnMap map[string]string) (headers []string, rows []map[string]any) {
+	if len(data) == 0 {
+		return nil, nil
+	}
+
+	// Obter cabeçalhos
+	for _, columnName := range columnMap {
+		headers = append(headers, columnName)
+	}
+
+	// Iterar sobre os elementos da lista
+	for _, item := range data {
+		val := reflect.ValueOf(item)
+
+		if val.Kind() != reflect.Struct {
+			continue
+		}
+
+		row := make(map[string]any)
+
+		// Percorrer os campos do mapa (chaves do banco)
+		for field, column := range columnMap {
+			fieldValue := val.FieldByName(field)
+			if fieldValue.IsValid() {
+				row[column] = fieldValue.Interface()
+			} else {
+				row[column] = nil
+			}
+		}
+
+		// Adicionando ID separadamente para os links de editar/excluir
+		idField := val.FieldByName("ID")
+		if idField.IsValid() {
+			row["ID"] = idField.Interface()
+		}
+
+		rows = append(rows, row)
+	}
+
+	return headers, rows
 }

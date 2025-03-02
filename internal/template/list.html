@@ -1,0 +1,81 @@
+{{ define "list" }}
+<div class="max-w-4xl mx-auto p-6 bg-white text-gray-900 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-900">{{ .Title }}</h2>
+        <a href="{{ .NewURL }}" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-600 transition shadow">
+            Novo
+        </a>
+    </div>
+
+    <!-- Campo de Filtro -->
+    <form method="GET" action="{{ .SearchURL }}" class="mb-4 flex">
+        <input type="text" name="search" value="{{ .Search }}"
+               class="border border-gray-300 p-2 rounded-md flex-1" />
+        <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition ml-2">
+            Filtrar
+        </button>
+    </form>
+
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden bg-gray-100 text-gray-900">
+            <thead>
+                <tr class="bg-gray-800 text-white">
+                    {{ range .Columns }}
+                    <th class="p-3 text-left">{{ . }}</th>
+                    {{ end }}
+                    <th class="p-3 text-left">Ações</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-300">
+                {{ range .Items }}
+                <tr class="hover:bg-gray-200 transition">
+                    {{ range $key, $value := . }}
+                    <td class="p-3">{{ $value }}</td>
+                    {{ end }}
+                    <td class="p-3">
+                        <a href="{{ $.EditURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a href="{{ $.DeleteURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600" onclick="return confirm('Tem certeza que deseja excluir este item?')">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+                {{ else }}
+                <tr>
+                    <td colspan="{{ .ColumnsCount }}" class="text-center p-4 text-gray-500">Nenhum item encontrado.</td>
+                </tr>
+                {{ end }}
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray-200">
+                    <td colspan="{{ .ColumnsCount }}" class="p-3 text-center font-bold">Total: {{ .Total }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Paginação -->
+    <div class="flex justify-between items-center mt-4">
+        {{ if gt .Offset 0 }}
+        <a href="{{ .SearchURL }}?search={{ .Search }}&offset={{ sub .Offset .Limit }}&limit={{ .Limit }}" 
+           class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+            ← Anterior
+        </a>
+        {{ else }}
+        <span class="bg-gray-400 text-white px-4 py-2 rounded-md opacity-50 cursor-not-allowed">← Anterior</span>
+        {{ end }}
+
+        <span class="text-gray-700">Página {{ div .Offset .Limit | add 1 }} de {{ div .Total .Limit | add .ExtraPage }}</span>
+
+        {{ if lt (add .Offset .Limit) .Total }}
+        <a href="{{ .SearchURL }}?search={{ .Search }}&offset={{ add .Offset .Limit }}&limit={{ .Limit }}" 
+           class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+            Próximo → 
+        </a>
+        {{ else }}
+        <span class="bg-gray-400 text-white px-4 py-2 rounded-md opacity-50 cursor-not-allowed">Próximo →</span>
+        {{ end }}
+    </div>
+</div>
+{{ end }}
