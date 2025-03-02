@@ -239,6 +239,29 @@ func (q *Queries) InsertDriver(ctx context.Context, arg InsertDriverParams) (int
 	return id, err
 }
 
+const selectCountListDrivers = `-- name: SelectCountListDrivers :one
+SELECT 
+    COUNT(1) AS count
+FROM
+    driver
+WHERE 
+    CASE WHEN $1::VARCHAR != '' THEN 
+        name ILIKE '%' || $1 || '%' OR
+        email ILIKE '%' || $1 || '%' OR
+        phone ILIKE '%' || $1 || '%' OR
+        team ILIKE '%' || $1 || '%'
+    ELSE
+        TRUE
+    END
+`
+
+func (q *Queries) SelectCountListDrivers(ctx context.Context, search string) (int64, error) {
+	row := q.queryRow(ctx, q.selectCountListDriversStmt, selectCountListDrivers, search)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const selectListDrivers = `-- name: SelectListDrivers :many
 SELECT 
     id::BIGINT,
@@ -248,6 +271,17 @@ SELECT
     team
 FROM
     driver
+WHERE 
+    CASE WHEN $3::VARCHAR != '' THEN 
+        name ILIKE '%' || $3 || '%' OR
+        email ILIKE '%' || $3 || '%' OR
+        phone ILIKE '%' || $3 || '%' OR
+        team ILIKE '%' || $3 || '%'
+    ELSE
+        TRUE
+    END
+ORDER BY
+    id
 OFFSET $1
 LIMIT $2
 `
@@ -255,6 +289,7 @@ LIMIT $2
 type SelectListDriversParams struct {
 	Offset int32
 	Limit  int32
+	Search string
 }
 
 type SelectListDriversRow struct {
@@ -266,7 +301,7 @@ type SelectListDriversRow struct {
 }
 
 func (q *Queries) SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error) {
-	rows, err := q.query(ctx, q.selectListDriversStmt, selectListDrivers, arg.Offset, arg.Limit)
+	rows, err := q.query(ctx, q.selectListDriversStmt, selectListDrivers, arg.Offset, arg.Limit, arg.Search)
 	if err != nil {
 		return nil, err
 	}

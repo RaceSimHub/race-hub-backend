@@ -51,6 +51,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
 	}
+	if q.selectCountListDriversStmt, err = db.PrepareContext(ctx, selectCountListDrivers); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectCountListDrivers: %w", err)
+	}
 	if q.selectListDriversStmt, err = db.PrepareContext(ctx, selectListDrivers); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectListDrivers: %w", err)
 	}
@@ -123,6 +126,11 @@ func (q *Queries) Close() error {
 	if q.insertUserStmt != nil {
 		if cerr := q.insertUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing insertUserStmt: %w", cerr)
+		}
+	}
+	if q.selectCountListDriversStmt != nil {
+		if cerr := q.selectCountListDriversStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectCountListDriversStmt: %w", cerr)
 		}
 	}
 	if q.selectListDriversStmt != nil {
@@ -213,6 +221,7 @@ type Queries struct {
 	insertNotificationStmt             *sql.Stmt
 	insertTrackStmt                    *sql.Stmt
 	insertUserStmt                     *sql.Stmt
+	selectCountListDriversStmt         *sql.Stmt
 	selectListDriversStmt              *sql.Stmt
 	selectListNotificationsStmt        *sql.Stmt
 	selectListTracksStmt               *sql.Stmt
@@ -236,6 +245,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		insertNotificationStmt:             q.insertNotificationStmt,
 		insertTrackStmt:                    q.insertTrackStmt,
 		insertUserStmt:                     q.insertUserStmt,
+		selectCountListDriversStmt:         q.selectCountListDriversStmt,
 		selectListDriversStmt:              q.selectListDriversStmt,
 		selectListNotificationsStmt:        q.selectListNotificationsStmt,
 		selectListTracksStmt:               q.selectListTracksStmt,

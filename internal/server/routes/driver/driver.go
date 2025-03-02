@@ -3,6 +3,7 @@ package driver
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
@@ -20,14 +21,32 @@ func NewDriver(serviceDriver serviceDriver.Driver) *Driver {
 }
 
 func (d Driver) GetList(c *gin.Context) {
-	drivers, err := d.serviceDriver.GetList(0, 10)
+	limitStr := c.DefaultQuery("limit", "10")
+	limit, _ := strconv.Atoi(limitStr)
+
+	offsetStr := c.DefaultQuery("offset", "0")
+	offset, _ := strconv.Atoi(offsetStr)
+
+	search := c.DefaultQuery("search", "")
+
+	drivers, total, err := d.serviceDriver.GetList(search, offset, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
+	extraPage := 0
+	if int(total)%limit != 0 {
+		extraPage = 1
+	}
+
 	data := map[string]any{
-		"Drivers": drivers,
+		"Drivers":   drivers,
+		"Total":     int(total),
+		"Limit":     limit,
+		"Offset":    offset,
+		"ExtraPage": extraPage,
+		"Search":    search,
 	}
 	template.Template{}.Render(c, "driver/driver_list", data)
 }

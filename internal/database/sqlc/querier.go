@@ -18,6 +18,7 @@ type Querier interface {
 	InsertNotification(ctx context.Context, arg InsertNotificationParams) (int64, error)
 	InsertTrack(ctx context.Context, arg InsertTrackParams) (int64, error)
 	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
+	SelectCountListDrivers(ctx context.Context, search string) (int64, error)
 	SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
 	SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error)

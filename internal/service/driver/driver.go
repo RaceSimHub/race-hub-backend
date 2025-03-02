@@ -34,11 +34,20 @@ func (d *Driver) Delete(id int) error {
 	return d.db.DeleteDriver(context.Background(), int64(id))
 }
 
-func (d *Driver) GetList(offset, limit int) ([]sqlc.SelectListDriversRow, error) {
-	return d.db.SelectListDrivers(context.Background(), sqlc.SelectListDriversParams{
+func (d *Driver) GetList(search string, offset, limit int) (drivers []sqlc.SelectListDriversRow, total int64, err error) {
+	drivers, err = d.db.SelectListDrivers(context.Background(), sqlc.SelectListDriversParams{
+		Search: search,
 		Offset: int32(offset),
 		Limit:  int32(limit),
 	})
+
+	if err != nil {
+		return
+	}
+
+	total, err = d.db.SelectCountListDrivers(context.Background(), search)
+
+	return
 }
 
 func (d *Driver) GetByID(id int) (sqlc.GetDriverRow, error) {

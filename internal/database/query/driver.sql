@@ -98,8 +98,34 @@ SELECT
     team
 FROM
     driver
+WHERE 
+    CASE WHEN @search::VARCHAR != '' THEN 
+        name ILIKE '%' || @search || '%' OR
+        email ILIKE '%' || @search || '%' OR
+        phone ILIKE '%' || @search || '%' OR
+        team ILIKE '%' || @search || '%'
+    ELSE
+        TRUE
+    END
+ORDER BY
+    id
 OFFSET $1
 LIMIT $2;
+
+-- name: SelectCountListDrivers :one
+SELECT 
+    COUNT(1) AS count
+FROM
+    driver
+WHERE 
+    CASE WHEN @search::VARCHAR != '' THEN 
+        name ILIKE '%' || @search || '%' OR
+        email ILIKE '%' || @search || '%' OR
+        phone ILIKE '%' || @search || '%' OR
+        team ILIKE '%' || @search || '%'
+    ELSE
+        TRUE
+    END;
 
 -- name: GetDriver :one
 SELECT 

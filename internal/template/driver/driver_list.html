@@ -3,9 +3,18 @@
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-2xl font-bold text-gray-900">Lista de Pilotos</h2>
         <a href="/drivers/new" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-600 transition shadow">
-            + Criar Novo Piloto
+            Novo
         </a>
     </div>
+
+    <!-- Campo de Filtro -->
+    <form method="GET" action="/drivers" class="mb-4 flex">
+        <input type="text" name="search" value="{{ .Search }}"
+               class="border border-gray-300 p-2 rounded-md flex-1" />
+        <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition ml-2">
+            Filtrar
+        </button>
+    </form>
 
     <div class="overflow-x-auto">
         <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden bg-gray-100 text-gray-900">
@@ -30,9 +39,41 @@
                         </a>
                     </td>
                 </tr>
+                {{ else }}
+                <tr>
+                    <td colspan="3" class="text-center p-4 text-gray-500">Nenhum piloto encontrado.</td>
+                </tr>
                 {{ end }}
             </tbody>
+            <tfoot>
+                <tr class="bg-gray-200">
+                    <td colspan="3" class="p-3 text-center font-bold">Total: {{ .Total }}</td>
+                </tr>
+            </tfoot>
         </table>
+    </div>
+
+    <!-- Paginação -->
+    <div class="flex justify-between items-center mt-4">
+        {{ if gt .Offset 0 }}
+        <a href="/drivers?search={{ .Search }}&offset={{ sub .Offset .Limit }}&limit={{ .Limit }}" 
+           class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+            ← Anterior
+        </a>
+        {{ else }}
+        <span class="bg-gray-400 text-white px-4 py-2 rounded-md opacity-50 cursor-not-allowed">← Anterior</span>
+        {{ end }}
+
+        <span class="text-gray-700">Página {{ div .Offset .Limit | add 1 }} de {{ div .Total .Limit | add .ExtraPage }}</span>
+
+        {{ if lt (add .Offset .Limit) .Total }}
+        <a href="/drivers?search={{ .Search }}&offset={{ add .Offset .Limit }}&limit={{ .Limit }}" 
+           class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
+            Próximo → 
+        </a>
+        {{ else }}
+        <span class="bg-gray-400 text-white px-4 py-2 rounded-md opacity-50 cursor-not-allowed">Próximo →</span>
+        {{ end }}
     </div>
 </div>
 {{ end }}

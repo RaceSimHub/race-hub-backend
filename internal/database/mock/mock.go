@@ -173,6 +173,21 @@ func (mr *MockQuerierMockRecorder) InsertUser(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockQuerier)(nil).InsertUser), ctx, arg)
 }
 
+// SelectCountListDrivers mocks base method.
+func (m *MockQuerier) SelectCountListDrivers(ctx context.Context, search string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectCountListDrivers", ctx, search)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectCountListDrivers indicates an expected call of SelectCountListDrivers.
+func (mr *MockQuerierMockRecorder) SelectCountListDrivers(ctx, search any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCountListDrivers", reflect.TypeOf((*MockQuerier)(nil).SelectCountListDrivers), ctx, search)
+}
+
 // SelectListDrivers mocks base method.
 func (m *MockQuerier) SelectListDrivers(ctx context.Context, arg sqlc.SelectListDriversParams) ([]sqlc.SelectListDriversRow, error) {
 	m.ctrl.T.Helper()
