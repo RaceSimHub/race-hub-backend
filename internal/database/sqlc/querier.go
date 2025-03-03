@@ -22,6 +22,7 @@ type Querier interface {
 	SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
 	SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error)
+	SelectListTracksCount(ctx context.Context, search string) (int64, error)
 	SelectTrackById(ctx context.Context, dollar_1 int64) (SelectTrackByIdRow, error)
 	SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error)
 	UpdateDriver(ctx context.Context, arg UpdateDriverParams) error

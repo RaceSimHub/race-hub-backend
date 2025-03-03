@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
-	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/model"
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	"github.com/RaceSimHub/race-hub-backend/internal/utils"
@@ -15,6 +15,13 @@ import (
 type Driver struct {
 	serviceDriver serviceDriver.Driver
 }
+
+const (
+	driverListTemplate   = "driver/driver_list"
+	driverEditTemplate   = "driver/driver_edit"
+	driverCreateTemplate = "driver/driver_create"
+	driversUrl           = "/drivers"
+)
 
 func NewDriver(serviceDriver serviceDriver.Driver) *Driver {
 	return &Driver{serviceDriver: serviceDriver}
@@ -34,7 +41,7 @@ func (d Driver) GetList(c *gin.Context) {
 		"Name": "Nome",
 	}
 
-	data := model.ListTemplateData[sqlc.SelectListDriversRow]{
+	data := list.ListTemplateData[sqlc.SelectListDriversRow]{
 		Title:      "Lista de Pilotos",
 		Template:   "drivers",
 		MapFields:  mapFields,
@@ -43,7 +50,7 @@ func (d Driver) GetList(c *gin.Context) {
 		GinContext: c,
 	}
 
-	template.Template{}.Render(c, "driver/driver_list", data)
+	template.Template{}.Render(c, driverListTemplate, data)
 }
 
 func (d Driver) Put(c *gin.Context) {
@@ -114,7 +121,7 @@ func (d Driver) Put(c *gin.Context) {
 		return
 	}
 
-	c.Header("HX-Location", "/drivers")
+	c.Header("HX-Location", driversUrl)
 	c.Status(200)
 }
 
@@ -181,7 +188,7 @@ func (d Driver) Post(c *gin.Context) {
 		return
 	}
 
-	c.Header("HX-Location", "/drivers")
+	c.Header("HX-Location", driversUrl)
 	c.Status(200)
 }
 
@@ -202,7 +209,7 @@ func (d Driver) GetByID(c *gin.Context) {
 		"Driver": driver,
 	}
 
-	template.Template{}.Render(c, "driver/driver_edit", data)
+	template.Template{}.Render(c, driverEditTemplate, data)
 }
 
 func (d Driver) New(c *gin.Context) {
@@ -210,7 +217,7 @@ func (d Driver) New(c *gin.Context) {
 		"Title": "Novo Piloto",
 	}
 
-	template.Template{}.Render(c, "driver/driver_create", data)
+	template.Template{}.Render(c, driverCreateTemplate, data)
 }
 
 func (d Driver) Delete(c *gin.Context) {
@@ -225,6 +232,6 @@ func (d Driver) Delete(c *gin.Context) {
 		return
 	}
 
-	c.Header("HX-Location", "/drivers")
+	c.Header("HX-Location", driversUrl)
 	c.Status(200)
 }

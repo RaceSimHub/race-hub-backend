@@ -63,6 +63,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.selectListTracksStmt, err = db.PrepareContext(ctx, selectListTracks); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectListTracks: %w", err)
 	}
+	if q.selectListTracksCountStmt, err = db.PrepareContext(ctx, selectListTracksCount); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectListTracksCount: %w", err)
+	}
 	if q.selectTrackByIdStmt, err = db.PrepareContext(ctx, selectTrackById); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectTrackById: %w", err)
 	}
@@ -148,6 +151,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing selectListTracksStmt: %w", cerr)
 		}
 	}
+	if q.selectListTracksCountStmt != nil {
+		if cerr := q.selectListTracksCountStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectListTracksCountStmt: %w", cerr)
+		}
+	}
 	if q.selectTrackByIdStmt != nil {
 		if cerr := q.selectTrackByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectTrackByIdStmt: %w", cerr)
@@ -225,6 +233,7 @@ type Queries struct {
 	selectListDriversStmt              *sql.Stmt
 	selectListNotificationsStmt        *sql.Stmt
 	selectListTracksStmt               *sql.Stmt
+	selectListTracksCountStmt          *sql.Stmt
 	selectTrackByIdStmt                *sql.Stmt
 	selectUserIDAndPasswordByEmailStmt *sql.Stmt
 	updateDriverStmt                   *sql.Stmt
@@ -249,6 +258,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		selectListDriversStmt:              q.selectListDriversStmt,
 		selectListNotificationsStmt:        q.selectListNotificationsStmt,
 		selectListTracksStmt:               q.selectListTracksStmt,
+		selectListTracksCountStmt:          q.selectListTracksCountStmt,
 		selectTrackByIdStmt:                q.selectTrackByIdStmt,
 		selectUserIDAndPasswordByEmailStmt: q.selectUserIDAndPasswordByEmailStmt,
 		updateDriverStmt:                   q.updateDriverStmt,

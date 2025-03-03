@@ -233,6 +233,21 @@ func (mr *MockQuerierMockRecorder) SelectListTracks(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectListTracks", reflect.TypeOf((*MockQuerier)(nil).SelectListTracks), ctx, arg)
 }
 
+// SelectListTracksCount mocks base method.
+func (m *MockQuerier) SelectListTracksCount(ctx context.Context, search string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectListTracksCount", ctx, search)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectListTracksCount indicates an expected call of SelectListTracksCount.
+func (mr *MockQuerierMockRecorder) SelectListTracksCount(ctx, search any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectListTracksCount", reflect.TypeOf((*MockQuerier)(nil).SelectListTracksCount), ctx, search)
+}
+
 // SelectTrackById mocks base method.
 func (m *MockQuerier) SelectTrackById(ctx context.Context, dollar_1 int64) (sqlc.SelectTrackByIdRow, error) {
 	m.ctrl.T.Helper()

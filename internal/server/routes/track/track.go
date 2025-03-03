@@ -1,98 +1,135 @@
 package track
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
-	"github.com/RaceSimHub/race-hub-backend/internal/service/track"
+	"net/http"
+
+	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
+	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
 	"github.com/RaceSimHub/race-hub-backend/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type Track struct {
-	serviceTrack track.Track
+	serviceTrack serviceTrack.Track
 }
 
-func NewTrack(serviceTrack track.Track) *Track {
+const (
+	trackListTemplate   = "track/track_list"
+	trackEditTemplate   = "track/track_edit"
+	trackCreateTemplate = "track/track_create"
+	tracksUrl           = "/tracks"
+)
+
+func NewTrack(serviceTrack serviceTrack.Track) *Track {
 	return &Track{serviceTrack: serviceTrack}
 }
 
-func (n *Track) Post(c *gin.Context) {
-	bodyRequest := request.PostTrack{}
-	err := utils.Utils{}.BindJson(c, &bodyRequest)
+func (d Track) GetList(c *gin.Context) {
+	search, offset, limit := utils.Utils{}.DefaultListParams(c)
+
+	tracks, total, err := d.serviceTrack.GetList(search, offset, limit)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	id, err := n.serviceTrack.Create(bodyRequest.Name, bodyRequest.Country)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
+	mapFields := map[string]string{
+		"ID":   "ID",
+		"Name": "Nome",
 	}
 
-	utils.Utils{}.ResponseCreated(c, int(id))
+	data := list.ListTemplateData[sqlc.SelectListTracksRow]{
+		Title:      "Lista de Pistas",
+		Template:   "tracks",
+		MapFields:  mapFields,
+		Data:       tracks,
+		Total:      int(total),
+		GinContext: c,
+	}
+
+	template.Template{}.Render(c, trackListTemplate, data)
 }
 
-func (n *Track) Put(c *gin.Context) {
+func (d Track) Put(c *gin.Context) {
 	id, err := utils.Utils{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	bodyRequest := request.PutTrack{}
-	err = utils.Utils{}.BindJson(c, &bodyRequest)
-	if err != nil {
+	name := c.PostForm("name")
+	country := c.PostForm("country")
+
+	if name == "" || country == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Campos obrigatórios não preenchidos"})
 		return
 	}
 
-	err = n.serviceTrack.Update(id, bodyRequest.Name, bodyRequest.Country)
+	err = d.serviceTrack.Update(id, name, country)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	utils.Utils{}.ResponseNoContent(c)
+	c.Header("HX-Location", tracksUrl)
+	c.Status(200)
 }
 
-func (n *Track) Delete(c *gin.Context) {
+func (d Track) Post(c *gin.Context) {
+	name := c.PostForm("name")
+	country := c.PostForm("country")
+
+	_, err := d.serviceTrack.Create(name, country)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao cadastrar pista"})
+		return
+	}
+
+	c.Header("HX-Location", tracksUrl)
+	c.Status(200)
+}
+
+func (d Track) GetByID(c *gin.Context) {
 	id, err := utils.Utils{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	err = n.serviceTrack.Delete(id)
+	track, err := d.serviceTrack.GetByID(id)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	utils.Utils{}.ResponseNoContent(c)
+	data := map[string]any{
+		"Title": track.Name,
+		"Track": track,
+	}
+
+	template.Template{}.Render(c, trackEditTemplate, data)
 }
 
-func (n *Track) GetList(c *gin.Context) {
-	offset, limit, err := utils.Utils{}.GetListParams(c)
-	if err != nil {
-		return
+func (d Track) New(c *gin.Context) {
+	data := map[string]any{
+		"Title": "Novo Piloto",
 	}
 
-	list, err := n.serviceTrack.GetList(offset, limit)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
-	}
-
-	utils.Utils{}.ResponseOK(c, list)
+	template.Template{}.Render(c, trackCreateTemplate, data)
 }
 
-func (n *Track) GetByID(c *gin.Context) {
+func (d Track) Delete(c *gin.Context) {
 	id, err := utils.Utils{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	track, err := n.serviceTrack.GetByID(id)
+	err = d.serviceTrack.Delete(id)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	utils.Utils{}.ResponseOK(c, track)
+	c.Header("HX-Location", tracksUrl)
+	c.Status(200)
 }

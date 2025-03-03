@@ -7,6 +7,7 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -51,11 +52,18 @@ const selectListTracks = `-- name: SelectListTracks :many
 SELECT
     id::BIGINT,
     name::VARCHAR,
-    country::VARCHAR,
-    created_date::TIMESTAMP,
-    updated_date::TIMESTAMP
+    country::VARCHAR
 FROM
     track
+WHERE 
+    CASE WHEN $3::VARCHAR != '' THEN 
+        name ILIKE '%' || $3 || '%' OR
+        country ILIKE '%' || $3 || '%'
+    ELSE
+        TRUE
+    END
+ORDER BY
+    id
 OFFSET $1::INTEGER
 LIMIT $2::INTEGER
 `
@@ -63,18 +71,17 @@ LIMIT $2::INTEGER
 type SelectListTracksParams struct {
 	Column1 int32
 	Column2 int32
+	Search  string
 }
 
 type SelectListTracksRow struct {
-	ID          int64
-	Name        string
-	Country     string
-	CreatedDate time.Time
-	UpdatedDate time.Time
+	ID      int64
+	Name    string
+	Country string
 }
 
 func (q *Queries) SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error) {
-	rows, err := q.query(ctx, q.selectListTracksStmt, selectListTracks, arg.Column1, arg.Column2)
+	rows, err := q.query(ctx, q.selectListTracksStmt, selectListTracks, arg.Column1, arg.Column2, arg.Search)
 	if err != nil {
 		return nil, err
 	}
@@ -82,13 +89,7 @@ func (q *Queries) SelectListTracks(ctx context.Context, arg SelectListTracksPara
 	items := []SelectListTracksRow{}
 	for rows.Next() {
 		var i SelectListTracksRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Country,
-			&i.CreatedDate,
-			&i.UpdatedDate,
-		); err != nil {
+		if err := rows.Scan(&i.ID, &i.Name, &i.Country); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -102,13 +103,34 @@ func (q *Queries) SelectListTracks(ctx context.Context, arg SelectListTracksPara
 	return items, nil
 }
 
+const selectListTracksCount = `-- name: SelectListTracksCount :one
+SELECT
+    COUNT(*) AS count
+FROM
+    track
+WHERE 
+    CASE WHEN $1::VARCHAR != '' THEN 
+        name ILIKE '%' || $1 || '%' OR
+        country ILIKE '%' || $1 || '%'
+    ELSE
+        TRUE
+    END
+`
+
+func (q *Queries) SelectListTracksCount(ctx context.Context, search string) (int64, error) {
+	row := q.queryRow(ctx, q.selectListTracksCountStmt, selectListTracksCount, search)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const selectTrackById = `-- name: SelectTrackById :one
 SELECT
     id::BIGINT,
     name::VARCHAR,
     country::VARCHAR,
     created_date::TIMESTAMP,
-    updated_date::TIMESTAMP
+    updated_date
 FROM
     track
 WHERE
@@ -120,7 +142,7 @@ type SelectTrackByIdRow struct {
 	Name        string
 	Country     string
 	CreatedDate time.Time
-	UpdatedDate time.Time
+	UpdatedDate sql.NullTime
 }
 
 func (q *Queries) SelectTrackById(ctx context.Context, dollar_1 int64) (SelectTrackByIdRow, error) {
