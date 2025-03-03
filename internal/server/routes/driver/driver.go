@@ -3,7 +3,6 @@ package driver
 import (
 	"database/sql"
 	"net/http"
-	"strconv"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/model"
@@ -22,18 +21,7 @@ func NewDriver(serviceDriver serviceDriver.Driver) *Driver {
 }
 
 func (d Driver) GetList(c *gin.Context) {
-	limitStr := c.DefaultQuery("limit", "10")
-	limit, _ := strconv.Atoi(limitStr)
-
-	offsetStr := c.DefaultQuery("offset", "0")
-	offset, _ := strconv.Atoi(offsetStr)
-
-	search := c.DefaultQuery("search", "")
-
-	mapFields := map[string]string{
-		"ID":   "ID",
-		"Name": "Nome",
-	}
+	search, offset, limit := utils.Utils{}.DefaultListParams(c)
 
 	drivers, total, err := d.serviceDriver.GetList(search, offset, limit)
 	if err != nil {
@@ -41,31 +29,18 @@ func (d Driver) GetList(c *gin.Context) {
 		return
 	}
 
-	driversAny := make([]any, len(drivers))
-	for i, driver := range drivers {
-		driversAny[i] = driver
+	mapFields := map[string]string{
+		"ID":   "ID",
+		"Name": "Nome",
 	}
 
-	headers, rows := utils.Utils{}.MapTableData(driversAny, mapFields)
-
-	extraPage := 0
-	if int(total)%limit != 0 {
-		extraPage = 1
-	}
-
-	data := model.ListTemplateData{
-		Title:     "Lista de Pilotos",
-		NewURL:    "/drivers/new",
-		SearchURL: "/drivers",
-		EditURL:   "/drivers",
-		DeleteURL: "/drivers/delete",
-		Columns:   headers,
-		Items:     rows,
-		Search:    search,
-		Offset:    offset,
-		Limit:     limit,
-		Total:     int(total),
-		ExtraPage: extraPage,
+	data := model.ListTemplateData[sqlc.SelectListDriversRow]{
+		Title:      "Lista de Pilotos",
+		Template:   "drivers",
+		MapFields:  mapFields,
+		Data:       drivers,
+		Total:      int(total),
+		GinContext: c,
 	}
 
 	template.Template{}.Render(c, "driver/driver_list", data)
