@@ -19,6 +19,31 @@
     <div class="overflow-x-auto">
         <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden bg-gray-100 text-gray-900">
             <thead>
+                <tr class="bg-gray-700 text-white">
+                    <th colspan="{{ .ColumnsCount }}" class="p-3 text-right">
+                        <div class="flex justify-between items-center">
+                            {{ if gt .Offset 0 }}
+                            <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Offset .Limit }}&limit={{ .Limit }}" 
+                               class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                ← Anterior
+                            </a>
+                            {{ else }}
+                            <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">← Anterior</span>
+                            {{ end }}
+
+                            <span class="text-white">Página {{ div .Offset .Limit | add 1 }} de {{ div .Total .Limit | add .ExtraPage }}</span>
+
+                            {{ if lt (add .Offset .Limit) .Total }}
+                            <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ add .Offset .Limit }}&limit={{ .Limit }}" 
+                               class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                Próxima → 
+                            </a>
+                            {{ else }}
+                            <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">Próximo →</span>
+                            {{ end }}
+                        </div>
+                    </th>
+                </tr>
                 <tr class="bg-gray-800 text-white">
                     {{ range .Headers }}
                     <th class="p-3 text-left">{{ . }}</th>
@@ -49,33 +74,12 @@
             </tbody>
             <tfoot>
                 <tr class="bg-gray-200">
-                    <td colspan="{{ .ColumnsCount }}" class="p-3 text-center font-bold">Total: {{ .Total }}</td>
+                    <td colspan="{{ .ColumnsCount }}" class="p-3 text-center text-gray-700 font-semibold">
+                        Total de registros: {{ .Total }}
+                    </td>
                 </tr>
             </tfoot>
         </table>
-    </div>
-
-    <!-- Paginação -->
-    <div class="flex justify-between items-center mt-4">
-        {{ if gt .Offset 0 }}
-        <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Offset .Limit }}&limit={{ .Limit }}" 
-           class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
-            ← Anterior
-        </a>
-        {{ else }}
-        <span class="bg-gray-400 text-white px-4 py-2 rounded-md opacity-50 cursor-not-allowed">← Anterior</span>
-        {{ end }}
-
-        <span class="text-gray-700">Página {{ div .Offset .Limit | add 1 }} de {{ div .Total .Limit | add .ExtraPage }}</span>
-
-        {{ if lt (add .Offset .Limit) .Total }}
-        <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ add .Offset .Limit }}&limit={{ .Limit }}" 
-           class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">
-            Próximo → 
-        </a>
-        {{ else }}
-        <span class="bg-gray-400 text-white px-4 py-2 rounded-md opacity-50 cursor-not-allowed">Próximo →</span>
-        {{ end }}
     </div>
 </div>
 {{ end }}
