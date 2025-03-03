@@ -36,8 +36,9 @@ func (d Track) GetList(c *gin.Context) {
 	}
 
 	mapFields := map[string]string{
-		"ID":   "ID",
-		"Name": "Nome",
+		"ID":      "ID",
+		"Name":    "Nome",
+		"Country": "País",
 	}
 
 	data := list.ListTemplateData[sqlc.SelectListTracksRow]{
