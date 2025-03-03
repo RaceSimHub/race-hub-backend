@@ -1,24 +1,13 @@
 {{ define "content" }}
 <form class="mb-6 flex flex-col gap-6" id="track_edit_form" hx-put="/tracks/{{ .Track.ID }}">
 
-    <!-- Identificação -->
-    <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
-        <div>
-            <label class="block font-semibold">ID</label>
-            <input type="text" name="id" disabled value="{{ .Track.ID }}"
-                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div>
-            <label class="block font-semibold">Nome</label>
-            <input type="text" name="name" required value="{{ .Track.Name }}"
-                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div>
-            <label class="block font-semibold">País</label>
-            <input type="text" name="country" required value="{{ .Track.Country }}"
-                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
+    <div>
+        <label class="block font-semibold">ID</label>
+        <input type="text" name="id" disabled value="{{ .Track.ID }}"
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
     </div>
+
+    {{ template "track_form_fields" . }}
 
     <div class="flex justify-between mt-4">
         <button onclick="window.location.href='/tracks'" type="button"

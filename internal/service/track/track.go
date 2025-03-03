@@ -14,18 +14,20 @@ func NewTrack(db sqlc.Querier) *Track {
 	return &Track{db: db}
 }
 
-func (n *Track) Create(name, country string) (int64, error) {
+func (n *Track) Create(name, country string, userID int64) (int64, error) {
 	return n.db.InsertTrack(context.Background(), sqlc.InsertTrackParams{
-		Name:    name,
-		Country: country,
+		Name:              name,
+		Country:           country,
+		FkCreatedByUserID: userID,
 	})
 }
 
-func (n *Track) Update(id int, name, country string) error {
+func (n *Track) Update(id int, name, country string, userID int64) error {
 	return n.db.UpdateTrack(context.Background(), sqlc.UpdateTrackParams{
-		ID:      int64(id),
-		Name:    name,
-		Country: country,
+		ID:                int64(id),
+		Name:              name,
+		Country:           country,
+		FkUpdatedByUserID: userID,
 	})
 }
 

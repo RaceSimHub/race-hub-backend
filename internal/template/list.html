@@ -12,7 +12,7 @@
         <input type="text" name="search" value="{{ .Search }}"
                class="border border-gray-300 p-2 rounded-md flex-1" />
         <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition ml-2">
-            Filtrar
+            <i class="fa-solid fa-filter"></i>
         </button>
     </form>
 
@@ -22,25 +22,51 @@
                 <tr class="bg-gray-700 text-white">
                     <th colspan="{{ .ColumnsCount }}" class="p-3 text-right">
                         <div class="flex justify-between items-center">
-                            {{ if gt .Offset 0 }}
-                            <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Offset .Limit }}&limit={{ .Limit }}" 
-                               class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
-                                ← Anterior
-                            </a>
-                            {{ else }}
-                            <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">← Anterior</span>
-                            {{ end }}
+                            <!-- Grupo de Primeira e Anterior -->
+                            <div class="flex space-x-2">
+                                {{ if gt .Offset 0 }}
+                                <a href="{{ .DefaultURL }}?search={{ .Search }}&offset=0&limit={{ .Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                    <i class="fa-solid fa-angles-left"></i>
+                                </a>
+                                <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Offset .Limit }}&limit={{ .Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </a>
+                                {{ else }}
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angles-left"></i>
+                                </span>
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </span>
+                                {{ end }}
+                            </div>
 
-                            <span class="text-white">Página {{ div .Offset .Limit | add 1 }} de {{ div .Total .Limit | add .ExtraPage }}</span>
+                            <span class="text-white">
+                                Página {{ div .Offset .Limit | add 1 }} de {{ div .Total .Limit | add .ExtraPage }}
+                            </span>
 
-                            {{ if lt (add .Offset .Limit) .Total }}
-                            <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ add .Offset .Limit }}&limit={{ .Limit }}" 
-                               class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
-                                Próxima → 
-                            </a>
-                            {{ else }}
-                            <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">Próximo →</span>
-                            {{ end }}
+                            <!-- Grupo de Próxima e Última -->
+                            <div class="flex space-x-2">
+                                {{ if lt (add .Offset .Limit) .Total }}
+                                <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ add .Offset .Limit }}&limit={{ .Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                                <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Total .Limit }}&limit={{ .Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                    <i class="fa-solid fa-angles-right"></i>
+                                </a>
+                                {{ else }}
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </span>
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angles-right"></i>
+                                </span>
+                                {{ end }}
+                            </div>
                         </div>
                     </th>
                 </tr>

@@ -50,7 +50,7 @@ func (d Driver) GetList(c *gin.Context) {
 		GinContext: c,
 	}
 
-	template.Template{}.Render(c, driverListTemplate, data)
+	template.Template{}.Render(c, data, driverListTemplate)
 }
 
 func (d Driver) Put(c *gin.Context) {
@@ -209,7 +209,7 @@ func (d Driver) GetByID(c *gin.Context) {
 		"Driver": driver,
 	}
 
-	template.Template{}.Render(c, driverEditTemplate, data)
+	template.Template{}.Render(c, data, driverEditTemplate)
 }
 
 func (d Driver) New(c *gin.Context) {
@@ -217,7 +217,7 @@ func (d Driver) New(c *gin.Context) {
 		"Title": "Novo Piloto",
 	}
 
-	template.Template{}.Render(c, driverCreateTemplate, data)
+	template.Template{}.Render(c, data, driverCreateTemplate)
 }
 
 func (d Driver) Delete(c *gin.Context) {

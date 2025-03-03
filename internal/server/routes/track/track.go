@@ -16,10 +16,11 @@ type Track struct {
 }
 
 const (
-	trackListTemplate   = "track/track_list"
-	trackEditTemplate   = "track/track_edit"
-	trackCreateTemplate = "track/track_create"
-	tracksUrl           = "/tracks"
+	trackListTemplate       = "track/track_list"
+	trackEditTemplate       = "track/track_edit"
+	trackCreateTemplate     = "track/track_create"
+	trackFormFieldsTemplate = "track/track_form_fields"
+	tracksUrl               = "/tracks"
 )
 
 func NewTrack(serviceTrack serviceTrack.Track) *Track {
@@ -50,7 +51,7 @@ func (d Track) GetList(c *gin.Context) {
 		GinContext: c,
 	}
 
-	template.Template{}.Render(c, trackListTemplate, data)
+	template.Template{}.Render(c, data, trackListTemplate)
 }
 
 func (d Track) Put(c *gin.Context) {
@@ -67,7 +68,7 @@ func (d Track) Put(c *gin.Context) {
 		return
 	}
 
-	err = d.serviceTrack.Update(id, name, country)
+	err = d.serviceTrack.Update(id, name, country, 1)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
@@ -81,7 +82,7 @@ func (d Track) Post(c *gin.Context) {
 	name := c.PostForm("name")
 	country := c.PostForm("country")
 
-	_, err := d.serviceTrack.Create(name, country)
+	_, err := d.serviceTrack.Create(name, country, 1)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao cadastrar pista"})
 		return
@@ -108,7 +109,7 @@ func (d Track) GetByID(c *gin.Context) {
 		"Track": track,
 	}
 
-	template.Template{}.Render(c, trackEditTemplate, data)
+	template.Template{}.Render(c, data, trackEditTemplate, trackFormFieldsTemplate)
 }
 
 func (d Track) New(c *gin.Context) {
@@ -116,7 +117,7 @@ func (d Track) New(c *gin.Context) {
 		"Title": "Novo Piloto",
 	}
 
-	template.Template{}.Render(c, trackCreateTemplate, data)
+	template.Template{}.Render(c, data, trackCreateTemplate, trackFormFieldsTemplate)
 }
 
 func (d Track) Delete(c *gin.Context) {

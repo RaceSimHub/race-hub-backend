@@ -22,10 +22,10 @@ func (t Template) Home(c *gin.Context) {
 	data := map[string]any{
 		"Title": "Home - Race Hub",
 	}
-	t.Render(c, "index", data)
+	t.Render(c, data, "index")
 }
 
-func (Template) Render(c *gin.Context, templateName string, data any) {
+func (Template) Render(c *gin.Context, data any, templates ...string) {
 	basePath, err := os.Getwd()
 	if err != nil {
 		c.String(500, "Internal Server Error")
@@ -48,16 +48,28 @@ func (Template) Render(c *gin.Context, templateName string, data any) {
 			}
 			return a % b
 		},
+		"dict": func(values ...interface{}) map[string]interface{} {
+			m := make(map[string]any)
+			for i := 0; i < len(values); i += 2 {
+				m[values[i].(string)] = values[i+1]
+			}
+			return m
+		},
 	})
 
-	// Registrar todos os arquivos de template corretamente
+	var templatesPaths []string
+	for _, templateName := range templates {
+		templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", templateName+".html"))
+	}
+
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "header.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "footer.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "sidebar.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "list.html"))
+
 	tmpl, err = tmpl.ParseFiles(
-		filepath.Join(parentPath, "internal", "template", "base.html"),
-		filepath.Join(parentPath, "internal", "template", templateName+".html"),
-		filepath.Join(parentPath, "internal", "template", "partial", "header.html"),
-		filepath.Join(parentPath, "internal", "template", "partial", "footer.html"),
-		filepath.Join(parentPath, "internal", "template", "partial", "sidebar.html"),
-		filepath.Join(parentPath, "internal", "template", "list.html"),
+		templatesPaths...,
 	)
 
 	if err != nil {
