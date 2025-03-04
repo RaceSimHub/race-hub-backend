@@ -48,7 +48,7 @@ func (Template) Render(c *gin.Context, data any, templates ...string) {
 			}
 			return a % b
 		},
-		"dict": func(values ...interface{}) map[string]interface{} {
+		"dict": func(values ...any) map[string]any {
 			m := make(map[string]any)
 			for i := 0; i < len(values); i += 2 {
 				m[values[i].(string)] = values[i+1]

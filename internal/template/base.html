@@ -11,20 +11,17 @@
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
     {{ template "header.html" . }}
 
-    <div class="flex flex-1">
-        <!-- Sidebar -->
+    <div class="flex flex-1 h-full">
         <div class="w-64 bg-gray-900 text-white">
             {{ template "sidebar.html" . }}
         </div>
 
-        <!-- Conteúdo principal -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 min-w-0 p-6">
             {{ block "content" . }}{{ end }}
         </main>
     </div>
 
-    <!-- Footer corrigido -->
-    <footer class="text-center text-gray-600 border-t pt-4 mt-auto">
+    <footer class="text-center text-gray-600 border-t pt-0">
         {{ template "footer.html" . }}
     </footer>
 </body>

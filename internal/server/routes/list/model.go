@@ -83,7 +83,7 @@ func (l ListTemplateData[T]) Headers() (headers []string) {
 	return
 }
 
-func (l ListTemplateData[T]) Search() string {
+    func (l ListTemplateData[T]) Search() string {
 	search, _, _ := utils.Utils{}.DefaultListParams(l.GinContext)
 
 	return search

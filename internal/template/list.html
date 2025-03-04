@@ -20,7 +20,7 @@
         <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden bg-gray-100 text-gray-900">
             <thead>
                 <tr class="bg-gray-700 text-white">
-                    <th colspan="{{ .ColumnsCount }}" class="p-3 text-right">
+                    <th colspan="{{ .ColumnsCount }}" class="p-2 text-right">
                         <div class="flex justify-between items-center">
                             <!-- Grupo de Primeira e Anterior -->
                             <div class="flex space-x-2">
@@ -54,8 +54,8 @@
                                    class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
                                     <i class="fa-solid fa-angle-right"></i>
                                 </a>
-                                <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Total .Limit }}&limit={{ .Limit }}" 
-                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                <a href="{{ .DefaultURL }}?search={{ .Search }}&offset={{ sub .Total (mod .Total .Limit) }}&limit={{ .Limit }}" 
+                                    class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
                                     <i class="fa-solid fa-angles-right"></i>
                                 </a>
                                 {{ else }}
@@ -72,18 +72,18 @@
                 </tr>
                 <tr class="bg-gray-800 text-white">
                     {{ range .Headers }}
-                    <th class="p-3 text-left">{{ . }}</th>
+                    <th class="p-2 text-left">{{ . }}</th>
                     {{ end }}
-                    <th class="p-3 text-right">Ações</th>
+                    <th class="p-2 text-right">Ações</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-300">
                 {{ range .Items }}
                 <tr class="hover:bg-gray-200 transition">
                     {{ range $key, $value := . }}
-                    <td class="p-3">{{ $value }}</td>
+                    <td class="p-2">{{ $value }}</td>
                     {{ end }}
-                    <td class="p-3 text-right">
+                    <td class="p-2 text-right">
                         <a href="{{ $.DefaultURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
@@ -100,7 +100,7 @@
             </tbody>
             <tfoot>
                 <tr class="bg-gray-200">
-                    <td colspan="{{ .ColumnsCount }}" class="p-3 text-center text-gray-700 font-semibold">
+                    <td colspan="{{ .ColumnsCount }}" class="p-2 text-center text-gray-700 font-semibold">
                         Total de registros: {{ .Total }}
                     </td>
                 </tr>
