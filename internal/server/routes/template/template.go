@@ -14,6 +14,12 @@ type Template struct {
 	db sqlc.Querier
 }
 
+type PageData struct {
+	Title       string
+	MinimalPage bool
+	Data        any
+}
+
 func NewTemplate(db sqlc.Querier) *Template {
 	return &Template{db: db}
 }
@@ -22,10 +28,21 @@ func (t Template) Home(c *gin.Context) {
 	data := map[string]any{
 		"Title": "Home - Race Hub",
 	}
-	t.Render(c, data, "index")
+
+	t.render(c, data, "index")
 }
 
-func (Template) Render(c *gin.Context, data any, templates ...string) {
+func (t Template) RenderPage(c *gin.Context, title string, minimal bool, content any, templates ...string) {
+	data := PageData{
+		Title:       title,
+		MinimalPage: minimal,
+		Data:        content,
+	}
+
+	t.render(c, data, templates...)
+}
+
+func (Template) render(c *gin.Context, data any, templates ...string) {
 	basePath, err := os.Getwd()
 	if err != nil {
 		c.String(500, "Internal Server Error")
@@ -33,7 +50,7 @@ func (Template) Render(c *gin.Context, data any, templates ...string) {
 	}
 	parentPath := filepath.Dir(basePath)
 
-	tmpl := template.New("base").Funcs(template.FuncMap{
+	baseTemplate := template.New("base").Funcs(template.FuncMap{
 		"sub": func(a, b int) int { return a - b },
 		"add": func(a, b int) int { return a + b },
 		"div": func(a, b int) int {
@@ -68,7 +85,7 @@ func (Template) Render(c *gin.Context, data any, templates ...string) {
 	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "sidebar.html"))
 	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "list.html"))
 
-	tmpl, err = tmpl.ParseFiles(
+	baseTemplate, err = baseTemplate.ParseFiles(
 		templatesPaths...,
 	)
 
@@ -79,7 +96,7 @@ func (Template) Render(c *gin.Context, data any, templates ...string) {
 	}
 
 	// Garantir que o template base seja renderizado corretamente
-	err = tmpl.ExecuteTemplate(c.Writer, "base.html", data)
+	err = baseTemplate.ExecuteTemplate(c.Writer, "base.html", data)
 	if err != nil {
 		log.Printf("Erro ao renderizar template: %v", err)
 		c.String(500, "Erro ao renderizar template")

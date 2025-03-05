@@ -3,5 +3,16 @@
         <a href="/" class="text-xl font-bold text-gray-800 hover:text-red-600 transition duration-300">
             Race Hub
         </a>
+
+        <!-- Botão de menu -->
+        <div class="relative">
+                <button 
+                    hx-post="/logout" 
+                    hx-trigger="click" 
+                    hx-swap="none" 
+                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200">
+                    <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                </button>
+        </div>
     </div>
 </header>

@@ -43,7 +43,6 @@ func (d Track) GetList(c *gin.Context) {
 	}
 
 	data := list.ListTemplateData[sqlc.SelectListTracksRow]{
-		Title:      "Lista de Pistas",
 		Template:   "tracks",
 		MapFields:  mapFields,
 		Data:       tracks,
@@ -51,7 +50,7 @@ func (d Track) GetList(c *gin.Context) {
 		GinContext: c,
 	}
 
-	template.Template{}.Render(c, data, trackListTemplate)
+	template.Template{}.RenderPage(c, "Lista de Pistas", false, data, trackListTemplate)
 }
 
 func (d Track) Put(c *gin.Context) {
@@ -105,19 +104,14 @@ func (d Track) GetByID(c *gin.Context) {
 	}
 
 	data := map[string]any{
-		"Title": track.Name,
 		"Track": track,
 	}
 
-	template.Template{}.Render(c, data, trackEditTemplate, trackFormFieldsTemplate)
+	template.Template{}.RenderPage(c, track.Name, false, data, trackEditTemplate, trackFormFieldsTemplate)
 }
 
 func (d Track) New(c *gin.Context) {
-	data := map[string]any{
-		"Title": "Novo Piloto",
-	}
-
-	template.Template{}.Render(c, data, trackCreateTemplate, trackFormFieldsTemplate)
+	template.Template{}.RenderPage(c, "Novo Piloto", false, nil, trackCreateTemplate, trackFormFieldsTemplate)
 }
 
 func (d Track) Delete(c *gin.Context) {

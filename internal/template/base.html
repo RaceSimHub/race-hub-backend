@@ -9,20 +9,28 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
-    {{ template "header.html" . }}
 
-    <div class="flex flex-1 h-full">
-        <div class="w-64 bg-gray-900 text-white">
-            {{ template "sidebar.html" . }}
-        </div>
+    {{ if not .MinimalPage }}
+        {{ template "header.html" . }}
+    {{ end }}
+
+    <div class="flex flex-1 h-full {{ if .MinimalPage }}items-center justify-center{{ end }}">
+        {{ if not .MinimalPage }}
+            <div class="w-64 bg-gray-900 text-white">
+                {{ template "sidebar.html" . }}
+            </div>
+        {{ end }}
 
         <main class="flex-1 min-w-0 p-6">
             {{ block "content" . }}{{ end }}
         </main>
-    </div>
+    </div> 
 
-    <footer class="text-center text-gray-600 border-t pt-0">
-        {{ template "footer.html" . }}
-    </footer>
+    {{ if not .MinimalPage }}
+        <footer class="text-center text-gray-600 border-t pt-0">
+            {{ template "footer.html" . }}
+        </footer>
+    {{ end }}
+
 </body>
 </html>

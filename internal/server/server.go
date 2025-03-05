@@ -5,10 +5,10 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverDriver "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver"
+	serverLogin "github.com/RaceSimHub/race-hub-backend/internal/server/routes/login"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
 	serverTemplate "github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
-	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
@@ -62,32 +62,31 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	login := serverLogin.NewLogin(*serviceUser.NewUser(database.DbQuerier))
+	router.POST("/login", login.PostLogin)
+	router.POST("/logout", login.PostLogout)
+	router.GET("/login", login.GetLogin)
+
+	authRouterGroup := router.Use(middleware.JWTMiddleware())
+
 	template := serverTemplate.NewTemplate(database.DbQuerier)
-	router.GET("/", template.Home)
+	authRouterGroup.GET("/", template.Home)
 
 	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
-	router.GET("/drivers", driver.GetList)
-	router.POST("/drivers", driver.Post)
-	router.GET("/drivers/:id", driver.GetByID)
-	router.PUT("/drivers/:id", driver.Put)
-	router.GET("/drivers/new", driver.New)
-	router.GET("/drivers/delete/:id", driver.Delete)
+	authRouterGroup.GET("/drivers", driver.GetList)
+	authRouterGroup.POST("/drivers", driver.Post)
+	authRouterGroup.GET("/drivers/:id", driver.GetByID)
+	authRouterGroup.PUT("/drivers/:id", driver.Put)
+	authRouterGroup.GET("/drivers/new", driver.New)
+	authRouterGroup.GET("/drivers/delete/:id", driver.Delete)
 
 	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
-	router.GET("/tracks", track.GetList)
-	router.POST("/tracks", track.Post)
-	router.GET("/tracks/:id", track.GetByID)
-	router.PUT("/tracks/:id", track.Put)
-	router.GET("/tracks/new", track.New)
-	router.GET("/tracks/delete/:id", track.Delete)
-
-	freeRouterGroup := router.Group(config.ApiVersion)
-
-	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
-	freeRouterGroup.POST("/login", user.PostLogin)
-
-	authRouterGroup := freeRouterGroup.Use(middleware.JWTMiddleware())
-	authRouterGroup.POST("/users", user.Post)
+	authRouterGroup.GET("/tracks", track.GetList)
+	authRouterGroup.POST("/tracks", track.Post)
+	authRouterGroup.GET("/tracks/:id", track.GetByID)
+	authRouterGroup.PUT("/tracks/:id", track.Put)
+	authRouterGroup.GET("/tracks/new", track.New)
+	authRouterGroup.GET("/tracks/delete/:id", track.Delete)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authRouterGroup.POST("/notifications", notification.Post)

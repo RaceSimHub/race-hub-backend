@@ -232,7 +232,9 @@ func GenerateToken(userID int) (string, error) {
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString(config.JwtSecret)
+	secret := []byte(config.JwtSecret)
+
+	return token.SignedString(secret)
 }
 
 func HashPassword(password string) (string, error) {
