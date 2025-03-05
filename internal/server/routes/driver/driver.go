@@ -36,18 +36,21 @@ func (d Driver) GetList(c *gin.Context) {
 		return
 	}
 
-	mapFields := map[string]string{
+	headers := []string{"ID", "Name"}
+
+	headerTranslations := map[string]string{
 		"ID":   "ID",
 		"Name": "Nome",
 	}
 
 	data := list.ListTemplateData[sqlc.SelectListDriversRow]{
-		Title:      "Lista de Pilotos",
-		Template:   "drivers",
-		MapFields:  mapFields,
-		Data:       drivers,
-		Total:      int(total),
-		GinContext: c,
+		Title:              "Lista de Pilotos",
+		Template:           "drivers",
+		Headers:            headers,
+		HeaderTranslations: headerTranslations,
+		Data:               drivers,
+		Total:              int(total),
+		GinContext:         c,
 	}
 
 	template.Template{}.RenderPage(c, "Lista de Pilotos", false, data, driverListTemplate)

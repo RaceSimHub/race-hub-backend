@@ -8,16 +8,17 @@ import (
 )
 
 type ListTemplateData[T any] struct {
-	Title      string
-	Template   string
-	Data       []T
-	MapFields  map[string]string
-	Total      int
-	GinContext *gin.Context
+	Title              string
+	Template           string
+	Data               []T
+	Headers            []string
+	HeaderTranslations map[string]string
+	Total              int
+	GinContext         *gin.Context
 }
 
 func (l ListTemplateData[T]) ColumnsCount() int {
-	return len(l.MapFields) + 1
+	return len(l.HeaderTranslations) + 1
 }
 
 func (l ListTemplateData[T]) ExtraPage() int {
@@ -55,7 +56,7 @@ func (l ListTemplateData[T]) Items() (rows []map[string]any) {
 
 		row := make(map[string]any)
 
-		for field, column := range l.MapFields {
+		for field, column := range l.HeaderTranslations {
 			fieldValue := val.FieldByName(field)
 			if fieldValue.IsValid() {
 				row[column] = fieldValue.Interface()
@@ -75,15 +76,16 @@ func (l ListTemplateData[T]) Items() (rows []map[string]any) {
 	return rows
 }
 
+/*
 func (l ListTemplateData[T]) Headers() (headers []string) {
-	for _, columnName := range l.MapFields {
+	for _, columnName := range l.HeaderTranslations {
 		headers = append(headers, columnName)
 	}
 
 	return
-}
+}*/
 
-    func (l ListTemplateData[T]) Search() string {
+func (l ListTemplateData[T]) Search() string {
 	search, _, _ := utils.Utils{}.DefaultListParams(l.GinContext)
 
 	return search

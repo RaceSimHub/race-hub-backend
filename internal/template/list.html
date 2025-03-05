@@ -72,7 +72,13 @@
                 </tr>
                 <tr class="bg-gray-800 text-white">
                     {{ range .Data.Headers }}
-                    <th class="p-2 text-left">{{ . }}</th>
+                    <th class="p-2 text-left">
+                        {{ if index $.Data.HeaderTranslations . }}
+                            {{ index $.Data.HeaderTranslations . }}
+                        {{ else }}
+                            {{ . }}
+                        {{ end }}
+                    </th>
                     {{ end }}
                     <th class="p-2 text-right">Ações</th>
                 </tr>
