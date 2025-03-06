@@ -1,5 +1,5 @@
 {{ define "content" }}
-<form class="mb-6 flex flex-col gap-6" id="driver_edit_form" hx-put="/drivers/{{ .Driver.ID }}">
+<form class="mb-6 flex flex-col gap-6" id="driver_edit_form" hx-put="/drivers/{{ .Data.Driver.ID }}">
 
     <!-- Identificação -->
     <fieldset class="border p-4 rounded-md">
@@ -7,12 +7,12 @@
         <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
             <div>
                 <label class="block font-semibold">ID</label>
-                <input type="text" name="id" disabled value="{{ .Driver.ID }}"
+                <input type="text" name="id" disabled value="{{ .Data.Driver.ID }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Nome</label>
-                <input type="text" name="name" required value="{{ .Driver.Name }}"
+                <input type="text" name="name" required value="{{ .Data.Driver.Name }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
@@ -24,24 +24,24 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block font-semibold">Email</label>
-                <input type="email" name="email" required value="{{ with .Driver.Email }}{{ . }}{{ end }}"
+                <input type="email" name="email" required value="{{ with .Data.Driver.Email }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Email Alternativo</label>
                 <input type="text" name="secondary_email"
-                    value="{{ with .Driver.SecondaryEmail.String }}{{ . }}{{ end }}"
+                    value="{{ with .Data.Driver.SecondaryEmail.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Telefone</label>
-                <input type="text" name="phone" value="{{ with .Driver.Phone.String }}{{ . }}{{ end }}"
+                <input type="text" name="phone" value="{{ with .Data.Driver.Phone.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Telefone Alternativo</label>
                 <input type="text" name="secondary_phone"
-                    value="{{ with .Driver.SecondaryPhone.String }}{{ . }}{{ end }}"
+                    value="{{ with .Data.Driver.SecondaryPhone.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
@@ -53,32 +53,32 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2">
                 <label class="block font-semibold">Endereço</label>
-                <input type="text" name="address" value="{{ with .Driver.Address.String }}{{ . }}{{ end }}"
+                <input type="text" name="address" value="{{ with .Data.Driver.Address.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Número</label>
-                <input type="text" name="address_number" value="{{ with .Driver.AddressNumber.String }}{{ . }}{{ end }}"
+                <input type="text" name="address_number" value="{{ with .Data.Driver.AddressNumber.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Bairro</label>
-                <input type="text" name="neighborhood" value="{{ with .Driver.Neighborhood.String }}{{ . }}{{ end }}"
+                <input type="text" name="neighborhood" value="{{ with .Data.Driver.Neighborhood.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Cidade</label>
-                <input type="text" name="city" value="{{ with .Driver.City.String }}{{ . }}{{ end }}"
+                <input type="text" name="city" value="{{ with .Data.Driver.City.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Estado</label>
-                <input type="text" name="state" value="{{ with .Driver.State.String }}{{ . }}{{ end }}"
+                <input type="text" name="state" value="{{ with .Data.Driver.State.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">CEP</label>
-                <input type="text" name="cep" value="{{ with .Driver.Cep.String }}{{ . }}{{ end }}"
+                <input type="text" name="cep" value="{{ with .Data.Driver.Cep.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
@@ -90,13 +90,13 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block font-semibold">Número do Piloto</label>
-                <input type="number" name="number" value="{{ with .Driver.Number.Int32 }}{{ . }}{{ end }}"
+                <input type="number" name="number" value="{{ with .Data.Driver.Number.Int32 }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Número Alternativo</label>
                 <input type="number" name="secondary_number"
-                    value="{{ with .Driver.SecondaryNumber.Int32 }}{{ . }}{{ end }}"
+                    value="{{ with .Data.Driver.SecondaryNumber.Int32 }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
@@ -110,13 +110,13 @@
             <select name="license" required
                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value="" disabled>Selecione</option>
-                <option value="BRONZE" {{ if and .Driver.License (eq .Driver.License.String "BRONZE" ) }}selected{{ end
+                <option value="BRONZE" {{ if and .Data.Driver.License (eq .Data.Driver.License.String "BRONZE" ) }}selected{{ end
                     }}>BRONZE</option>
-                <option value="SILVER" {{ if and .Driver.License (eq .Driver.License.String "SILVER" ) }}selected{{ end
+                <option value="SILVER" {{ if and .Data.Driver.License (eq .Data.Driver.License.String "SILVER" ) }}selected{{ end
                     }}>SILVER</option>
-                <option value="GOLD" {{ if and .Driver.License (eq .Driver.License.String "GOLD" ) }}selected{{ end }}>
+                <option value="GOLD" {{ if and .Data.Driver.License (eq .Data.Driver.License.String "GOLD" ) }}selected{{ end }}>
                     GOLD</option>
-                <option value="PLATINUM" {{ if and .Driver.License (eq .Driver.License.String "PLATINUM" ) }}selected{{
+                <option value="PLATINUM" {{ if and .Data.Driver.License (eq .Data.Driver.License.String "PLATINUM" ) }}selected{{
                     end }}>PLATINUM</option>
             </select>
         </div>
@@ -128,17 +128,17 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="block font-semibold">ID iRacing</label>
-                <input type="text" name="id_iracing" value="{{ with .Driver.IDIracing.String }}{{ . }}{{ end }}"
+                <input type="text" name="id_iracing" value="{{ with .Data.Driver.IDIracing.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">ID Steam</label>
-                <input type="text" name="id_steam" value="{{ with .Driver.IDSteam.String }}{{ . }}{{ end }}"
+                <input type="text" name="id_steam" value="{{ with .Data.Driver.IDSteam.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <div>
                 <label class="block font-semibold">Instagram</label>
-                <input type="text" name="instagram" value="{{ with .Driver.Instagram.String }}{{ . }}{{ end }}"
+                <input type="text" name="instagram" value="{{ with .Data.Driver.Instagram.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
@@ -150,7 +150,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="block font-semibold">URL da Foto</label>
-                <input type="text" name="photo_url" value="{{ with .Driver.PhotoUrl.String }}{{ . }}{{ end }}"
+                <input type="text" name="photo_url" value="{{ with .Data.Driver.PhotoUrl.String }}{{ . }}{{ end }}"
                     class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
         </div>
