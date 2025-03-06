@@ -1,9 +1,10 @@
 package user
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
+	modelRequest "github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
 	"github.com/RaceSimHub/race-hub-backend/internal/service/user"
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"github.com/RaceSimHub/race-hub-backend/pkg/request"
+	"github.com/RaceSimHub/race-hub-backend/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,17 +17,17 @@ func NewUser(serviceUser user.User) *User {
 }
 
 func (u *User) Post(c *gin.Context) {
-	bodyRequest := request.PostUser{}
-	err := utils.Utils{}.BindJson(c, &bodyRequest)
+	bodyRequest := modelRequest.PostUser{}
+	err := request.Request{}.BindJson(c, &bodyRequest)
 	if err != nil {
 		return
 	}
 
 	id, err := u.serviceUser.Create(bodyRequest.Email, bodyRequest.Name, bodyRequest.Password)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 
-	utils.Utils{}.ResponseCreated(c, int(id))
+	response.Response{}.ResponseCreated(c, int(id))
 }

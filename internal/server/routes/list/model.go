@@ -3,7 +3,7 @@ package list
 import (
 	"reflect"
 
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"github.com/RaceSimHub/race-hub-backend/pkg/request"
 	"github.com/gin-gonic/gin"
 )
 
@@ -86,19 +86,19 @@ func (l ListTemplateData[T]) Headers() (headers []string) {
 }*/
 
 func (l ListTemplateData[T]) Search() string {
-	search, _, _ := utils.Utils{}.DefaultListParams(l.GinContext)
+	search, _, _ := request.Request{}.DefaultListParams(l.GinContext)
 
 	return search
 }
 
 func (l ListTemplateData[T]) Offset() int {
-	_, offset, _ := utils.Utils{}.DefaultListParams(l.GinContext)
+	_, offset, _ := request.Request{}.DefaultListParams(l.GinContext)
 
 	return offset
 }
 
 func (l ListTemplateData[T]) Limit() int {
-	_, _, limit := utils.Utils{}.DefaultListParams(l.GinContext)
+	_, _, limit := request.Request{}.DefaultListParams(l.GinContext)
 
 	return limit
 }

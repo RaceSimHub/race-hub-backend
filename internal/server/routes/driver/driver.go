@@ -8,7 +8,8 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"github.com/RaceSimHub/race-hub-backend/pkg/conv"
+	"github.com/RaceSimHub/race-hub-backend/pkg/request"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +29,7 @@ func NewDriver(serviceDriver serviceDriver.Driver) *Driver {
 }
 
 func (d Driver) GetList(c *gin.Context) {
-	search, offset, limit := utils.Utils{}.DefaultListParams(c)
+	search, offset, limit := request.Request{}.DefaultListParams(c)
 
 	drivers, total, err := d.serviceDriver.GetList(search, offset, limit)
 	if err != nil {
@@ -57,7 +58,7 @@ func (d Driver) GetList(c *gin.Context) {
 }
 
 func (d Driver) Put(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
@@ -85,8 +86,8 @@ func (d Driver) Put(c *gin.Context) {
 	numberStr := c.PostForm("number")
 	secondaryNumberStr := c.PostForm("secondary_number")
 
-	number := utils.Utils{}.StringToNullInt(numberStr)
-	secondaryNumber := utils.Utils{}.StringToNullInt(secondaryNumberStr)
+	number := conv.StringConv{}.StringToNullInt(numberStr)
+	secondaryNumber := conv.StringConv{}.StringToNullInt(secondaryNumberStr)
 
 	if name == "" || email == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Campos obrigatórios não preenchidos"})
@@ -152,8 +153,8 @@ func (d Driver) Post(c *gin.Context) {
 	numberStr := c.PostForm("number")
 	secondaryNumberStr := c.PostForm("secondary_number")
 
-	number := utils.Utils{}.StringToNullInt(numberStr)
-	secondaryNumber := utils.Utils{}.StringToNullInt(secondaryNumberStr)
+	number := conv.StringConv{}.StringToNullInt(numberStr)
+	secondaryNumber := conv.StringConv{}.StringToNullInt(secondaryNumberStr)
 
 	if name == "" || email == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Campos obrigatórios não preenchidos"})
@@ -196,7 +197,7 @@ func (d Driver) Post(c *gin.Context) {
 }
 
 func (d Driver) GetByID(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
@@ -219,7 +220,7 @@ func (d Driver) New(c *gin.Context) {
 }
 
 func (d Driver) Delete(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}

@@ -3,7 +3,7 @@ package login
 import (
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	"github.com/RaceSimHub/race-hub-backend/internal/service/user"
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"github.com/RaceSimHub/race-hub-backend/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,7 +21,7 @@ func (u *Login) PostLogin(c *gin.Context) {
 
 	token, err := u.serviceUser.GenerateToken(email, password)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 

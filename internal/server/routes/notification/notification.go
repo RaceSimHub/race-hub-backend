@@ -1,9 +1,10 @@
 package notification
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
+	modelRequest "github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
 	"github.com/RaceSimHub/race-hub-backend/internal/service/notification"
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"github.com/RaceSimHub/race-hub-backend/pkg/request"
+	"github.com/RaceSimHub/race-hub-backend/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,78 +17,78 @@ func NewNotification(serviceNotification notification.Notification) *Notificatio
 }
 
 func (n *Notification) Post(c *gin.Context) {
-	bodyRequest := request.PostNotification{}
-	err := utils.Utils{}.BindJson(c, &bodyRequest)
+	bodyRequest := modelRequest.PostNotification{}
+	err := request.Request{}.BindJson(c, &bodyRequest)
 	if err != nil {
 		return
 	}
 
 	id, err := n.serviceNotification.Create(bodyRequest.Message, bodyRequest.FirstDriver, bodyRequest.SecondDriver, bodyRequest.ThirdDriver, bodyRequest.LicensePoints)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 
-	utils.Utils{}.ResponseCreated(c, int(id))
+	response.Response{}.ResponseCreated(c, int(id))
 }
 
 func (n *Notification) Put(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	bodyRequest := request.PutNotification{}
-	err = utils.Utils{}.BindJson(c, &bodyRequest)
+	bodyRequest := modelRequest.PutNotification{}
+	err = request.Request{}.BindJson(c, &bodyRequest)
 	if err != nil {
 		return
 	}
 
 	err = n.serviceNotification.Update(id, bodyRequest.Message, bodyRequest.FirstDriver, bodyRequest.SecondDriver, bodyRequest.ThirdDriver, bodyRequest.LicensePoints)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 
-	utils.Utils{}.ResponseNoContent(c)
+	response.Response{}.ResponseNoContent(c)
 }
 
 func (n *Notification) Delete(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
 	err = n.serviceNotification.Delete(id)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 
-	utils.Utils{}.ResponseNoContent(c)
+	response.Response{}.ResponseNoContent(c)
 }
 
 func (n *Notification) GetLastMessage(c *gin.Context) {
 	message, err := n.serviceNotification.GetLastMessage()
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 
-	utils.Utils{}.ResponseOK(c, message)
+	response.Response{}.ResponseOK(c, message)
 }
 
 func (n *Notification) GetList(c *gin.Context) {
-	offset, limit, err := utils.Utils{}.GetListParams(c)
+	offset, limit, err := request.Request{}.GetListParams(c)
 	if err != nil {
 		return
 	}
 
 	list, err := n.serviceNotification.GetList(offset, limit)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		response.Response{}.ResponseError(c, err)
 		return
 	}
 
-	utils.Utils{}.ResponseOK(c, list)
+	response.Response{}.ResponseOK(c, list)
 }

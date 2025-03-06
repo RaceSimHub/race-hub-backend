@@ -16,7 +16,7 @@ O **race-hub-backend** é um serviço backend desenvolvido em Go, destinado a fo
   - **server/**: Código referente ao servidor HTTP, modelos e rotas.
   - **template/**: Templates HTML para renderizar corretamente o frontend.
 - **service/**: Lógica de negócio, como integração com drivers e notificações.
-- **utils/**: Funções e utilitários auxiliares.
+- **pkg/**: Contém bibliotecas, utilitários e helpers que podem ser compartilhados entre diferentes partes da aplicação ou mesmo reutilizados em outros projetos.
 
 ## Pré-requisitos ✅
 

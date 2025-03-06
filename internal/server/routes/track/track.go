@@ -7,7 +7,7 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"github.com/RaceSimHub/race-hub-backend/pkg/request"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +28,7 @@ func NewTrack(serviceTrack serviceTrack.Track) *Track {
 }
 
 func (d Track) GetList(c *gin.Context) {
-	search, offset, limit := utils.Utils{}.DefaultListParams(c)
+	search, offset, limit := request.Request{}.DefaultListParams(c)
 
 	tracks, total, err := d.serviceTrack.GetList(search, offset, limit)
 	if err != nil {
@@ -57,7 +57,7 @@ func (d Track) GetList(c *gin.Context) {
 }
 
 func (d Track) Put(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
@@ -95,7 +95,7 @@ func (d Track) Post(c *gin.Context) {
 }
 
 func (d Track) GetByID(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
@@ -118,7 +118,7 @@ func (d Track) New(c *gin.Context) {
 }
 
 func (d Track) Delete(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
