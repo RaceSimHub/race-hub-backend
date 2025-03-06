@@ -1,10 +1,10 @@
-# race-hub-backend
+# race-hub-backend 🏁
 
-## Visão Geral
+## Visão Geral 🤩
 
 O **race-hub-backend** é um serviço backend desenvolvido em Go, destinado a fornecer a lógica de negócio e integração com banco de dados para a aplicação Race Hub.
 
-## Estrutura do Projeto
+## Estrutura do Projeto 📁
 
 - **cmd/**: Contém o ponto de entrada da aplicação (ex.: `main.go`).
 - **internal/**: Código interno da aplicação.
@@ -18,12 +18,12 @@ O **race-hub-backend** é um serviço backend desenvolvido em Go, destinado a fo
 - **service/**: Lógica de negócio, como integração com drivers e notificações.
 - **utils/**: Funções e utilitários auxiliares.
 
-## Pré-requisitos
+## Pré-requisitos ✅
 
 - Go (conforme especificado no [go.mod](go.mod))
 - Docker e Docker Compose (para ambiente de desenvolvimento e execução)
 
-## Configuração do Ambiente
+## Configuração do Ambiente 🔧
 
 1. **Variáveis de Ambiente**  
    Crie um arquivo `.env` na raiz do projeto com suas configurações específicas (consulte exemplos ou documentação interna para detalhes).
@@ -34,7 +34,7 @@ O **race-hub-backend** é um serviço backend desenvolvido em Go, destinado a fo
    go mod tidy
    ```
 
-## Execução
+## Execução ▶️
 
 ### Usando Docker Compose
 
@@ -52,19 +52,19 @@ Se preferir rodar localmente:
 go run cmd/main.go
 ```
 
-## Testes
+## Testes 🧪
 
 Execute os testes unitários (se houver) com:
 ```sh
 go test ./...
 ```
 
-## Geração de Mocks
+## Geração de Mocks 🤖
 
 O arquivo [docker-compose.yml](docker-compose.yml) inclui comandos para instalar o `mockgen` e gerar os mocks automaticamente.  
 Certifique-se de que o diretório `/src/internal/database/` esteja mapeado corretamente para gerar os mocks em `/src/internal/database/mock/mock.go`.
 
-## Makefile
+## Makefile 🛠
 
 O projeto inclui um Makefile para facilitar tarefas comuns durante o desenvolvimento. Abaixo um resumo dos targets disponíveis:
 
@@ -110,7 +110,7 @@ O projeto inclui um Makefile para facilitar tarefas comuns durante o desenvolvim
 
 Consulte o arquivo Makefile para mais detalhes ou customizações.
 
-## Contribuição
+## Contribuição 🤝
 
 Contribuições são bem-vindas!  
 - Crie uma issue para discutir mudanças importantes.
