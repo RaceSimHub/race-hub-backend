@@ -79,6 +79,7 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup.PUT("/drivers/:id", driver.Put)
 	authRouterGroup.GET("/drivers/new", driver.New)
 	authRouterGroup.GET("/drivers/delete/:id", driver.Delete)
+	authRouterGroup.PUT("/drivers/:id/irating", driver.UpdateIrating)
 
 	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
 	authRouterGroup.GET("/tracks", track.GetList)

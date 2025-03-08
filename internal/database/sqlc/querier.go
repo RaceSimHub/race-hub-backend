@@ -6,6 +6,7 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 )
 
 type Querier interface {
@@ -19,6 +20,7 @@ type Querier interface {
 	InsertTrack(ctx context.Context, arg InsertTrackParams) (int64, error)
 	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
 	SelectCountListDrivers(ctx context.Context, search string) (int64, error)
+	SelectIDIracingByID(ctx context.Context, dollar_1 int64) (sql.NullString, error)
 	SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
 	SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error)
@@ -26,6 +28,7 @@ type Querier interface {
 	SelectTrackById(ctx context.Context, dollar_1 int64) (SelectTrackByIdRow, error)
 	SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error)
 	UpdateDriver(ctx context.Context, arg UpdateDriverParams) error
+	UpdateIratingsByID(ctx context.Context, arg UpdateIratingsByIDParams) error
 	UpdateNotification(ctx context.Context, arg UpdateNotificationParams) error
 	UpdateTrack(ctx context.Context, arg UpdateTrackParams) error
 }

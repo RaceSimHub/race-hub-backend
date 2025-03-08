@@ -19,4 +19,7 @@ var (
 	SwaggerServerHost = os.Getenv("SWAGGER_SERVER_HOST")
 
 	JwtSecret = os.Getenv("JWT_SECRET")
+
+	IRacingEmail    = os.Getenv("IRACING_EMAIL")
+	IRacingPassword = os.Getenv("IRACING_PASSWORD")
 )

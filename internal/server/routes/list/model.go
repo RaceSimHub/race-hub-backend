@@ -76,15 +76,6 @@ func (l ListTemplateData[T]) Items() (rows []map[string]any) {
 	return rows
 }
 
-/*
-func (l ListTemplateData[T]) Headers() (headers []string) {
-	for _, columnName := range l.HeaderTranslations {
-		headers = append(headers, columnName)
-	}
-
-	return
-}*/
-
 func (l ListTemplateData[T]) Search() string {
 	search, _, _ := request.Request{}.DefaultListParams(l.GinContext)
 

@@ -53,6 +53,9 @@ CREATE TABLE driver (
     facebook VARCHAR(255),
     twitch VARCHAR(255),
     photo_url VARCHAR(255),
+    irating_sports_car INT,
+    irating_oval INT,
+    irating_formula_car INT,
     created_date TIMESTAMP NOT NULL DEFAULT now(),
     updated_date TIMESTAMP NOT NULL DEFAULT now()
 );

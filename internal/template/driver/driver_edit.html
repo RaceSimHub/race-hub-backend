@@ -144,6 +144,55 @@
         </div>
     </fieldset>
 
+    <!-- Informações iRacing -->
+    <fieldset class="border p-4 rounded-md">
+        <legend class="font-bold text-xl text-gray-800">IRating</legend>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
+            <div class="flex flex-col">
+                <label class="font-semibold">Sports Car</label>
+                <input 
+                    type="number" 
+                    name="irating" 
+                    value="{{ with .Data.Driver.IratingSportsCar.Int32 }}{{ . }}{{ end }}"
+                    class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled
+                >
+            </div>
+
+            <div class="flex flex-col">
+                <label class="font-semibold">Formula Car</label>
+                <input 
+                    type="number" 
+                    name="irating" 
+                    value="{{ with .Data.Driver.IratingFormulaCar.Int32 }}{{ . }}{{ end }}"
+                    class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled
+                >
+            </div>
+
+            <div class="flex flex-col">
+                <label class="font-semibold">Oval</label>
+                <input 
+                    type="number" 
+                    name="irating" 
+                    value="{{ with .Data.Driver.IratingOval.Int32 }}{{ . }}{{ end }}"
+                    class="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled
+                >
+            </div>
+        </div>
+
+        <button 
+            hx-put="/drivers/{{ .Data.Driver.ID }}/irating" 
+            type="button" 
+            class="bg-gray-700 text-white mt-6 px-4 py-2 rounded-md hover:bg-red-500 transition"
+        >
+            Atualizar iRating
+        </button>
+    </fieldset>
+
+
     <!-- Foto e Submissão -->
     <fieldset class="border p-4 rounded-md">
         <legend class="font-bold text-lg">Foto</legend>
@@ -158,7 +207,7 @@
 
     <div class="flex justify-between mt-4">
         <button onclick="window.location.href='/drivers'" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">← Voltar</button>
-        <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
+        <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-red-500 transition">
             Atualizar
         </button>
     </div>

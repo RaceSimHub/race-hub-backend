@@ -152,6 +152,9 @@ SELECT
     facebook,
     twitch,
     photo_url,
+    irating_formula_car,
+    irating_oval,
+    irating_sports_car,
     fk_created_by_user_id::BIGINT,
     fk_updated_by_user_id::BIGINT,
     created_date::TIMESTAMP,
@@ -159,3 +162,17 @@ SELECT
 FROM
     driver
 WHERE id = $1::BIGINT;
+
+-- name: SelectIDIracingByID :one
+SELECT 
+    id_iracing
+FROM
+    driver
+WHERE id = $1::BIGINT;
+
+-- name: UpdateIratingsByID :exec
+UPDATE driver SET 
+    irating_sports_car = CASE WHEN @irating_sports_car::INT > 0 THEN @irating_sports_car::INT ELSE irating_sports_car END,
+    irating_oval = CASE WHEN @irating_oval::INT > 0 THEN @irating_oval::INT ELSE irating_oval END,
+    irating_formula_car = CASE WHEN @irating_formula_car::INT > 0 THEN @irating_formula_car::INT ELSE irating_formula_car END
+WHERE id = @id::BIGINT;

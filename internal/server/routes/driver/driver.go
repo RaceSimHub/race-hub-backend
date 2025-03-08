@@ -3,6 +3,7 @@ package driver
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
@@ -232,5 +233,21 @@ func (d Driver) Delete(c *gin.Context) {
 	}
 
 	c.Header("HX-Location", driversUrl)
+	c.Status(200)
+}
+
+func (d Driver) UpdateIrating(c *gin.Context) {
+	id, err := request.Request{}.BindParamInt(c, "id", true)
+	if err != nil {
+		return
+	}
+
+	err = d.serviceDriver.UpdateIratingByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		return
+	}
+
+	c.Header("HX-Location", driversUrl+"/"+strconv.FormatInt(int64(id), 10))
 	c.Status(200)
 }

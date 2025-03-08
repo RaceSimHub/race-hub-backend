@@ -35,6 +35,9 @@ type Driver struct {
 	Facebook          sql.NullString
 	Twitch            sql.NullString
 	PhotoUrl          sql.NullString
+	IratingSportsCar  sql.NullInt32
+	IratingOval       sql.NullInt32
+	IratingFormulaCar sql.NullInt32
 	CreatedDate       time.Time
 	UpdatedDate       time.Time
 }

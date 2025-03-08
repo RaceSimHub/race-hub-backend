@@ -48,6 +48,9 @@ SELECT
     facebook,
     twitch,
     photo_url,
+    irating_formula_car,
+    irating_oval,
+    irating_sports_car,
     fk_created_by_user_id::BIGINT,
     fk_updated_by_user_id::BIGINT,
     created_date::TIMESTAMP,
@@ -81,6 +84,9 @@ type GetDriverRow struct {
 	Facebook          sql.NullString
 	Twitch            sql.NullString
 	PhotoUrl          sql.NullString
+	IratingFormulaCar sql.NullInt32
+	IratingOval       sql.NullInt32
+	IratingSportsCar  sql.NullInt32
 	FkCreatedByUserID int64
 	FkUpdatedByUserID int64
 	CreatedDate       time.Time
@@ -114,6 +120,9 @@ func (q *Queries) GetDriver(ctx context.Context, dollar_1 int64) (GetDriverRow, 
 		&i.Facebook,
 		&i.Twitch,
 		&i.PhotoUrl,
+		&i.IratingFormulaCar,
+		&i.IratingOval,
+		&i.IratingSportsCar,
 		&i.FkCreatedByUserID,
 		&i.FkUpdatedByUserID,
 		&i.CreatedDate,
@@ -260,6 +269,21 @@ func (q *Queries) SelectCountListDrivers(ctx context.Context, search string) (in
 	var count int64
 	err := row.Scan(&count)
 	return count, err
+}
+
+const selectIDIracingByID = `-- name: SelectIDIracingByID :one
+SELECT 
+    id_iracing
+FROM
+    driver
+WHERE id = $1::BIGINT
+`
+
+func (q *Queries) SelectIDIracingByID(ctx context.Context, dollar_1 int64) (sql.NullString, error) {
+	row := q.queryRow(ctx, q.selectIDIracingByIDStmt, selectIDIracingByID, dollar_1)
+	var id_iracing sql.NullString
+	err := row.Scan(&id_iracing)
+	return id_iracing, err
 }
 
 const selectListDrivers = `-- name: SelectListDrivers :many
@@ -412,6 +436,31 @@ func (q *Queries) UpdateDriver(ctx context.Context, arg UpdateDriverParams) erro
 		arg.PhotoUrl,
 		arg.FkUpdatedByUserID,
 		arg.UpdatedDate,
+		arg.ID,
+	)
+	return err
+}
+
+const updateIratingsByID = `-- name: UpdateIratingsByID :exec
+UPDATE driver SET 
+    irating_sports_car = CASE WHEN $1::INT > 0 THEN $1::INT ELSE irating_sports_car END,
+    irating_oval = CASE WHEN $2::INT > 0 THEN $2::INT ELSE irating_oval END,
+    irating_formula_car = CASE WHEN $3::INT > 0 THEN $3::INT ELSE irating_formula_car END
+WHERE id = $4::BIGINT
+`
+
+type UpdateIratingsByIDParams struct {
+	IratingSportsCar  int32
+	IratingOval       int32
+	IratingFormulaCar int32
+	ID                int64
+}
+
+func (q *Queries) UpdateIratingsByID(ctx context.Context, arg UpdateIratingsByIDParams) error {
+	_, err := q.exec(ctx, q.updateIratingsByIDStmt, updateIratingsByID,
+		arg.IratingSportsCar,
+		arg.IratingOval,
+		arg.IratingFormulaCar,
 		arg.ID,
 	)
 	return err

@@ -2,9 +2,12 @@ package driver
 
 import (
 	"context"
+	"strconv"
 	"time"
 
+	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/pkg/iracing"
 )
 
 type Driver struct {
@@ -52,4 +55,29 @@ func (d *Driver) GetList(search string, offset, limit int) (drivers []sqlc.Selec
 
 func (d *Driver) GetByID(id int) (sqlc.GetDriverRow, error) {
 	return d.db.GetDriver(context.Background(), int64(id))
+}
+
+func (d *Driver) UpdateIratingByID(id int) error {
+	idIracing, err := d.db.SelectIDIracingByID(context.Background(), int64(id))
+	if err != nil {
+		return err
+	}
+
+	if !idIracing.Valid {
+		return nil
+	}
+
+	idIracingInt, _ := strconv.Atoi(idIracing.String)
+
+	iratingMap := iracing.IRacing{Email: config.IRacingEmail, Password: config.IRacingPassword}.GetIRatings([]int{idIracingInt})
+	if err != nil {
+		return err
+	}
+
+	return d.db.UpdateIratingsByID(context.Background(), sqlc.UpdateIratingsByIDParams{
+		ID:                int64(id),
+		IratingSportsCar:  int32(iratingMap[idIracingInt].SportsCar),
+		IratingFormulaCar: int32(iratingMap[idIracingInt].FormulaCar),
+		IratingOval:       int32(iratingMap[idIracingInt].Oval),
+	})
 }

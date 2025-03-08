@@ -11,6 +11,7 @@ package mock_sqlc
 
 import (
 	context "context"
+	sql "database/sql"
 	reflect "reflect"
 
 	sqlc "github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
@@ -188,6 +189,21 @@ func (mr *MockQuerierMockRecorder) SelectCountListDrivers(ctx, search any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCountListDrivers", reflect.TypeOf((*MockQuerier)(nil).SelectCountListDrivers), ctx, search)
 }
 
+// SelectIDIracingByID mocks base method.
+func (m *MockQuerier) SelectIDIracingByID(ctx context.Context, dollar_1 int64) (sql.NullString, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectIDIracingByID", ctx, dollar_1)
+	ret0, _ := ret[0].(sql.NullString)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectIDIracingByID indicates an expected call of SelectIDIracingByID.
+func (mr *MockQuerierMockRecorder) SelectIDIracingByID(ctx, dollar_1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectIDIracingByID", reflect.TypeOf((*MockQuerier)(nil).SelectIDIracingByID), ctx, dollar_1)
+}
+
 // SelectListDrivers mocks base method.
 func (m *MockQuerier) SelectListDrivers(ctx context.Context, arg sqlc.SelectListDriversParams) ([]sqlc.SelectListDriversRow, error) {
 	m.ctrl.T.Helper()
@@ -290,6 +306,20 @@ func (m *MockQuerier) UpdateDriver(ctx context.Context, arg sqlc.UpdateDriverPar
 func (mr *MockQuerierMockRecorder) UpdateDriver(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDriver", reflect.TypeOf((*MockQuerier)(nil).UpdateDriver), ctx, arg)
+}
+
+// UpdateIratingsByID mocks base method.
+func (m *MockQuerier) UpdateIratingsByID(ctx context.Context, arg sqlc.UpdateIratingsByIDParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateIratingsByID", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateIratingsByID indicates an expected call of UpdateIratingsByID.
+func (mr *MockQuerierMockRecorder) UpdateIratingsByID(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateIratingsByID", reflect.TypeOf((*MockQuerier)(nil).UpdateIratingsByID), ctx, arg)
 }
 
 // UpdateNotification mocks base method.
