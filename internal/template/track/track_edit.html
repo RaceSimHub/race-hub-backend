@@ -1,5 +1,5 @@
 {{ define "content" }}
-<form class="mb-6 flex flex-col gap-6" id="track_edit_form" hx-put="/tracks/{{ .Data.Track.ID }}">
+<form class="mb-6 flex flex-col gap-6" id="track_edit_form" hx-put="/tracks/{{ .Data.Track.ID }}" hx-swap="none" hx-on::after-request="handleNotification(event)">
 
     <div>
         <label class="block font-semibold">ID</label>

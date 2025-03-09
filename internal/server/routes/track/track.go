@@ -8,11 +8,13 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
 	"github.com/RaceSimHub/race-hub-backend/pkg/request"
+	"github.com/RaceSimHub/race-hub-backend/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type Track struct {
 	serviceTrack serviceTrack.Track
+	response     response.Response
 }
 
 const (
@@ -24,15 +26,15 @@ const (
 )
 
 func NewTrack(serviceTrack serviceTrack.Track) *Track {
-	return &Track{serviceTrack: serviceTrack}
+	return &Track{serviceTrack: serviceTrack, response: response.Response{}}
 }
 
-func (d Track) GetList(c *gin.Context) {
+func (t Track) GetList(c *gin.Context) {
 	search, offset, limit := request.Request{}.DefaultListParams(c)
 
-	tracks, total, err := d.serviceTrack.GetList(search, offset, limit)
+	tracks, total, err := t.serviceTrack.GetList(search, offset, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao buscar lista de pistas. Erro: "+err.Error(), "")
 		return
 	}
 
@@ -56,7 +58,7 @@ func (d Track) GetList(c *gin.Context) {
 	template.Template{}.RenderPage(c, "Lista de Pistas", false, data, trackListTemplate)
 }
 
-func (d Track) Put(c *gin.Context) {
+func (t Track) Put(c *gin.Context) {
 	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
@@ -66,43 +68,41 @@ func (d Track) Put(c *gin.Context) {
 	country := c.PostForm("country")
 
 	if name == "" || country == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Campos obrigatórios não preenchidos"})
+		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Campos obrigatórios não preenchidos", "")
 		return
 	}
 
-	err = d.serviceTrack.Update(id, name, country, 1)
+	err = t.serviceTrack.Update(id, name, country, 1)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	c.Header("HX-Location", tracksUrl)
-	c.Status(200)
+	t.response.ResponseWithNotification(c, response.NotificationTypeSuccess, "Pista atualizada com sucesso", tracksUrl)
 }
 
-func (d Track) Post(c *gin.Context) {
+func (t Track) Post(c *gin.Context) {
 	name := c.PostForm("name")
 	country := c.PostForm("country")
 
-	_, err := d.serviceTrack.Create(name, country, 1)
+	_, err := t.serviceTrack.Create(name, country, 1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao cadastrar pista"})
+		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao criar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	c.Header("HX-Location", tracksUrl)
-	c.Status(200)
+	t.response.ResponseWithNotification(c, response.NotificationTypeSuccess, "Pista criada com sucesso", tracksUrl)
 }
 
-func (d Track) GetByID(c *gin.Context) {
+func (t Track) GetByID(c *gin.Context) {
 	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	track, err := d.serviceTrack.GetByID(id)
+	track, err := t.serviceTrack.GetByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao buscar pista. Erro: "+err.Error(), "")
 		return
 	}
 
@@ -113,22 +113,21 @@ func (d Track) GetByID(c *gin.Context) {
 	template.Template{}.RenderPage(c, track.Name, false, data, trackEditTemplate, trackFormFieldsTemplate)
 }
 
-func (d Track) New(c *gin.Context) {
+func (t Track) New(c *gin.Context) {
 	template.Template{}.RenderPage(c, "Novo Piloto", false, nil, trackCreateTemplate, trackFormFieldsTemplate)
 }
 
-func (d Track) Delete(c *gin.Context) {
+func (t Track) Delete(c *gin.Context) {
 	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	err = d.serviceTrack.Delete(id)
+	err = t.serviceTrack.Delete(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao deletar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	c.Header("HX-Location", tracksUrl)
-	c.Status(200)
+	t.response.ResponseWithNotification(c, response.NotificationTypeSuccess, "Pista deletada com sucesso", tracksUrl)
 }

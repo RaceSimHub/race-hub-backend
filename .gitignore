@@ -21,3 +21,6 @@
 go.work
 
 .env
+
+# Not include bin files
+__debug*

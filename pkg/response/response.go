@@ -12,6 +12,16 @@ import (
 
 type Response struct{}
 
+func (r Response) ResponseWithNotification(ctx *gin.Context, notificationType NotificationType, message string, redirect string) {
+	notification := Notification{
+		Message:  message,
+		Type:     notificationType,
+		Redirect: redirect,
+	}
+
+	ctx.JSON(200, notification)
+}
+
 func (r Response) ResponseForbidden(ctx *gin.Context) {
 	err := errors.New("error.request.forbidden")
 

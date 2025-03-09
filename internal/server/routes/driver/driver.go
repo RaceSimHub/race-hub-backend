@@ -11,11 +11,13 @@ import (
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	"github.com/RaceSimHub/race-hub-backend/pkg/conv"
 	"github.com/RaceSimHub/race-hub-backend/pkg/request"
+	"github.com/RaceSimHub/race-hub-backend/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type Driver struct {
 	serviceDriver serviceDriver.Driver
+	response      response.Response
 }
 
 const (
@@ -26,7 +28,7 @@ const (
 )
 
 func NewDriver(serviceDriver serviceDriver.Driver) *Driver {
-	return &Driver{serviceDriver: serviceDriver}
+	return &Driver{serviceDriver: serviceDriver, response: response.Response{}}
 }
 
 func (d Driver) GetList(c *gin.Context) {
@@ -34,7 +36,12 @@ func (d Driver) GetList(c *gin.Context) {
 
 	drivers, total, err := d.serviceDriver.GetList(search, offset, limit)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		d.response.ResponseWithNotification(
+			c,
+			response.NotificationTypeError,
+			"Erro ao buscar lista de pilotos:"+err.Error(),
+			"",
+		)
 		return
 	}
 
@@ -91,7 +98,12 @@ func (d Driver) Put(c *gin.Context) {
 	secondaryNumber := conv.StringConv{}.StringToNullInt(secondaryNumberStr)
 
 	if name == "" || email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Campos obrigatórios não preenchidos"})
+		d.response.ResponseWithNotification(
+			c,
+			response.NotificationTypeError,
+			"Campos obrigatórios não preenchidos",
+			"",
+		)
 		return
 	}
 
@@ -122,12 +134,22 @@ func (d Driver) Put(c *gin.Context) {
 
 	err = d.serviceDriver.Update(id, driver, 1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		d.response.ResponseWithNotification(
+			c,
+			response.NotificationTypeError,
+			"Erro ao atualizar piloto:"+err.Error(),
+			"",
+		)
+
 		return
 	}
 
-	c.Header("HX-Location", driversUrl)
-	c.Status(200)
+	d.response.ResponseWithNotification(
+		c,
+		response.NotificationTypeSuccess,
+		"Piloto atualizado com sucesso!",
+		driversUrl,
+	)
 }
 
 func (d Driver) Post(c *gin.Context) {
@@ -158,7 +180,12 @@ func (d Driver) Post(c *gin.Context) {
 	secondaryNumber := conv.StringConv{}.StringToNullInt(secondaryNumberStr)
 
 	if name == "" || email == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Campos obrigatórios não preenchidos"})
+		d.response.ResponseWithNotification(
+			c,
+			response.NotificationTypeError,
+			"Campos obrigatórios não preenchidos",
+			"",
+		)
 		return
 	}
 
@@ -189,12 +216,21 @@ func (d Driver) Post(c *gin.Context) {
 
 	_, err := d.serviceDriver.Create(driver, 1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao cadastrar piloto"})
+		d.response.ResponseWithNotification(
+			c,
+			response.NotificationTypeError,
+			"Erro ao cadastrar piloto:"+err.Error(),
+			"",
+		)
 		return
 	}
 
-	c.Header("HX-Location", driversUrl)
-	c.Status(200)
+	d.response.ResponseWithNotification(
+		c,
+		response.NotificationTypeSuccess,
+		"Piloto cadastrado com sucesso!",
+		driversUrl,
+	)
 }
 
 func (d Driver) GetByID(c *gin.Context) {
@@ -220,37 +256,71 @@ func (d Driver) New(c *gin.Context) {
 	template.Template{}.RenderPage(c, "Novo Piloto", false, nil, driverCreateTemplate)
 }
 
-func (d Driver) Delete(c *gin.Context) {
-	id, err := request.Request{}.BindParamInt(c, "id", true)
+func (d Driver) Delete(ctx *gin.Context) {
+	id, err := request.Request{}.BindParamInt(ctx, "id", true)
 	if err != nil {
 		return
 	}
 
 	err = d.serviceDriver.Delete(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		d.response.ResponseWithNotification(
+			ctx,
+			response.NotificationTypeError,
+			"Erro ao excluir registro:"+err.Error(),
+			"",
+		)
 		return
 	}
 
-	c.Header("HX-Location", driversUrl)
-	c.Status(200)
+	search, offset, limit := request.Request{}.DefaultListParams(ctx)
+
+	redirectUrl := driversUrl + "?search=" + search + "&offset=" + strconv.FormatInt(int64(offset), 10) + "&limit=" + strconv.FormatInt(int64(limit), 10)
+
+	d.response.ResponseWithNotification(
+		ctx,
+		response.NotificationTypeSuccess,
+		"Registro excluído com sucesso!",
+		redirectUrl,
+	)
 }
 
-func (d Driver) UpdateIrating(c *gin.Context) {
-	id, err := request.Request{}.BindParamInt(c, "id", true)
+func (d Driver) UpdateIrating(ctx *gin.Context) {
+	id, err := request.Request{}.BindParamInt(ctx, "id", true)
 	if err != nil {
 		return
 	}
 
 	err = d.serviceDriver.UpdateIratingByID(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		if err.Error() == "iracing id not found" {
+			d.response.ResponseWithNotification(
+				ctx,
+				response.NotificationTypeWarning,
+				"Não existe um ID iRacing cadastrado para este piloto.",
+				"",
+			)
+
+			return
+		}
+
+		d.response.ResponseWithNotification(
+			ctx,
+			response.NotificationTypeError,
+			"Erro ao atualizar iRating:"+err.Error(),
+			"",
+		)
+
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message":  "Registro atualizado com sucesso!",
-		"type":     "success",
-		"redirect": driversUrl + "/" + strconv.FormatInt(int64(id), 10),
-	})
+	redirectUrl := driversUrl + "/" + strconv.FormatInt(int64(id), 10)
+
+	d.response.ResponseWithNotification(
+		ctx,
+		response.NotificationTypeSuccess,
+		"Registro atualizado com sucesso!",
+		redirectUrl,
+	)
 }

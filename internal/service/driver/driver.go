@@ -2,6 +2,7 @@ package driver
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"time"
 
@@ -63,8 +64,8 @@ func (d *Driver) UpdateIratingByID(id int) error {
 		return err
 	}
 
-	if !idIracing.Valid {
-		return nil
+	if !idIracing.Valid || idIracing.String == "" {
+		return errors.New("iracing id not found")
 	}
 
 	idIracingInt, _ := strconv.Atoi(idIracing.String)

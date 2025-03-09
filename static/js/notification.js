@@ -4,7 +4,17 @@ function showNotification(message, type = 'success') {
 
     const icon = document.createElement('span');
     icon.className = 'icon';
-    icon.innerHTML = type === 'success' ? '✅' : '❌';
+
+    switch (type) {
+        case 'success':
+            icon.innerHTML = '✅';
+            break;
+        case 'error':
+            icon.innerHTML = '❌';
+            break;
+        default:
+            icon.innerHTML = '⚠️';
+    } 
 
     notification.appendChild(icon);
     notification.appendChild(document.createTextNode(message));
@@ -38,5 +48,36 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 });
 
 
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const texts = document.querySelectorAll('.sidebar-text');
+
+    if (sidebar.classList.contains('sidebar-expanded')) {
+        sidebar.classList.remove('sidebar-expanded');
+        sidebar.classList.add('sidebar-collapsed');
+        texts.forEach(text => text.classList.add('hidden'));
+
+        localStorage.setItem('sidebarState', 'collapsed');
+    } else {
+        sidebar.classList.remove('sidebar-collapsed');
+        sidebar.classList.add('sidebar-expanded');
+        texts.forEach(text => text.classList.remove('hidden'));
+
+        localStorage.setItem('sidebarState', 'expanded');
+    }
+}
 
 
+window.addEventListener('DOMContentLoaded', () => {
+    const sidebar = document.getElementById('sidebar');
+    const texts = document.querySelectorAll('.sidebar-text');
+    const sidebarState = localStorage.getItem('sidebarState');
+
+    if (sidebarState === 'collapsed') {
+        sidebar.classList.add('sidebar-collapsed');
+        texts.forEach(text => text.classList.add('hidden'));
+    } else {
+        sidebar.classList.add('sidebar-expanded');
+        texts.forEach(text => text.classList.remove('hidden'));
+    }
+});

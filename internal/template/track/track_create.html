@@ -1,7 +1,7 @@
 {{ define "content" }}
 <div id="notification" class="hidden p-3 mb-4 text-white rounded-md"></div>
 
-<form class="mb-6 flex flex-col gap-6" id="track_create_form" hx-post="/tracks">
+<form class="mb-6 flex flex-col gap-6" id="track_create_form" hx-post="/tracks" hx-swap="none" hx-on::after-request="handleNotification(event)">
     {{ template "track_form_fields" (dict "Track" (dict "Name" "" "Country" "")) }}
 
     <div class="flex justify-between mt-4">

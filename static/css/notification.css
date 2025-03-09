@@ -28,6 +28,10 @@
     background-color: #f44336;
 }
 
+.notification.warning {
+    background-color: #ff9800;
+}
+
 .notification .icon {
     font-size: 20px;
 }
@@ -48,4 +52,15 @@
         opacity: 0;
         transform: translateX(100%);
     }
+}
+.sidebar-expanded {
+    width: 12rem; /* w-48 */
+}
+
+.sidebar-collapsed {
+    width: 4rem; /* w-16 */
+}
+
+.sidebar-collapsed .sidebar-text {
+    display: none;
 }

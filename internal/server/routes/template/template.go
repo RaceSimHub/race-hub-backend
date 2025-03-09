@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
@@ -18,6 +19,7 @@ type PageData struct {
 	Title       string
 	MinimalPage bool
 	Data        any
+	CurrentPath string
 }
 
 func NewTemplate(db sqlc.Querier) *Template {
@@ -25,18 +27,27 @@ func NewTemplate(db sqlc.Querier) *Template {
 }
 
 func (t Template) Home(c *gin.Context) {
-	data := map[string]any{
-		"Title": "Home - Race Hub",
-	}
-
-	t.render(c, data, "index")
+	t.RenderPage(c, "Home - Race Hub", false, nil, "index")
 }
 
 func (t Template) RenderPage(c *gin.Context, title string, minimal bool, content any, templates ...string) {
+	currentPath := c.Request.URL.Path
+
+	if currentPath == "/" {
+		currentPath = "/"
+	} else {
+		// Caso contrário, pega o prefixo do caminho (primeira parte antes da primeira barra)
+		if strings.Contains(currentPath, "/") {
+			// Pega o prefixo do caminho (primeira parte antes da primeira barra)
+			currentPath = "/" + strings.Split(currentPath[1:], "/")[0]
+		}
+	}
+
 	data := PageData{
 		Title:       title,
 		MinimalPage: minimal,
 		Data:        content,
+		CurrentPath: currentPath,
 	}
 
 	t.render(c, data, templates...)

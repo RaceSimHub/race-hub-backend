@@ -40,3 +40,17 @@ type Pagination struct {
 type Id struct {
 	Id int `json:"id"`
 }
+
+type NotificationType string
+
+const (
+	NotificationTypeSuccess NotificationType = "success"
+	NotificationTypeError   NotificationType = "error"
+	NotificationTypeWarning NotificationType = "warning"
+)
+
+type Notification struct {
+	Message  string           `json:"message"`
+	Type     NotificationType `json:"type"`
+	Redirect string           `json:"redirect"`
+}
