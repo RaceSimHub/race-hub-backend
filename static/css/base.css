@@ -16,7 +16,7 @@
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
     opacity: 0;
     transform: translateX(100%);
-    animation: slide-in 0.5s forwards, fade-out 0.5s 1.5s forwards; /* Atraso de 1.5s para começar o fade-out */
+    animation: slide-in 0.5s forwards, fade-out 0.5s 2.5s forwards; /* Atraso de 1.5s para começar o fade-out */
     max-width: 320px;
     font-weight: bold;
     display: flex;

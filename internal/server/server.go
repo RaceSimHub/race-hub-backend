@@ -80,6 +80,7 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	authRouterGroup.Static("/js", filepath.Join(staticPath, "js"))
 	authRouterGroup.Static("/css", filepath.Join(staticPath, "css"))
+	authRouterGroup.StaticFile("/favicon.ico", filepath.Join(staticPath, "favicon.ico"))
 
 	authRouterGroup.GET("/", template.Home)
 

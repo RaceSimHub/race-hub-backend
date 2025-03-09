@@ -23,7 +23,7 @@ function showNotification(message, type = 'success') {
 
     setTimeout(() => {
         notification.remove();
-    }, 2000);
+    }, 3000);
 }
 
 document.body.addEventListener('htmx:afterSwap', (event) => {
@@ -33,6 +33,11 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
         const parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
 
         if (parsedResponse) {
+            if (!parsedResponse.redirect && parsedResponse.message) {
+                showNotification(parsedResponse.message, parsedResponse.type);
+                return
+            }
+
             if (parsedResponse.message) {
                 localStorage.setItem('notification', JSON.stringify({
                     message: parsedResponse.message,
