@@ -53,14 +53,43 @@
         transform: translateX(100%);
     }
 }
+
+/* Transição suave na largura do sidebar */
+#sidebar {
+    transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar expandido */
 .sidebar-expanded {
     width: 12rem; /* w-48 */
 }
 
+/* Sidebar colapsado */
 .sidebar-collapsed {
     width: 4rem; /* w-16 */
 }
 
 .sidebar-collapsed .sidebar-text {
     display: none;
+}
+
+/* Colapsa o sidebar automaticamente em telas pequenas */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 4rem; /* w-16 */
+    }
+
+    #sidebar .sidebar-text {
+        display: none;
+    }
+
+    /* Se o sidebar estiver expandido, vai colapsar ao redimensionar */
+    #sidebar.sidebar-expanded {
+        width: 4rem; /* w-16 */
+    }
+
+    /* Forçar o estado de "colapsado" no localStorage ao atingir essa largura */
+    #sidebar.sidebar-expanded .sidebar-text {
+        display: none;
+    }
 }

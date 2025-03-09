@@ -19,21 +19,19 @@
 
     <div class="flex flex-1 h-full {{ if .MinimalPage }}items-center justify-center{{ end }}">
         {{ if not .MinimalPage }}
-            <div id="sidebar" class="bg-gray-900 text-white transition-all duration-300 shrink-0">
+            <div id="sidebar" class="bg-gray-900 text-white transition-all duration-300 ease-in-out shrink-0">
                 {{ template "sidebar.html" . }}
             </div>
         {{ end }}
-
-        <main class="flex-1 min-w-0 p-6">
+        <main class="flex-1 w-full p-6">
             {{ block "content" . }}{{ end }}
         </main>
-    </div> 
+    </div>   
 
     {{ if not .MinimalPage }}
         <footer class="text-center text-gray-600 border-t pt-0">
             {{ template "footer.html" . }}
         </footer>
     {{ end }}
-
 </body>
 </html>

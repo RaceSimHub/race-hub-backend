@@ -67,7 +67,6 @@ function toggleSidebar() {
     }
 }
 
-
 window.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
     const texts = document.querySelectorAll('.sidebar-text');
