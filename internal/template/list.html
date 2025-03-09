@@ -11,7 +11,7 @@
     <form method="GET" action="{{ .Data.DefaultURL }}" class="mb-4 flex">
         <input type="text" name="search" value="{{ .Data.Search }}"
                class="border border-gray-300 p-2 rounded-md flex-1" />
-        <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition ml-2">
+        <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-500 transition ml-2">
             <i class="fa-solid fa-filter"></i>
         </button>
     </form>
@@ -26,11 +26,11 @@
                             <div class="flex space-x-2">
                                 {{ if gt .Data.Offset 0 }}
                                 <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset=0&limit={{ .Data.Limit }}" 
-                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
                                     <i class="fa-solid fa-angles-left"></i>
                                 </a>
                                 <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset={{ sub .Data.Offset .Data.Limit }}&limit={{ .Data.Limit }}" 
-                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
                                     <i class="fa-solid fa-angle-left"></i>
                                 </a>
                                 {{ else }}
@@ -51,11 +51,11 @@
                             <div class="flex space-x-2">
                                 {{ if lt (add .Data.Offset .Data.Limit) .Data.Total }}
                                 <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset={{ add .Data.Offset .Data.Limit }}&limit={{ .Data.Limit }}" 
-                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
                                     <i class="fa-solid fa-angle-right"></i>
                                 </a>
                                 <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset={{ sub .Data.Total (mod .Data.Total .Data.Limit) }}&limit={{ .Data.Limit }}" 
-                                    class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-700 transition">
+                                    class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
                                     <i class="fa-solid fa-angles-right"></i>
                                 </a>
                                 {{ else }}

@@ -32,14 +32,16 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
     try {
         const parsedResponse = typeof response === 'string' ? JSON.parse(response) : response;
 
-
-        if (parsedResponse && parsedResponse.message) {
-            showNotification(parsedResponse.message, parsedResponse.type);
+        if (parsedResponse) {
+            if (parsedResponse.message) {
+                localStorage.setItem('notification', JSON.stringify({
+                    message: parsedResponse.message,
+                    type: parsedResponse.type
+                }));
+            }
 
             if (parsedResponse.redirect) {
-                setTimeout(() => {
-                    window.location.href = parsedResponse.redirect;
-                }, 2000);
+                window.location.href = parsedResponse.redirect;
             }
         }
     } catch (error) {
@@ -72,11 +74,24 @@ window.addEventListener('DOMContentLoaded', () => {
     const texts = document.querySelectorAll('.sidebar-text');
     const sidebarState = localStorage.getItem('sidebarState');
 
-    if (sidebarState === 'collapsed') {
+    if (!sidebarState) {
+        sidebar.classList.add('sidebar-expanded');
+        texts.forEach(text => text.classList.remove('hidden'));
+        localStorage.setItem('sidebarState', 'expanded');  // Grava o estado padrão
+    } else if (sidebarState === 'collapsed') {
         sidebar.classList.add('sidebar-collapsed');
         texts.forEach(text => text.classList.add('hidden'));
     } else {
         sidebar.classList.add('sidebar-expanded');
         texts.forEach(text => text.classList.remove('hidden'));
+    }
+
+    const storedNotification = localStorage.getItem('notification');
+
+    if (storedNotification) {
+        const { message, type } = JSON.parse(storedNotification);
+        showNotification(message, type);
+
+        localStorage.removeItem('notification');
     }
 });

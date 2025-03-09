@@ -1,18 +1,28 @@
-<header class="bg-gray-100 shadow-md p-4">
-    <div class="container mx-auto flex justify-between items-center">
-        <a href="/" class="text-xl font-bold text-red-600 font-bold hover:text-red-600 transition duration-300">
+<header class="bg-gray-900 shadow-md p-4 relative flex items-center justify-center">
+
+    <!-- Ícone do Menu (Colado na Esquerda) -->
+    <div class="absolute left-0 pl-4">
+        <i 
+            class="fas fa-bars text-2xl text-gray-600 cursor-pointer hover:text-red-600 transition"
+            onclick="toggleSidebar()">
+        </i>
+    </div>
+
+    <!-- Logo Centralizada -->
+    <div>
+        <a href="/" class="text-xl font-bold text-red-600">
             Race Hub
         </a>
+    </div>
 
-        <!-- Botão de menu -->
-        <div class="relative">
-                <button 
-                    hx-post="/logout" 
-                    hx-trigger="click" 
-                    hx-swap="none" 
-                    class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-200">
-                    <i class="fa-solid fa-right-from-bracket mr-2"></i>
-                </button>
-        </div>
+    <!-- Botão de Logout (Colado na Direita) -->
+    <div class="absolute right-0 pr-4">
+        <button 
+            hx-post="/logout" 
+            hx-trigger="click" 
+            hx-swap="none" 
+            class="px-4 py-2 text-red-600 hover:bg-gray-200 rounded-md">
+            <i class="fa-solid fa-right-from-bracket mr-2"></i>
+        </button>
     </div>
 </header>

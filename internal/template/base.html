@@ -19,7 +19,7 @@
 
     <div class="flex flex-1 h-full {{ if .MinimalPage }}items-center justify-center{{ end }}">
         {{ if not .MinimalPage }}
-            <div id="sidebar" class="bg-gray-900 text-white transition-all duration-300 ease-in-out shrink-0">
+            <div id="sidebar" class="bg-gray-900 text-white transition-all duration-100 sidebar-expanded">
                 {{ template "sidebar.html" . }}
             </div>
         {{ end }}
