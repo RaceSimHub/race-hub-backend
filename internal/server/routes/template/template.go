@@ -55,13 +55,13 @@ func (Template) render(c *gin.Context, data any, templates ...string) {
 		"add": func(a, b int) int { return a + b },
 		"div": func(a, b int) int {
 			if b == 0 {
-				return 0 // Evita divisão por zero
+				return 0
 			}
 			return a / b
 		},
 		"mod": func(a, b int) int {
 			if b == 0 {
-				return 0 // Evita divisão por zero
+				return 0
 			}
 			return a % b
 		},

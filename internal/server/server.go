@@ -1,6 +1,10 @@
 package server
 
 import (
+	"log"
+	"os"
+	"path/filepath"
+
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
@@ -21,13 +25,11 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 )
 
-// Server serves http requests for the service
 type Server struct {
 	Port   string
 	Router *gin.Engine
 }
 
-// NewServer creates a new http server and setup routing
 func NewServer() (s Server) {
 	if config.Environment != "DEV" {
 		gin.SetMode(gin.ReleaseMode)
@@ -39,7 +41,6 @@ func NewServer() (s Server) {
 	return
 }
 
-// Start runs the http server on a specific address
 func (s Server) Start() {
 	address := ":" + s.Port
 	err := s.Router.Run(address)
@@ -70,6 +71,16 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup := router.Use(middleware.JWTMiddleware())
 
 	template := serverTemplate.NewTemplate(database.DbQuerier)
+
+	basePath, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	staticPath := filepath.Join(basePath, "..", "static")
+
+	authRouterGroup.Static("/js", filepath.Join(staticPath, "js"))
+	authRouterGroup.Static("/css", filepath.Join(staticPath, "css"))
+
 	authRouterGroup.GET("/", template.Home)
 
 	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))

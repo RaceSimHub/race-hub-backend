@@ -248,6 +248,9 @@ func (d Driver) UpdateIrating(c *gin.Context) {
 		return
 	}
 
-	c.Header("HX-Location", driversUrl+"/"+strconv.FormatInt(int64(id), 10))
-	c.Status(200)
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "Registro atualizado com sucesso!",
+		"type":     "success",
+		"redirect": driversUrl + "/" + strconv.FormatInt(int64(id), 10),
+	})
 }

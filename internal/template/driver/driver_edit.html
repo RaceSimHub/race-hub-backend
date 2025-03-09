@@ -187,6 +187,8 @@
             hx-put="/drivers/{{ .Data.Driver.ID }}/irating" 
             type="button" 
             class="bg-gray-700 text-white mt-6 px-4 py-2 rounded-md hover:bg-red-500 transition"
+            hx-swap="none"
+            hx-on::after-request="handleNotification(event)"
         >
             Atualizar iRating
         </button>

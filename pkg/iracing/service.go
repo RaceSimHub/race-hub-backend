@@ -15,6 +15,10 @@ type IRacing struct {
 	Password string
 }
 
+const (
+	baseUrl = "https://members-ng.iracing.com"
+)
+
 func (ir IRacing) GetIRatings(custIds []int) map[int]IRatingData {
 	cookies, err := ir.authenticateIracing()
 	if err != nil {
@@ -28,14 +32,12 @@ func (ir IRacing) GetIRatings(custIds []int) map[int]IRatingData {
 	for i := 0; i < len(custIds); i += batchSize {
 		batch := custIds[i:min(i+batchSize, len(custIds))]
 
-		// Transform the batch of int into a string
-		// Example: [1, 2, 3] -> "1,2,3"
 		var batchStr []string
 		for _, id := range batch {
 			batchStr = append(batchStr, fmt.Sprintf("%v", id))
 		}
 
-		url := fmt.Sprintf("https://members-ng.iracing.com/data/member/get?cust_ids=%v&include_licenses=true", strings.Join(batchStr, ","))
+		url := fmt.Sprintf("%v/data/member/get?cust_ids=%v&include_licenses=true", baseUrl, strings.Join(batchStr, ","))
 
 		req, _ := http.NewRequest("GET", url, nil)
 		req.Header.Add("Cookie", cookies)
@@ -94,7 +96,7 @@ func min(a, b int) int {
 }
 
 func (ir IRacing) authenticateIracing() (cookies string, err error) {
-	url := "https://members-ng.iracing.com/auth"
+	url := baseUrl + "/auth"
 	payload := fmt.Sprintf(`{"email":"%s","password":"%s"}`, ir.Email, hashIracingPassword(ir.Email, ir.Password))
 	resp, err := http.Post(url, "application/json", strings.NewReader(payload))
 	if err != nil {
