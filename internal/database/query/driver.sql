@@ -108,7 +108,7 @@ WHERE
         TRUE
     END
 ORDER BY
-    id
+    id DESC
 OFFSET $1
 LIMIT $2;
 

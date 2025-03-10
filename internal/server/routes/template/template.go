@@ -27,7 +27,7 @@ func NewTemplate(db sqlc.Querier) *Template {
 }
 
 func (t Template) Home(c *gin.Context) {
-	t.RenderPage(c, "Home - Race Hub", false, nil, "index")
+	t.RenderPage(c, "Home - Race Hub", false, nil, "base/index")
 }
 
 func (t Template) RenderPage(c *gin.Context, title string, minimal bool, content any, templates ...string) {
@@ -90,11 +90,11 @@ func (Template) render(c *gin.Context, data any, templates ...string) {
 		templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", templateName+".html"))
 	}
 
-	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base.html"))
-	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "header.html"))
-	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "footer.html"))
-	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "partial", "sidebar.html"))
-	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "list.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "base.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "header.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "footer.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "sidebar.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "list.html"))
 
 	baseTemplate, err = baseTemplate.ParseFiles(
 		templatesPaths...,

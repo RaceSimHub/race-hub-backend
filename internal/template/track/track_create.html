@@ -1,15 +1,32 @@
 {{ define "content" }}
-<div id="notification" class="hidden p-3 mb-4 text-white rounded-md"></div>
+<div class="bg-white shadow-lg rounded-xl p-6 max-w-lg mx-auto">
 
-<form class="mb-6 flex flex-col gap-6" id="track_create_form" hx-post="/tracks" hx-swap="none" hx-on::after-request="handleNotification(event)">
-    {{ template "track_form_fields" (dict "Track" (dict "Name" "" "Country" "")) }}
+    <h1 class="text-2xl font-bold text-gray-700 mb-4">Criar Nova Pista</h1>
 
-    <div class="flex justify-between mt-4">
-        <button onclick="window.location.href='/tracks'" type="button"
-            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">← Voltar</button>
-        <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
-            Criar
-        </button>
-    </div>
-</form>
+    <div id="notification" class="hidden p-3 mb-4 text-white rounded-md"></div>
+
+    <form class="flex flex-col gap-6" 
+          id="track_create_form" 
+          hx-post="/tracks" 
+          hx-swap="none" 
+          hx-on::after-request="handleNotification(event)">
+
+        {{ template "track_form_fields" (dict "Data" (dict "Track" (dict "Name" "" "Country" ""))) }}
+
+        <div class="flex justify-between mt-6">
+            <button 
+                onclick="window.location.href='/tracks'" 
+                type="button"
+                class="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar
+            </button>
+
+            <button type="submit"
+                    class="flex items-center bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-500 transition shadow-md">
+                <i class="fas fa-plus mr-2"></i> Criar
+            </button>
+        </div>
+
+    </form>
+</div>
 {{ end }}

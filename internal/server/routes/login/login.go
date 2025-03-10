@@ -35,5 +35,5 @@ func (u *Login) PostLogout(c *gin.Context) {
 }
 
 func (u *Login) GetLogin(c *gin.Context) {
-	template.Template{}.RenderPage(c, "Login", true, nil, "login")
+	template.Template{}.RenderPage(c, "Login", true, nil, "base/login")
 }

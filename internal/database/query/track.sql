@@ -38,7 +38,7 @@ WHERE
         TRUE
     END
 ORDER BY
-    id
+    id DESC
 OFFSET $1::INTEGER
 LIMIT $2::INTEGER;
 

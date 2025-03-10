@@ -1,21 +1,39 @@
 {{ define "content" }}
-<form class="mb-6 flex flex-col gap-6" id="track_edit_form" hx-put="/tracks/{{ .Data.Track.ID }}" hx-swap="none" hx-on::after-request="handleNotification(event)">
+<div class="bg-white shadow-lg rounded-xl p-6 max-w-lg mx-auto">
 
-    <div>
-        <label class="block font-semibold">ID</label>
-        <input type="text" name="id" disabled value="{{ .Data.Track.ID }}"
-            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-    </div>
+    <h1 class="text-2xl font-bold text-gray-700 mb-4">Editar Pista</h1>
 
-    {{ template "track_form_fields" . }}
+    <form class="flex flex-col gap-6" 
+          id="track_edit_form" 
+          hx-put="/tracks/{{ .Data.Track.ID }}" 
+          hx-swap="none" 
+          hx-on::after-request="handleNotification(event)">
 
-    <div class="flex justify-between mt-4">
-        <button onclick="window.location.href='/tracks'" type="button"
-            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">← Voltar</button>
-        <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
-            Atualizar
+        <!-- Campo de ID (somente visual) -->
+        <div>
+            <label class="block font-semibold text-gray-600">ID</label>
+            <div class="w-full p-2 border bg-gray-100 rounded-md text-gray-500 cursor-not-allowed">
+                {{ .Data.Track.ID }}
+            </div>
+        </div>
+
+        {{ template "track_form_fields" . }}
+
+        <!-- Botões -->
+        <div class="flex justify-between mt-6">
+            <button 
+            onclick="window.location.href='/tracks'" 
+            type="button"
+            class="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
+            <i class="fas fa-arrow-left mr-2"></i> Voltar
         </button>
-    </div>
+        
+        <button type="submit"
+                class="flex items-center bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-500 transition shadow-md">
+            <i class="fas fa-save mr-2"></i> Atualizar
+        </button>
+        </div>
 
-</form>
+    </form>
+</div>
 {{ end }}
