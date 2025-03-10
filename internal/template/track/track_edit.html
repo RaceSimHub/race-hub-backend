@@ -19,19 +19,32 @@
 
         {{ template "track_form_fields" . }}
 
-        <!-- Botões -->
+       <!-- Botões -->
         <div class="flex justify-between mt-6">
             <button 
-            onclick="window.location.href='/tracks'" 
-            type="button"
-            class="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
-            <i class="fas fa-arrow-left mr-2"></i> Voltar
-        </button>
-        
-        <button type="submit"
-                class="flex items-center bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-500 transition shadow-md">
-            <i class="fas fa-save mr-2"></i> Atualizar
-        </button>
+                onclick="window.location.href='/tracks'" 
+                type="button"
+                class="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Voltar
+            </button>
+            
+            <div class="flex space-x-1">
+                <button 
+                    hx-delete="/tracks/{{ .Data.Track.ID }}" 
+                    type="button"
+                    class="flex items-center bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition shadow-md"
+                    hx-confirm="Tem certeza que deseja excluir este item?" 
+                    hx-swap="none"
+                    hx-on::after-request="handleNotification(event)">
+                    <i class="fas fa-trash mr-2"></i> Deletar
+                </button>
+
+                <button 
+                    type="submit"
+                    class="flex items-center bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-500 transition shadow-md">
+                    <i class="fas fa-save mr-2"></i> Atualizar
+                </button>
+            </div>
         </div>
 
     </form>

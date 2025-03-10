@@ -93,9 +93,6 @@
                         <a href="{{ $.Data.DefaultURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a hx-delete="{{ $.Data.DeleteURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600" onclick="return confirm('Tem certeza que deseja excluir este item?')" hx-swap="none" hx-on::after-request="handleNotification(event)">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
                     </td>
                 </tr>
                 {{ else }}

@@ -206,11 +206,24 @@
 
         <div class="flex justify-between mt-4">
             <button onclick="window.location.href='/drivers'" type="button"
-                class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">← Voltar</button>
-            <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-red-500 transition">
-                Atualizar
+                class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
+                ← Voltar
             </button>
-        </div>
+            <div class="flex space-x-1">
+                <button hx-delete="/drivers/{{ .Data.Driver.ID }}" 
+                        type="button"
+                        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
+                        hx-confirm="Tem certeza que deseja excluir este item?" 
+                        hx-swap="none"
+                        hx-on::after-request="handleNotification(event)">
+                    Deletar
+                </button>
+                <button type="submit" 
+                        class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-red-500 transition">
+                    Atualizar
+                </button>
+            </div>
+        </div>             
 
     </div>
 

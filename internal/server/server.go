@@ -90,7 +90,7 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup.GET("/drivers/:id", driver.GetByID)
 	authRouterGroup.PUT("/drivers/:id", driver.Put)
 	authRouterGroup.GET("/drivers/new", driver.New)
-	authRouterGroup.DELETE("/drivers/delete/:id", driver.Delete)
+	authRouterGroup.DELETE("/drivers/:id", driver.Delete)
 	authRouterGroup.PUT("/drivers/:id/irating", driver.UpdateIrating)
 
 	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
@@ -99,7 +99,7 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup.GET("/tracks/:id", track.GetByID)
 	authRouterGroup.PUT("/tracks/:id", track.Put)
 	authRouterGroup.GET("/tracks/new", track.New)
-	authRouterGroup.DELETE("/tracks/delete/:id", track.Delete)
+	authRouterGroup.DELETE("/tracks/:id", track.Delete)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authRouterGroup.POST("/notifications", notification.Post)
