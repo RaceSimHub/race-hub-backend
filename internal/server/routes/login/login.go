@@ -21,7 +21,7 @@ func (u *Login) PostLogin(c *gin.Context) {
 
 	token, err := u.serviceUser.GenerateToken(email, password)
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
@@ -35,5 +35,5 @@ func (u *Login) PostLogout(c *gin.Context) {
 }
 
 func (u *Login) GetLogin(c *gin.Context) {
-	template.Template{}.RenderPage(c, "Login", true, nil, "base/login")
+	template.Template{}.RenderPageMinimal(c, "Login", nil, "base/login")
 }

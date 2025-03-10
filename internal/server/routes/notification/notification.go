@@ -25,11 +25,11 @@ func (n *Notification) Post(c *gin.Context) {
 
 	id, err := n.serviceNotification.Create(bodyRequest.Message, bodyRequest.FirstDriver, bodyRequest.SecondDriver, bodyRequest.ThirdDriver, bodyRequest.LicensePoints)
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
-	response.Response{}.ResponseCreated(c, int(id))
+	response.Response{}.Created(c, int(id))
 }
 
 func (n *Notification) Put(c *gin.Context) {
@@ -46,11 +46,11 @@ func (n *Notification) Put(c *gin.Context) {
 
 	err = n.serviceNotification.Update(id, bodyRequest.Message, bodyRequest.FirstDriver, bodyRequest.SecondDriver, bodyRequest.ThirdDriver, bodyRequest.LicensePoints)
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
-	response.Response{}.ResponseNoContent(c)
+	response.Response{}.NoContent(c)
 }
 
 func (n *Notification) Delete(c *gin.Context) {
@@ -61,21 +61,21 @@ func (n *Notification) Delete(c *gin.Context) {
 
 	err = n.serviceNotification.Delete(id)
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
-	response.Response{}.ResponseNoContent(c)
+	response.Response{}.NoContent(c)
 }
 
 func (n *Notification) GetLastMessage(c *gin.Context) {
 	message, err := n.serviceNotification.GetLastMessage()
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
-	response.Response{}.ResponseOK(c, message)
+	response.Response{}.OK(c, message)
 }
 
 func (n *Notification) GetList(c *gin.Context) {
@@ -86,9 +86,9 @@ func (n *Notification) GetList(c *gin.Context) {
 
 	list, err := n.serviceNotification.GetList(offset, limit)
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
-	response.Response{}.ResponseOK(c, list)
+	response.Response{}.OK(c, list)
 }

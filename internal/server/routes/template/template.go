@@ -27,18 +27,24 @@ func NewTemplate(db sqlc.Querier) *Template {
 }
 
 func (t Template) Home(c *gin.Context) {
-	t.RenderPage(c, "Home - Race Hub", false, nil, "base/index")
+	t.RenderPage(c, "Home - Race Hub", nil, "base/index")
 }
 
-func (t Template) RenderPage(c *gin.Context, title string, minimal bool, content any, templates ...string) {
+func (t Template) RenderPageMinimal(c *gin.Context, title string, content any, templates ...string) {
+	t.renderPage(c, title, true, content, templates...)
+}
+
+func (t Template) RenderPage(c *gin.Context, title string, content any, templates ...string) {
+	t.renderPage(c, title, false, content, templates...)
+}
+
+func (t Template) renderPage(c *gin.Context, title string, minimal bool, content any, templates ...string) {
 	currentPath := c.Request.URL.Path
 
 	if currentPath == "/" {
 		currentPath = "/"
 	} else {
-		// Caso contrário, pega o prefixo do caminho (primeira parte antes da primeira barra)
 		if strings.Contains(currentPath, "/") {
-			// Pega o prefixo do caminho (primeira parte antes da primeira barra)
 			currentPath = "/" + strings.Split(currentPath[1:], "/")[0]
 		}
 	}

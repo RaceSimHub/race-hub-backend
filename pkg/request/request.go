@@ -18,7 +18,7 @@ func (r Request) ParseBody(ctx *gin.Context, b io.Reader, dto any) error {
 	err := json.NewDecoder(b).Decode(dto)
 
 	if err != nil {
-		response.Response{}.ResponseError(ctx, errors.New("error.system.json: "+err.Error()))
+		response.Response{}.Error(ctx, errors.New("error.system.json: "+err.Error()))
 		return err
 	}
 
@@ -30,7 +30,7 @@ func (r Request) BindParam(ctx *gin.Context, key string, required bool) (value s
 
 	if required && len(strings.TrimSpace(value)) == 0 {
 		err = errors.New("error.request.parameter.invalid: Param " + key + " has value invalid")
-		response.Response{}.ResponseBadRequest(ctx, err)
+		response.Response{}.BadRequest(ctx, err)
 	}
 
 	return
@@ -44,7 +44,7 @@ func (r Request) GetPathVariableString(ctx *gin.Context, name string) (value str
 
 	if value == "" {
 		err := errors.New("error.request.variable.path_invalid")
-		response.Response{}.ResponseError(ctx, err)
+		response.Response{}.Error(ctx, err)
 
 		return "", err
 	}
@@ -57,7 +57,7 @@ func (r Request) GetPathParamInt(ctx *gin.Context, values url.Values, name strin
 		if strings.EqualFold(parameter, name) {
 			v, err := strconv.ParseInt(value[0], 10, 64)
 			if err != nil {
-				response.Response{}.ResponseError(ctx, errors.New("error.request.parameter.invalid_value: "+name))
+				response.Response{}.Error(ctx, errors.New("error.request.parameter.invalid_value: "+name))
 				return 0, err
 			}
 
@@ -67,7 +67,7 @@ func (r Request) GetPathParamInt(ctx *gin.Context, values url.Values, name strin
 
 	if required {
 		err := errors.New("error.request.parameter.invalid: " + name)
-		response.Response{}.ResponseError(ctx, err)
+		response.Response{}.Error(ctx, err)
 		return 0, err
 	}
 
@@ -78,7 +78,7 @@ func (r Request) BindJson(ctx *gin.Context, obj any) error {
 	err := ctx.ShouldBindJSON(obj)
 	if err != nil {
 		err := errors.New("error.request.invalid: " + err.Error())
-		response.Response{}.ResponseBadRequest(ctx, err)
+		response.Response{}.BadRequest(ctx, err)
 	}
 	return err
 }
@@ -109,7 +109,7 @@ func (r Request) bindQueryParamInt(ctx *gin.Context, key string, required bool) 
 
 	value, err := strconv.Atoi(param)
 	if err != nil && required {
-		response.Response{}.ResponseBadRequest(ctx, err)
+		response.Response{}.BadRequest(ctx, err)
 		return 0, err
 	}
 
@@ -121,7 +121,7 @@ func (r Request) BindQueryParam(ctx *gin.Context, key string, required bool) (va
 
 	if required && len(strings.TrimSpace(value)) == 0 {
 		err = errors.New("error.request.query.param.invalid: " + key)
-		response.Response{}.ResponseBadRequest(ctx, err)
+		response.Response{}.BadRequest(ctx, err)
 	}
 
 	return
@@ -135,7 +135,7 @@ func (r Request) BindParamInt(ctx *gin.Context, key string, required bool) (int,
 
 	value, err := strconv.Atoi(param)
 	if err != nil && required {
-		response.Response{}.ResponseBadRequest(ctx, errors.New("error.param.invalid: "+err.Error()))
+		response.Response{}.BadRequest(ctx, errors.New("error.param.invalid: "+err.Error()))
 		return 0, err
 	}
 

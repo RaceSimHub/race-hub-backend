@@ -34,7 +34,7 @@ func (t Track) GetList(c *gin.Context) {
 
 	tracks, total, err := t.serviceTrack.GetList(search, offset, limit)
 	if err != nil {
-		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao buscar lista de pistas. Erro: "+err.Error(), "")
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao buscar lista de pistas. Erro: "+err.Error(), "")
 		return
 	}
 
@@ -55,7 +55,7 @@ func (t Track) GetList(c *gin.Context) {
 		GinContext:         c,
 	}
 
-	template.Template{}.RenderPage(c, "Lista de Pistas", false, data, trackListTemplate)
+	template.Template{}.RenderPage(c, "Lista de Pistas", data, trackListTemplate)
 }
 
 func (t Track) Put(c *gin.Context) {
@@ -68,7 +68,7 @@ func (t Track) Put(c *gin.Context) {
 	country := c.PostForm("country")
 
 	if name == "" || country == "" {
-		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Campos obrigatórios não preenchidos", "")
+		t.response.WithNotification(c, response.NotificationTypeError, "Campos obrigatórios não preenchidos", "")
 		return
 	}
 
@@ -78,7 +78,7 @@ func (t Track) Put(c *gin.Context) {
 		return
 	}
 
-	t.response.ResponseWithNotification(c, response.NotificationTypeSuccess, "Pista atualizada com sucesso", tracksUrl)
+	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista atualizada com sucesso", tracksUrl)
 }
 
 func (t Track) Post(c *gin.Context) {
@@ -87,11 +87,11 @@ func (t Track) Post(c *gin.Context) {
 
 	_, err := t.serviceTrack.Create(name, country, 1)
 	if err != nil {
-		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao criar pista. Erro: "+err.Error(), "")
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao criar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	t.response.ResponseWithNotification(c, response.NotificationTypeSuccess, "Pista criada com sucesso", tracksUrl)
+	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista criada com sucesso", tracksUrl)
 }
 
 func (t Track) GetByID(c *gin.Context) {
@@ -102,7 +102,7 @@ func (t Track) GetByID(c *gin.Context) {
 
 	track, err := t.serviceTrack.GetByID(id)
 	if err != nil {
-		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao buscar pista. Erro: "+err.Error(), "")
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao buscar pista. Erro: "+err.Error(), "")
 		return
 	}
 
@@ -110,11 +110,11 @@ func (t Track) GetByID(c *gin.Context) {
 		"Track": track,
 	}
 
-	template.Template{}.RenderPage(c, track.Name, false, data, trackEditTemplate, trackFormFieldsTemplate)
+	template.Template{}.RenderPage(c, track.Name, data, trackEditTemplate, trackFormFieldsTemplate)
 }
 
 func (t Track) New(c *gin.Context) {
-	template.Template{}.RenderPage(c, "Novo Piloto", false, nil, trackCreateTemplate, trackFormFieldsTemplate)
+	template.Template{}.RenderPage(c, "Novo Piloto", nil, trackCreateTemplate, trackFormFieldsTemplate)
 }
 
 func (t Track) Delete(c *gin.Context) {
@@ -125,9 +125,9 @@ func (t Track) Delete(c *gin.Context) {
 
 	err = t.serviceTrack.Delete(id)
 	if err != nil {
-		t.response.ResponseWithNotification(c, response.NotificationTypeError, "Erro ao deletar pista. Erro: "+err.Error(), "")
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao deletar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	t.response.ResponseWithNotification(c, response.NotificationTypeSuccess, "Pista deletada com sucesso", tracksUrl)
+	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista deletada com sucesso", tracksUrl)
 }

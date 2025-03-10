@@ -25,9 +25,9 @@ func (u *User) Post(c *gin.Context) {
 
 	id, err := u.serviceUser.Create(bodyRequest.Email, bodyRequest.Name, bodyRequest.Password)
 	if err != nil {
-		response.Response{}.ResponseError(c, err)
+		response.Response{}.Error(c, err)
 		return
 	}
 
-	response.Response{}.ResponseCreated(c, int(id))
+	response.Response{}.Created(c, int(id))
 }
