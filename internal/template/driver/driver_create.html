@@ -1,8 +1,12 @@
 {{ define "content" }}
-<div id="notification" class="hidden p-3 mb-4 text-white rounded-md"></div>
-
 <form class="mb-6 flex flex-col gap-6" id="driver_create_form" hx-post="/drivers">
-    
+    <div class="flex justify-between mt-4">
+        <button onclick="window.location.href='/drivers'" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">← Voltar</button>
+        <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition">
+            Criar
+        </button>
+    </div>
+
     <!-- Identificação -->
     <fieldset class="border p-4 rounded-md">
         <legend class="font-bold text-lg">Identificação</legend>

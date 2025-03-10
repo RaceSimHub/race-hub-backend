@@ -1,5 +1,11 @@
 {{ define "content" }}
 <form class="mb-6 flex flex-col gap-6" id="driver_edit_form" hx-put="/drivers/{{ .Data.Driver.ID }}" hx-swap="none" hx-on::after-request="handleNotification(event)">
+    <div class="flex justify-between mt-4">
+        <button onclick="window.location.href='/drivers'" type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">← Voltar</button>
+        <button type="submit" class="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-red-500 transition">
+            Atualizar
+        </button>
+    </div>
 
     <!-- Identificação -->
     <fieldset class="border p-4 rounded-md">

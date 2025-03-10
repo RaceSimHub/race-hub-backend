@@ -24,7 +24,7 @@
                 {{ template "sidebar.html" . }}
             </div>
         {{ end }}
-        <main class="flex-1 w-full p-6">
+        <main id="content-wrapper" class="flex-1 w-full p-6 transition-opacity duration-300 opacity-100">
             {{ block "content" . }}{{ end }}
         </main>
     </div>   

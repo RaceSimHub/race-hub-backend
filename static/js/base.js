@@ -46,7 +46,14 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
             }
 
             if (parsedResponse.redirect) {
-                window.location.href = parsedResponse.redirect;
+                const contentWrapper = document.getElementById('content-wrapper');
+
+                contentWrapper.classList.remove('opacity-100');
+                contentWrapper.classList.add('opacity-0');
+
+                setTimeout(() => {
+                    window.location.href = parsedResponse.redirect;
+                }, 300); // Tempo da transição
             }
         }
     } catch (error) {
