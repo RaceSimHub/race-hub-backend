@@ -71,9 +71,6 @@ func (d *Driver) UpdateIratingByID(id int) error {
 	idIracingInt, _ := strconv.Atoi(idIracing.String)
 
 	iratingMap := iracing.IRacing{Email: config.IRacingEmail, Password: config.IRacingPassword}.GetIRatings([]int{idIracingInt})
-	if err != nil {
-		return err
-	}
 
 	return d.db.UpdateIratingsByID(context.Background(), sqlc.UpdateIratingsByIDParams{
 		ID:                int64(id),
