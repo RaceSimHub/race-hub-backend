@@ -22,4 +22,9 @@ var (
 
 	IRacingEmail    = os.Getenv("IRACING_EMAIL")
 	IRacingPassword = os.Getenv("IRACING_PASSWORD")
+
+	EmailFrom     = os.Getenv("EMAIL_FROM")
+	EmailPassword = os.Getenv("EMAIL_PASSWORD")
+	EmailHost     = os.Getenv("EMAIL_HOST")
+	EmailPort     = os.Getenv("EMAIL_PORT")
 )
