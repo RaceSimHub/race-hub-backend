@@ -30,4 +30,4 @@ COPY --from=builder /app/internal/database/migration /migration
 EXPOSE 9090
 
 # Comando para rodar as migrations e depois iniciar a aplicação
-CMD ["/bin/sh", "-c", "./migrate -path /migration -database '$DATABASE_URL' up && ./main"]
+CMD ["/bin/sh", "-c", "./migrate -path /migration -database \"$DATABASE_URL\" up && ./main"]
