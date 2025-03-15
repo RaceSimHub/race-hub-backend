@@ -24,6 +24,7 @@ COPY --from=builder /app/migrate .
 
 # Copia os templates e as migrations para a imagem final
 COPY --from=builder /app/internal /internal
+COPY --from=builder /app/static /static
 COPY --from=builder /app/internal/database/migration /migration
 
 # Porta que sua aplicação usará
