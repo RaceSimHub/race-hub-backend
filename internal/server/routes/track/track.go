@@ -1,98 +1,133 @@
 package track
 
 import (
-	"github.com/RaceSimHub/race-hub-backend/internal/server/model/request"
-	"github.com/RaceSimHub/race-hub-backend/internal/service/track"
-	"github.com/RaceSimHub/race-hub-backend/internal/utils"
+	"net/http"
+
+	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
+	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
+	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
+	"github.com/RaceSimHub/race-hub-backend/pkg/request"
+	"github.com/RaceSimHub/race-hub-backend/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type Track struct {
-	serviceTrack track.Track
+	serviceTrack serviceTrack.Track
+	response     response.Response
 }
 
-func NewTrack(serviceTrack track.Track) *Track {
-	return &Track{serviceTrack: serviceTrack}
+const (
+	trackListTemplate       = "track/track_list"
+	trackEditTemplate       = "track/track_edit"
+	trackCreateTemplate     = "track/track_create"
+	trackFormFieldsTemplate = "track/track_form_fields"
+	tracksUrl               = "/tracks"
+)
+
+func NewTrack(serviceTrack serviceTrack.Track) *Track {
+	return &Track{serviceTrack: serviceTrack, response: response.Response{}}
 }
 
-func (n *Track) Post(c *gin.Context) {
-	bodyRequest := request.PostTrack{}
-	err := utils.Utils{}.BindJson(c, &bodyRequest)
+func (t Track) GetList(c *gin.Context) {
+	search, offset, limit := request.Request{}.DefaultListParams(c)
+
+	tracks, total, err := t.serviceTrack.GetList(search, offset, limit)
 	if err != nil {
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao buscar lista de pistas. Erro: "+err.Error(), "")
 		return
 	}
 
-	id, err := n.serviceTrack.Create(bodyRequest.Name, bodyRequest.Country)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
+	headers := []string{"ID", "Name", "Country"}
+
+	headerTranslations := map[string]string{
+		"ID":      "ID",
+		"Name":    "Nome",
+		"Country": "País",
 	}
 
-	utils.Utils{}.ResponseCreated(c, int(id))
+	data := list.ListTemplateData[sqlc.SelectListTracksRow]{
+		Template:           "tracks",
+		Headers:            headers,
+		HeaderTranslations: headerTranslations,
+		Data:               tracks,
+		Total:              int(total),
+		GinContext:         c,
+	}
+
+	template.Template{}.RenderPage(c, "Lista de Pistas", data, trackListTemplate)
 }
 
-func (n *Track) Put(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+func (t Track) Put(c *gin.Context) {
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	bodyRequest := request.PutTrack{}
-	err = utils.Utils{}.BindJson(c, &bodyRequest)
-	if err != nil {
+	name := c.PostForm("name")
+	country := c.PostForm("country")
+
+	if name == "" || country == "" {
+		t.response.WithNotification(c, response.NotificationTypeError, "Campos obrigatórios não preenchidos", "")
 		return
 	}
 
-	err = n.serviceTrack.Update(id, bodyRequest.Name, bodyRequest.Country)
+	err = t.serviceTrack.Update(id, name, country, 1)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
 		return
 	}
 
-	utils.Utils{}.ResponseNoContent(c)
+	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista atualizada com sucesso", tracksUrl)
 }
 
-func (n *Track) Delete(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+func (t Track) Post(c *gin.Context) {
+	name := c.PostForm("name")
+	country := c.PostForm("country")
+
+	_, err := t.serviceTrack.Create(name, country, 1)
 	if err != nil {
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao criar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	err = n.serviceTrack.Delete(id)
-	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
-		return
-	}
-
-	utils.Utils{}.ResponseNoContent(c)
+	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista criada com sucesso", tracksUrl)
 }
 
-func (n *Track) GetList(c *gin.Context) {
-	offset, limit, err := utils.Utils{}.GetListParams(c)
+func (t Track) GetByID(c *gin.Context) {
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	list, err := n.serviceTrack.GetList(offset, limit)
+	track, err := t.serviceTrack.GetByID(id)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao buscar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	utils.Utils{}.ResponseOK(c, list)
+	data := map[string]any{
+		"Track": track,
+	}
+
+	template.Template{}.RenderPage(c, track.Name, data, trackEditTemplate, trackFormFieldsTemplate)
 }
 
-func (n *Track) GetByID(c *gin.Context) {
-	id, err := utils.Utils{}.BindParamInt(c, "id", true)
+func (t Track) New(c *gin.Context) {
+	template.Template{}.RenderPage(c, "Novo Piloto", nil, trackCreateTemplate, trackFormFieldsTemplate)
+}
+
+func (t Track) Delete(c *gin.Context) {
+	id, err := request.Request{}.BindParamInt(c, "id", true)
 	if err != nil {
 		return
 	}
 
-	track, err := n.serviceTrack.GetByID(id)
+	err = t.serviceTrack.Delete(id)
 	if err != nil {
-		utils.Utils{}.ResponseError(c, err)
+		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao deletar pista. Erro: "+err.Error(), "")
 		return
 	}
 
-	utils.Utils{}.ResponseOK(c, track)
+	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista deletada com sucesso", tracksUrl)
 }

@@ -7,6 +7,7 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -26,9 +27,30 @@ const getDriver = `-- name: GetDriver :one
 SELECT 
     id::BIGINT,
     name::VARCHAR,
-    race_name::VARCHAR,
     email::VARCHAR,
-    phone::VARCHAR,
+    secondary_email,
+    phone,
+    secondary_phone,
+    license,
+    number,
+    secondary_number,
+    neighborhood,
+    state,
+    city,
+    cep,
+    address,
+    address_number,
+    country,
+    team,
+    id_iracing,
+    id_steam,
+    instagram,
+    facebook,
+    twitch,
+    photo_url,
+    irating_formula_car,
+    irating_oval,
+    irating_sports_car,
     fk_created_by_user_id::BIGINT,
     fk_updated_by_user_id::BIGINT,
     created_date::TIMESTAMP,
@@ -41,9 +63,30 @@ WHERE id = $1::BIGINT
 type GetDriverRow struct {
 	ID                int64
 	Name              string
-	RaceName          string
 	Email             string
-	Phone             string
+	SecondaryEmail    sql.NullString
+	Phone             sql.NullString
+	SecondaryPhone    sql.NullString
+	License           sql.NullString
+	Number            sql.NullInt32
+	SecondaryNumber   sql.NullInt32
+	Neighborhood      sql.NullString
+	State             sql.NullString
+	City              sql.NullString
+	Cep               sql.NullString
+	Address           sql.NullString
+	AddressNumber     sql.NullString
+	Country           sql.NullString
+	Team              sql.NullString
+	IDIracing         sql.NullString
+	IDSteam           sql.NullString
+	Instagram         sql.NullString
+	Facebook          sql.NullString
+	Twitch            sql.NullString
+	PhotoUrl          sql.NullString
+	IratingFormulaCar sql.NullInt32
+	IratingOval       sql.NullInt32
+	IratingSportsCar  sql.NullInt32
 	FkCreatedByUserID int64
 	FkUpdatedByUserID int64
 	CreatedDate       time.Time
@@ -56,9 +99,30 @@ func (q *Queries) GetDriver(ctx context.Context, dollar_1 int64) (GetDriverRow, 
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
-		&i.RaceName,
 		&i.Email,
+		&i.SecondaryEmail,
 		&i.Phone,
+		&i.SecondaryPhone,
+		&i.License,
+		&i.Number,
+		&i.SecondaryNumber,
+		&i.Neighborhood,
+		&i.State,
+		&i.City,
+		&i.Cep,
+		&i.Address,
+		&i.AddressNumber,
+		&i.Country,
+		&i.Team,
+		&i.IDIracing,
+		&i.IDSteam,
+		&i.Instagram,
+		&i.Facebook,
+		&i.Twitch,
+		&i.PhotoUrl,
+		&i.IratingFormulaCar,
+		&i.IratingOval,
+		&i.IratingSportsCar,
 		&i.FkCreatedByUserID,
 		&i.FkUpdatedByUserID,
 		&i.CreatedDate,
@@ -70,26 +134,84 @@ func (q *Queries) GetDriver(ctx context.Context, dollar_1 int64) (GetDriverRow, 
 const insertDriver = `-- name: InsertDriver :one
 INSERT INTO driver (
     name,
-    race_name,
     email,
+    secondary_email,
     phone,
+    secondary_phone,
+    license,
+    number,
+    secondary_number,
+    neighborhood,
+    state,
+    city,
+    cep,
+    address,
+    address_number,
+    country,
+    team,
+    id_iracing,
+    id_steam,
+    instagram,
+    facebook,
+    twitch,
+    photo_url,
     fk_created_by_user_id,
-    created_date
+    created_date,
+    fk_updated_by_user_id,
+    updated_date
 ) VALUES (
     $1::VARCHAR,
     $2::VARCHAR,
-    $3::VARCHAR,
-    $4::VARCHAR,
-    $5::BIGINT,
-    $6::TIMESTAMP
-) RETURNING id
+    $3,
+    $4,
+    $5,
+    $6,
+    $7,
+    $8,
+    $9,
+    $10,
+    $11,
+    $12,
+    $13,
+    $14,
+    $15,
+    $16,
+    $17,
+    $18,
+    $19,
+    $20,
+    $21,
+    $22,
+    $23::BIGINT,
+    $24::TIMESTAMP,
+    $23::BIGINT,
+    $24::TIMESTAMP
+) RETURNING id::BIGINT
 `
 
 type InsertDriverParams struct {
 	Name              string
-	RaceName          string
 	Email             string
-	Phone             string
+	SecondaryEmail    sql.NullString
+	Phone             sql.NullString
+	SecondaryPhone    sql.NullString
+	License           sql.NullString
+	Number            sql.NullInt32
+	SecondaryNumber   sql.NullInt32
+	Neighborhood      sql.NullString
+	State             sql.NullString
+	City              sql.NullString
+	Cep               sql.NullString
+	Address           sql.NullString
+	AddressNumber     sql.NullString
+	Country           sql.NullString
+	Team              sql.NullString
+	IDIracing         sql.NullString
+	IDSteam           sql.NullString
+	Instagram         sql.NullString
+	Facebook          sql.NullString
+	Twitch            sql.NullString
+	PhotoUrl          sql.NullString
 	FkCreatedByUserID int64
 	CreatedDate       time.Time
 }
@@ -97,9 +219,27 @@ type InsertDriverParams struct {
 func (q *Queries) InsertDriver(ctx context.Context, arg InsertDriverParams) (int64, error) {
 	row := q.queryRow(ctx, q.insertDriverStmt, insertDriver,
 		arg.Name,
-		arg.RaceName,
 		arg.Email,
+		arg.SecondaryEmail,
 		arg.Phone,
+		arg.SecondaryPhone,
+		arg.License,
+		arg.Number,
+		arg.SecondaryNumber,
+		arg.Neighborhood,
+		arg.State,
+		arg.City,
+		arg.Cep,
+		arg.Address,
+		arg.AddressNumber,
+		arg.Country,
+		arg.Team,
+		arg.IDIracing,
+		arg.IDSteam,
+		arg.Instagram,
+		arg.Facebook,
+		arg.Twitch,
+		arg.PhotoUrl,
 		arg.FkCreatedByUserID,
 		arg.CreatedDate,
 	)
@@ -108,28 +248,84 @@ func (q *Queries) InsertDriver(ctx context.Context, arg InsertDriverParams) (int
 	return id, err
 }
 
+const selectCountListDrivers = `-- name: SelectCountListDrivers :one
+SELECT 
+    COUNT(1) AS count
+FROM
+    driver
+WHERE 
+    CASE WHEN $1::VARCHAR != '' THEN 
+        name ILIKE '%' || $1 || '%' OR
+        email ILIKE '%' || $1 || '%' OR
+        phone ILIKE '%' || $1 || '%' OR
+        team ILIKE '%' || $1 || '%'
+    ELSE
+        TRUE
+    END
+`
+
+func (q *Queries) SelectCountListDrivers(ctx context.Context, search string) (int64, error) {
+	row := q.queryRow(ctx, q.selectCountListDriversStmt, selectCountListDrivers, search)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const selectIDIracingByID = `-- name: SelectIDIracingByID :one
+SELECT 
+    id_iracing
+FROM
+    driver
+WHERE id = $1::BIGINT
+`
+
+func (q *Queries) SelectIDIracingByID(ctx context.Context, dollar_1 int64) (sql.NullString, error) {
+	row := q.queryRow(ctx, q.selectIDIracingByIDStmt, selectIDIracingByID, dollar_1)
+	var id_iracing sql.NullString
+	err := row.Scan(&id_iracing)
+	return id_iracing, err
+}
+
 const selectListDrivers = `-- name: SelectListDrivers :many
 SELECT 
     id::BIGINT,
-    name::VARCHAR
+    name::VARCHAR,
+    email::VARCHAR,
+    phone,
+    team
 FROM
     driver
-OFFSET $1::INTEGER
-LIMIT $2::INTEGER
+WHERE 
+    CASE WHEN $3::VARCHAR != '' THEN 
+        name ILIKE '%' || $3 || '%' OR
+        email ILIKE '%' || $3 || '%' OR
+        phone ILIKE '%' || $3 || '%' OR
+        team ILIKE '%' || $3 || '%'
+    ELSE
+        TRUE
+    END
+ORDER BY
+    id DESC
+OFFSET $1
+LIMIT $2
 `
 
 type SelectListDriversParams struct {
-	Column1 int32
-	Column2 int32
+	Offset int32
+	Limit  int32
+	Search string
 }
 
 type SelectListDriversRow struct {
-	ID   int64
-	Name string
+	ID    int64
+	Name  string
+	Email string
+	Phone sql.NullString
+	Team  sql.NullString
 }
 
 func (q *Queries) SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error) {
-	rows, err := q.query(ctx, q.selectListDriversStmt, selectListDrivers, arg.Column1, arg.Column2)
+	rows, err := q.query(ctx, q.selectListDriversStmt, selectListDrivers, arg.Offset, arg.Limit, arg.Search)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +333,13 @@ func (q *Queries) SelectListDrivers(ctx context.Context, arg SelectListDriversPa
 	items := []SelectListDriversRow{}
 	for rows.Next() {
 		var i SelectListDriversRow
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.Phone,
+			&i.Team,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -153,20 +355,56 @@ func (q *Queries) SelectListDrivers(ctx context.Context, arg SelectListDriversPa
 
 const updateDriver = `-- name: UpdateDriver :exec
 UPDATE driver SET 
-    name = COALESCE($1::VARCHAR, name),
-    race_name = COALESCE($2::VARCHAR, race_name),
-    email = COALESCE($3::VARCHAR, email),
-    phone = COALESCE($4::VARCHAR, phone),
-    fk_updated_by_user_id = $5::BIGINT,
-    updated_date = $6::TIMESTAMP
-WHERE id = $7::BIGINT
+    name = $1::VARCHAR,
+    email = $2::VARCHAR,
+    secondary_email = $3,
+    phone = $4,
+    secondary_phone = $5,
+    license = $6,
+    number = $7,
+    secondary_number = $8,
+    neighborhood = $9,
+    state = $10,
+    city = $11,
+    cep = $12,
+    address = $13,
+    address_number = $14,
+    country = $15,
+    team = $16,
+    id_iracing = $17,
+    id_steam = $18,
+    instagram = $19,
+    facebook = $20,
+    twitch = $21,
+    photo_url = $22,
+    fk_updated_by_user_id = $23::BIGINT,
+    updated_date = $24::TIMESTAMP
+WHERE id = $25::BIGINT
 `
 
 type UpdateDriverParams struct {
 	Name              string
-	RaceName          string
 	Email             string
-	Phone             string
+	SecondaryEmail    sql.NullString
+	Phone             sql.NullString
+	SecondaryPhone    sql.NullString
+	License           sql.NullString
+	Number            sql.NullInt32
+	SecondaryNumber   sql.NullInt32
+	Neighborhood      sql.NullString
+	State             sql.NullString
+	City              sql.NullString
+	Cep               sql.NullString
+	Address           sql.NullString
+	AddressNumber     sql.NullString
+	Country           sql.NullString
+	Team              sql.NullString
+	IDIracing         sql.NullString
+	IDSteam           sql.NullString
+	Instagram         sql.NullString
+	Facebook          sql.NullString
+	Twitch            sql.NullString
+	PhotoUrl          sql.NullString
 	FkUpdatedByUserID int64
 	UpdatedDate       time.Time
 	ID                int64
@@ -175,11 +413,54 @@ type UpdateDriverParams struct {
 func (q *Queries) UpdateDriver(ctx context.Context, arg UpdateDriverParams) error {
 	_, err := q.exec(ctx, q.updateDriverStmt, updateDriver,
 		arg.Name,
-		arg.RaceName,
 		arg.Email,
+		arg.SecondaryEmail,
 		arg.Phone,
+		arg.SecondaryPhone,
+		arg.License,
+		arg.Number,
+		arg.SecondaryNumber,
+		arg.Neighborhood,
+		arg.State,
+		arg.City,
+		arg.Cep,
+		arg.Address,
+		arg.AddressNumber,
+		arg.Country,
+		arg.Team,
+		arg.IDIracing,
+		arg.IDSteam,
+		arg.Instagram,
+		arg.Facebook,
+		arg.Twitch,
+		arg.PhotoUrl,
 		arg.FkUpdatedByUserID,
 		arg.UpdatedDate,
+		arg.ID,
+	)
+	return err
+}
+
+const updateIratingsByID = `-- name: UpdateIratingsByID :exec
+UPDATE driver SET 
+    irating_sports_car = CASE WHEN $1::INT > 0 THEN $1::INT ELSE irating_sports_car END,
+    irating_oval = CASE WHEN $2::INT > 0 THEN $2::INT ELSE irating_oval END,
+    irating_formula_car = CASE WHEN $3::INT > 0 THEN $3::INT ELSE irating_formula_car END
+WHERE id = $4::BIGINT
+`
+
+type UpdateIratingsByIDParams struct {
+	IratingSportsCar  int32
+	IratingOval       int32
+	IratingFormulaCar int32
+	ID                int64
+}
+
+func (q *Queries) UpdateIratingsByID(ctx context.Context, arg UpdateIratingsByIDParams) error {
+	_, err := q.exec(ctx, q.updateIratingsByIDStmt, updateIratingsByID,
+		arg.IratingSportsCar,
+		arg.IratingOval,
+		arg.IratingFormulaCar,
 		arg.ID,
 	)
 	return err

@@ -3,7 +3,7 @@ package config
 import "os"
 
 var (
-	ENVIRONMENT = os.Getenv("ENVIRONMENT")
+	Environment = os.Getenv("ENVIRONMENT")
 
 	DatabaseDriver = os.Getenv("DATABASE_DRIVER")
 	DatabaseUser   = os.Getenv("DATABASE_USER")
@@ -19,4 +19,12 @@ var (
 	SwaggerServerHost = os.Getenv("SWAGGER_SERVER_HOST")
 
 	JwtSecret = os.Getenv("JWT_SECRET")
+
+	IRacingEmail    = os.Getenv("IRACING_EMAIL")
+	IRacingPassword = os.Getenv("IRACING_PASSWORD")
+
+	EmailFrom     = os.Getenv("EMAIL_FROM")
+	EmailPassword = os.Getenv("EMAIL_PASSWORD")
+	EmailHost     = os.Getenv("EMAIL_HOST")
+	EmailPort     = os.Getenv("EMAIL_PORT")
 )

@@ -1,0 +1,114 @@
+{{ define "list" }}
+<div class="w-full h-full p-6 bg-white text-gray-900 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-900">{{ .Title }}</h2>
+        <a href="{{ .Data.NewURL }}" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-600 transition shadow">
+            Novo
+        </a>
+    </div>
+
+    <!-- Campo de Filtro -->
+    <form method="GET" action="{{ .Data.DefaultURL }}" class="mb-4 flex">
+        <input type="text" name="search" value="{{ .Data.Search }}"
+               class="border border-gray-300 p-2 rounded-md flex-1" />
+        <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-red-500 transition ml-2">
+            <i class="fa-solid fa-filter"></i>
+        </button>
+    </form>
+
+    <div class="overflow-x-auto">
+        <table class="w-full border-collapse shadow-md rounded-lg overflow-hidden bg-gray-100 text-gray-900">
+            <thead>
+                <tr class="bg-gray-700 text-white">
+                    <th colspan="{{ .Data.ColumnsCount }}" class="p-2 text-right">
+                        <div class="flex justify-between items-center">
+                            <!-- Grupo de Primeira e Anterior -->
+                            <div class="flex space-x-2">
+                                {{ if gt .Data.Offset 0 }}
+                                <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset=0&limit={{ .Data.Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
+                                    <i class="fa-solid fa-angles-left"></i>
+                                </a>
+                                <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset={{ sub .Data.Offset .Data.Limit }}&limit={{ .Data.Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </a>
+                                {{ else }}
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angles-left"></i>
+                                </span>
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angle-left"></i>
+                                </span>
+                                {{ end }}
+                            </div>
+
+                            <span class="text-white">
+                                Página {{ div .Data.Offset .Data.Limit | add 1 }} de {{ div .Data.Total .Data.Limit | add .Data.ExtraPage }}
+                            </span>
+
+                            <!-- Grupo de Próxima e Última -->
+                            <div class="flex space-x-2">
+                                {{ if lt (add .Data.Offset .Data.Limit) .Data.Total }}
+                                <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset={{ add .Data.Offset .Data.Limit }}&limit={{ .Data.Limit }}" 
+                                   class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </a>
+                                <a href="{{ .Data.DefaultURL }}?search={{ .Data.Search }}&offset={{ sub .Data.Total (mod .Data.Total .Data.Limit) }}&limit={{ .Data.Limit }}" 
+                                    class="bg-gray-600 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition">
+                                    <i class="fa-solid fa-angles-right"></i>
+                                </a>
+                                {{ else }}
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angle-right"></i>
+                                </span>
+                                <span class="bg-gray-400 text-white px-3 py-1 rounded-md opacity-50 cursor-not-allowed">
+                                    <i class="fa-solid fa-angles-right"></i>
+                                </span>
+                                {{ end }}
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr class="bg-gray-800 text-white">
+                    {{ range .Data.Headers }}
+                    <th class="p-2 text-left">
+                        {{ if index $.Data.HeaderTranslations . }}
+                            {{ index $.Data.HeaderTranslations . }}
+                        {{ else }}
+                            {{ . }}
+                        {{ end }}
+                    </th>
+                    {{ end }}
+                    <th class="p-2 text-right">Ações</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-300">
+                {{ range .Data.Items }}
+                <tr class="hover:bg-gray-200 transition">
+                    {{ range $key, $value := . }}
+                    <td class="p-2">{{ $value }}</td>
+                    {{ end }}
+                    <td class="p-2 text-right">
+                        <a href="{{ $.Data.DefaultURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                    </td>
+                </tr>
+                {{ else }}
+                <tr>
+                    <td colspan="{{ .Data.ColumnsCount }}" class="text-center p-4 text-gray-500">Nenhum item encontrado.</td>
+                </tr>
+                {{ end }}
+            </tbody>
+            <tfoot>
+                <tr class="bg-gray-200">
+                    <td colspan="{{ .Data.ColumnsCount }}" class="p-2 text-center text-gray-700 font-semibold">
+                        Total de registros: {{ .Data.Total }}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{{ end }}

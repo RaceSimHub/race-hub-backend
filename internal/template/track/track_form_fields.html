@@ -1,0 +1,12 @@
+{{ define "track_form_fields" }}
+    <div>
+        <label class="block font-semibold">Nome</label>
+        <input type="text" name="name" required value="{{ .Data.Track.Name }}"
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    <div>
+        <label class="block font-semibold">País</label>
+        <input type="text" name="country" required value="{{ .Data.Track.Country }}"
+            class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+{{ end }}

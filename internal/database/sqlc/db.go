@@ -51,6 +51,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
 	}
+	if q.selectCountListDriversStmt, err = db.PrepareContext(ctx, selectCountListDrivers); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectCountListDrivers: %w", err)
+	}
+	if q.selectIDIracingByIDStmt, err = db.PrepareContext(ctx, selectIDIracingByID); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectIDIracingByID: %w", err)
+	}
 	if q.selectListDriversStmt, err = db.PrepareContext(ctx, selectListDrivers); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectListDrivers: %w", err)
 	}
@@ -60,6 +66,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.selectListTracksStmt, err = db.PrepareContext(ctx, selectListTracks); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectListTracks: %w", err)
 	}
+	if q.selectListTracksCountStmt, err = db.PrepareContext(ctx, selectListTracksCount); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectListTracksCount: %w", err)
+	}
 	if q.selectTrackByIdStmt, err = db.PrepareContext(ctx, selectTrackById); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectTrackById: %w", err)
 	}
@@ -68,6 +77,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.updateDriverStmt, err = db.PrepareContext(ctx, updateDriver); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateDriver: %w", err)
+	}
+	if q.updateIratingsByIDStmt, err = db.PrepareContext(ctx, updateIratingsByID); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateIratingsByID: %w", err)
 	}
 	if q.updateNotificationStmt, err = db.PrepareContext(ctx, updateNotification); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateNotification: %w", err)
@@ -125,6 +137,16 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing insertUserStmt: %w", cerr)
 		}
 	}
+	if q.selectCountListDriversStmt != nil {
+		if cerr := q.selectCountListDriversStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectCountListDriversStmt: %w", cerr)
+		}
+	}
+	if q.selectIDIracingByIDStmt != nil {
+		if cerr := q.selectIDIracingByIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectIDIracingByIDStmt: %w", cerr)
+		}
+	}
 	if q.selectListDriversStmt != nil {
 		if cerr := q.selectListDriversStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectListDriversStmt: %w", cerr)
@@ -140,6 +162,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing selectListTracksStmt: %w", cerr)
 		}
 	}
+	if q.selectListTracksCountStmt != nil {
+		if cerr := q.selectListTracksCountStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectListTracksCountStmt: %w", cerr)
+		}
+	}
 	if q.selectTrackByIdStmt != nil {
 		if cerr := q.selectTrackByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectTrackByIdStmt: %w", cerr)
@@ -153,6 +180,11 @@ func (q *Queries) Close() error {
 	if q.updateDriverStmt != nil {
 		if cerr := q.updateDriverStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing updateDriverStmt: %w", cerr)
+		}
+	}
+	if q.updateIratingsByIDStmt != nil {
+		if cerr := q.updateIratingsByIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateIratingsByIDStmt: %w", cerr)
 		}
 	}
 	if q.updateNotificationStmt != nil {
@@ -213,12 +245,16 @@ type Queries struct {
 	insertNotificationStmt             *sql.Stmt
 	insertTrackStmt                    *sql.Stmt
 	insertUserStmt                     *sql.Stmt
+	selectCountListDriversStmt         *sql.Stmt
+	selectIDIracingByIDStmt            *sql.Stmt
 	selectListDriversStmt              *sql.Stmt
 	selectListNotificationsStmt        *sql.Stmt
 	selectListTracksStmt               *sql.Stmt
+	selectListTracksCountStmt          *sql.Stmt
 	selectTrackByIdStmt                *sql.Stmt
 	selectUserIDAndPasswordByEmailStmt *sql.Stmt
 	updateDriverStmt                   *sql.Stmt
+	updateIratingsByIDStmt             *sql.Stmt
 	updateNotificationStmt             *sql.Stmt
 	updateTrackStmt                    *sql.Stmt
 }
@@ -236,12 +272,16 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		insertNotificationStmt:             q.insertNotificationStmt,
 		insertTrackStmt:                    q.insertTrackStmt,
 		insertUserStmt:                     q.insertUserStmt,
+		selectCountListDriversStmt:         q.selectCountListDriversStmt,
+		selectIDIracingByIDStmt:            q.selectIDIracingByIDStmt,
 		selectListDriversStmt:              q.selectListDriversStmt,
 		selectListNotificationsStmt:        q.selectListNotificationsStmt,
 		selectListTracksStmt:               q.selectListTracksStmt,
+		selectListTracksCountStmt:          q.selectListTracksCountStmt,
 		selectTrackByIdStmt:                q.selectTrackByIdStmt,
 		selectUserIDAndPasswordByEmailStmt: q.selectUserIDAndPasswordByEmailStmt,
 		updateDriverStmt:                   q.updateDriverStmt,
+		updateIratingsByIDStmt:             q.updateIratingsByIDStmt,
 		updateNotificationStmt:             q.updateNotificationStmt,
 		updateTrackStmt:                    q.updateTrackStmt,
 	}

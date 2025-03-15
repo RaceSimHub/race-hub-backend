@@ -4,8 +4,8 @@ package driver
 import "github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 
 type Contract interface {
-	Create(name, raceName, email, phone string) (int64, error)
-	Update(id int, name, raceName, email, phone string) error
+	Create(driver sqlc.InsertDriverParams, createdById int64) (int64, error)
+	Update(id int, driver sqlc.UpdateDriverParams, updatedById int64) error
 	Delete(id int) error
 	GetList(offset, limit int) ([]sqlc.SelectListDriversRow, error)
 	GetByID(id int) (sqlc.GetDriverRow, error)

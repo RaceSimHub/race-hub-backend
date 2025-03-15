@@ -1,13 +1,18 @@
 package server
 
 import (
+	"log"
+	"os"
+	"path/filepath"
+
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverDriver "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver"
+	serverLogin "github.com/RaceSimHub/race-hub-backend/internal/server/routes/login"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
+	serverTemplate "github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
-	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
@@ -20,15 +25,13 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 )
 
-// Server serves http requests for the service
 type Server struct {
 	Port   string
 	Router *gin.Engine
 }
 
-// NewServer creates a new http server and setup routing
 func NewServer() (s Server) {
-	if config.ENVIRONMENT != "DEV" {
+	if config.Environment != "DEV" {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -38,7 +41,6 @@ func NewServer() (s Server) {
 	return
 }
 
-// Start runs the http server on a specific address
 func (s Server) Start() {
 	address := ":" + s.Port
 	err := s.Router.Run(address)
@@ -61,27 +63,43 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	freeRouterGroup := router.Group(config.ApiVersion)
+	login := serverLogin.NewLogin(*serviceUser.NewUser(database.DbQuerier))
+	router.POST("/login", login.PostLogin)
+	router.POST("/logout", login.PostLogout)
+	router.GET("/login", login.GetLogin)
 
-	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
-	freeRouterGroup.POST("/login", user.PostLogin)
+	authRouterGroup := router.Use(middleware.JWTMiddleware())
 
-	authRouterGroup := freeRouterGroup.Use(middleware.JWTMiddleware())
-	authRouterGroup.POST("/users", user.Post)
+	template := serverTemplate.NewTemplate(database.DbQuerier)
 
-	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
-	authRouterGroup.POST("/tracks", track.Post)
-	authRouterGroup.PUT("/tracks/:id", track.Put)
-	authRouterGroup.DELETE("/tracks/:id", track.Delete)
-	authRouterGroup.GET("/tracks", track.GetList)
-	authRouterGroup.GET("/tracks/:id", track.GetByID)
+	basePath, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	staticPath := filepath.Join(basePath, "..", "static")
+
+	authRouterGroup.Static("/js", filepath.Join(staticPath, "js"))
+	authRouterGroup.Static("/css", filepath.Join(staticPath, "css"))
+	authRouterGroup.StaticFile("/favicon.ico", filepath.Join(staticPath, "favicon.ico"))
+
+	authRouterGroup.GET("/", template.Home)
 
 	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
-	authRouterGroup.POST("/drivers", driver.Post)
-	authRouterGroup.PUT("/drivers/:id", driver.Put)
-	authRouterGroup.DELETE("/drivers/:id", driver.Delete)
 	authRouterGroup.GET("/drivers", driver.GetList)
+	authRouterGroup.POST("/drivers", driver.Post)
 	authRouterGroup.GET("/drivers/:id", driver.GetByID)
+	authRouterGroup.PUT("/drivers/:id", driver.Put)
+	authRouterGroup.GET("/drivers/new", driver.New)
+	authRouterGroup.DELETE("/drivers/:id", driver.Delete)
+	authRouterGroup.PUT("/drivers/:id/irating", driver.UpdateIrating)
+
+	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
+	authRouterGroup.GET("/tracks", track.GetList)
+	authRouterGroup.POST("/tracks", track.Post)
+	authRouterGroup.GET("/tracks/:id", track.GetByID)
+	authRouterGroup.PUT("/tracks/:id", track.Put)
+	authRouterGroup.GET("/tracks/new", track.New)
+	authRouterGroup.DELETE("/tracks/:id", track.Delete)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authRouterGroup.POST("/notifications", notification.Post)

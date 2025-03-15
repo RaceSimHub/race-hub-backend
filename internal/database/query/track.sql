@@ -27,13 +27,33 @@ WHERE
 SELECT
     id::BIGINT,
     name::VARCHAR,
-    country::VARCHAR,
-    created_date::TIMESTAMP,
-    updated_date::TIMESTAMP
+    country::VARCHAR
 FROM
     track
+WHERE 
+    CASE WHEN @search::VARCHAR != '' THEN 
+        name ILIKE '%' || @search || '%' OR
+        country ILIKE '%' || @search || '%'
+    ELSE
+        TRUE
+    END
+ORDER BY
+    id DESC
 OFFSET $1::INTEGER
 LIMIT $2::INTEGER;
+
+-- name: SelectListTracksCount :one
+SELECT
+    COUNT(*) AS count
+FROM
+    track
+WHERE 
+    CASE WHEN @search::VARCHAR != '' THEN 
+        name ILIKE '%' || @search || '%' OR
+        country ILIKE '%' || @search || '%'
+    ELSE
+        TRUE
+    END;
 
 -- name: SelectTrackById :one
 SELECT
@@ -41,7 +61,7 @@ SELECT
     name::VARCHAR,
     country::VARCHAR,
     created_date::TIMESTAMP,
-    updated_date::TIMESTAMP
+    updated_date
 FROM
     track
 WHERE

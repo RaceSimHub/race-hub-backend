@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .Title }}</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="/js/base.js" defer></script>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+</head>
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+    <div id="notifications"></div>
+
+    {{ if not .MinimalPage }}
+        {{ template "header.html" . }}
+    {{ end }}
+
+    <div class="flex flex-1 h-full {{ if .MinimalPage }}items-center justify-center{{ end }}">
+        {{ if not .MinimalPage }}
+            <div id="sidebar" class="bg-gray-900 text-white transition-all duration-100 sidebar-expanded">
+                {{ template "sidebar.html" . }}
+            </div>
+        {{ end }}
+        <main id="content-wrapper" class="flex-1 w-full p-6 transition-opacity duration-300 opacity-100">
+            {{ block "content" . }}{{ end }}
+        </main>
+    </div>   
+
+    {{ if not .MinimalPage }}
+        <footer class="text-center text-gray-600 border-t pt-0">
+            {{ template "footer.html" . }}
+        </footer>
+    {{ end }}
+</body>
+</html>

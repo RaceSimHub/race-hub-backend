@@ -1,0 +1,96 @@
+#notifications {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 9999;
+}
+
+.notification {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(100%);
+    animation: slide-in 0.5s forwards, fade-out 0.5s 2.5s forwards; /* Atraso de 1.5s para começar o fade-out */
+    max-width: 320px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
+
+.notification.warning {
+    background-color: #ff9800;
+}
+
+.notification .icon {
+    font-size: 20px;
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fade-out {
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+/* Transição suave na largura do sidebar */
+#sidebar {
+    transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar expandido */
+.sidebar-expanded {
+    width: 10rem; /* w-48 */
+}
+
+/* Sidebar colapsado */
+.sidebar-collapsed {
+    width: 4rem; /* w-16 */
+}
+
+.sidebar-collapsed .sidebar-text {
+    display: none;
+}
+
+/* Colapsa o sidebar automaticamente em telas pequenas */
+@media (max-width: 768px) {
+    #sidebar {
+        width: 4rem; /* w-16 */
+    }
+
+    #sidebar .sidebar-text {
+        display: none;
+    }
+
+    /* Se o sidebar estiver expandido, vai colapsar ao redimensionar */
+    #sidebar.sidebar-expanded {
+        width: 4rem; /* w-16 */
+    }
+
+    /* Forçar o estado de "colapsado" no localStorage ao atingir essa largura */
+    #sidebar.sidebar-expanded .sidebar-text {
+        display: none;
+    }
+}
+

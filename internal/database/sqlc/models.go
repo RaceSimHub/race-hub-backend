@@ -14,11 +14,32 @@ type Driver struct {
 	FkCreatedByUserID sql.NullInt64
 	FkUpdatedByUserID sql.NullInt64
 	Name              string
-	RaceName          string
+	License           sql.NullString
+	Number            sql.NullInt32
+	SecondaryNumber   sql.NullInt32
+	Neighborhood      sql.NullString
+	State             sql.NullString
+	City              sql.NullString
+	Cep               sql.NullString
+	Address           sql.NullString
+	AddressNumber     sql.NullString
+	Phone             sql.NullString
+	SecondaryPhone    sql.NullString
+	Country           sql.NullString
 	Email             string
-	Phone             string
+	SecondaryEmail    sql.NullString
+	Team              sql.NullString
+	IDIracing         sql.NullString
+	IDSteam           sql.NullString
+	Instagram         sql.NullString
+	Facebook          sql.NullString
+	Twitch            sql.NullString
+	PhotoUrl          sql.NullString
+	IratingSportsCar  sql.NullInt32
+	IratingOval       sql.NullInt32
+	IratingFormulaCar sql.NullInt32
 	CreatedDate       time.Time
-	UpdatedDate       sql.NullTime
+	UpdatedDate       time.Time
 }
 
 type Notification struct {
