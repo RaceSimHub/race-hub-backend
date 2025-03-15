@@ -17,8 +17,11 @@ WORKDIR /app
 # Copia apenas o binário da etapa anterior
 COPY --from=builder /app/main .
 
-# Porta que sua aplicação usará (ajuste se necessário)
-EXPOSE 8080
+# Copia os templates para a imagem final
+COPY --from=builder /app/internal /app/internal
+
+# Porta que sua aplicação usará
+EXPOSE 9090
 
 # Comando para rodar a aplicação
 CMD ["./main"]
