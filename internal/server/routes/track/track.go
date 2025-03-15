@@ -1,8 +1,6 @@
 package track
 
 import (
-	"net/http"
-
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/list"
 	"github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
@@ -34,7 +32,8 @@ func (t Track) GetList(c *gin.Context) {
 
 	tracks, total, err := t.serviceTrack.GetList(search, offset, limit)
 	if err != nil {
-		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao buscar lista de pistas. Erro: "+err.Error(), "")
+		t.response.NewNotification(response.NotificationTypeError, "Erro ao buscar lista de pistas. Erro: "+err.Error()).
+			Show(c)
 		return
 	}
 
@@ -68,17 +67,21 @@ func (t Track) Put(c *gin.Context) {
 	country := c.PostForm("country")
 
 	if name == "" || country == "" {
-		t.response.WithNotification(c, response.NotificationTypeError, "Campos obrigatórios não preenchidos", "")
+		t.response.NewNotification(response.NotificationTypeError, "Campos obrigatórios não preenchidos").
+			Show(c)
 		return
 	}
 
 	err = t.serviceTrack.Update(id, name, country, 1)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
+		t.response.NewNotification(response.NotificationTypeError, "Erro ao fazer a atualização. Erro: "+err.Error()).
+			Show(c)
 		return
 	}
 
-	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista atualizada com sucesso", tracksUrl)
+	t.response.NewNotification(response.NotificationTypeSuccess, "Pista atualizada com sucesso").
+		WithRedirect(tracksUrl).
+		Show(c)
 }
 
 func (t Track) Post(c *gin.Context) {
@@ -87,11 +90,15 @@ func (t Track) Post(c *gin.Context) {
 
 	_, err := t.serviceTrack.Create(name, country, 1)
 	if err != nil {
-		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao criar pista. Erro: "+err.Error(), "")
+		t.response.NewNotification(response.NotificationTypeError, "Erro ao criar pista. Erro: "+err.Error()).
+			Show(c)
 		return
 	}
 
-	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista criada com sucesso", tracksUrl)
+	t.response.NewNotification(response.NotificationTypeSuccess, "Pista criada com sucesso").
+		WithRedirect(tracksUrl).
+		Show(c)
+
 }
 
 func (t Track) GetByID(c *gin.Context) {
@@ -102,7 +109,8 @@ func (t Track) GetByID(c *gin.Context) {
 
 	track, err := t.serviceTrack.GetByID(id)
 	if err != nil {
-		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao buscar pista. Erro: "+err.Error(), "")
+		t.response.NewNotification(response.NotificationTypeError, "Erro ao buscar pista. Erro: "+err.Error()).
+			Show(c)
 		return
 	}
 
@@ -125,9 +133,12 @@ func (t Track) Delete(c *gin.Context) {
 
 	err = t.serviceTrack.Delete(id)
 	if err != nil {
-		t.response.WithNotification(c, response.NotificationTypeError, "Erro ao deletar pista. Erro: "+err.Error(), "")
+		t.response.NewNotification(response.NotificationTypeError, "Erro ao deletar pista. Erro: "+err.Error()).
+			Show(c)
 		return
 	}
 
-	t.response.WithNotification(c, response.NotificationTypeSuccess, "Pista deletada com sucesso", tracksUrl)
+	t.response.NewNotification(response.NotificationTypeSuccess, "Pista deletada com sucesso").
+		WithRedirect(tracksUrl).
+		Show(c)
 }

@@ -12,14 +12,21 @@ import (
 
 type Response struct{}
 
-func (r Response) WithNotification(ctx *gin.Context, notificationType NotificationType, message string, redirect string) {
-	notification := Notification{
-		Message:  message,
-		Type:     notificationType,
-		Redirect: redirect,
+func (r Response) NewNotification(notificationType NotificationType, message string) *notification {
+	return &notification{
+		Message: message,
+		Type:    notificationType,
 	}
+}
 
-	ctx.JSON(200, notification)
+func (n *notification) WithRedirect(redirect string) *notification {
+	n.Redirect = redirect
+
+	return n
+}
+
+func (n *notification) Show(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, n)
 }
 
 func (r Response) Forbidden(ctx *gin.Context) {

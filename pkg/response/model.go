@@ -49,7 +49,7 @@ const (
 	NotificationTypeWarning NotificationType = "warning"
 )
 
-type Notification struct {
+type notification struct {
 	Message  string           `json:"message"`
 	Type     NotificationType `json:"type"`
 	Redirect string           `json:"redirect"`

@@ -36,12 +36,8 @@ func (d Driver) GetList(c *gin.Context) {
 
 	drivers, total, err := d.serviceDriver.GetList(search, offset, limit)
 	if err != nil {
-		d.response.WithNotification(
-			c,
-			response.NotificationTypeError,
-			"Erro ao buscar lista de pilotos:"+err.Error(),
-			"",
-		)
+		d.response.NewNotification(response.NotificationTypeError, "Erro ao buscar lista de pilotos: "+err.Error()).
+			Show(c)
 		return
 	}
 
@@ -98,12 +94,8 @@ func (d Driver) Put(c *gin.Context) {
 	secondaryNumber := conv.StringConv{}.StringToNullInt(secondaryNumberStr)
 
 	if name == "" || email == "" {
-		d.response.WithNotification(
-			c,
-			response.NotificationTypeError,
-			"Campos obrigatórios não preenchidos",
-			"",
-		)
+		d.response.NewNotification(response.NotificationTypeError, "Campos obrigatórios não preenchidos").
+			Show(c)
 		return
 	}
 
@@ -134,22 +126,15 @@ func (d Driver) Put(c *gin.Context) {
 
 	err = d.serviceDriver.Update(id, driver, 1)
 	if err != nil {
-		d.response.WithNotification(
-			c,
-			response.NotificationTypeError,
-			"Erro ao atualizar piloto:"+err.Error(),
-			"",
-		)
-
+		d.response.NewNotification(response.NotificationTypeError, "Erro ao atualizar piloto: "+err.Error()).
+			Show(c)
 		return
 	}
 
-	d.response.WithNotification(
-		c,
-		response.NotificationTypeSuccess,
-		"Piloto atualizado com sucesso!",
-		driversUrl,
-	)
+	d.response.NewNotification(response.NotificationTypeSuccess, "Piloto atualizado com sucesso!").
+		WithRedirect(driversUrl).
+		Show(c)
+
 }
 
 func (d Driver) Post(c *gin.Context) {
@@ -180,12 +165,8 @@ func (d Driver) Post(c *gin.Context) {
 	secondaryNumber := conv.StringConv{}.StringToNullInt(secondaryNumberStr)
 
 	if name == "" || email == "" {
-		d.response.WithNotification(
-			c,
-			response.NotificationTypeError,
-			"Campos obrigatórios não preenchidos",
-			"",
-		)
+		d.response.NewNotification(response.NotificationTypeError, "Campos obrigatórios não preenchidos").
+			Show(c)
 		return
 	}
 
@@ -216,21 +197,14 @@ func (d Driver) Post(c *gin.Context) {
 
 	_, err := d.serviceDriver.Create(driver, 1)
 	if err != nil {
-		d.response.WithNotification(
-			c,
-			response.NotificationTypeError,
-			"Erro ao cadastrar piloto:"+err.Error(),
-			"",
-		)
+		d.response.NewNotification(response.NotificationTypeError, "Erro ao cadastrar piloto: "+err.Error()).
+			Show(c)
 		return
 	}
 
-	d.response.WithNotification(
-		c,
-		response.NotificationTypeSuccess,
-		"Piloto cadastrado com sucesso!",
-		driversUrl,
-	)
+	d.response.NewNotification(response.NotificationTypeSuccess, "Piloto cadastrado com sucesso!").
+		WithRedirect(driversUrl).
+		Show(c)
 }
 
 func (d Driver) GetByID(c *gin.Context) {
@@ -265,12 +239,8 @@ func (d Driver) Delete(ctx *gin.Context) {
 	err = d.serviceDriver.Delete(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": http.StatusText(http.StatusInternalServerError)})
-		d.response.WithNotification(
-			ctx,
-			response.NotificationTypeError,
-			"Erro ao excluir registro:"+err.Error(),
-			"",
-		)
+		d.response.NewNotification(response.NotificationTypeError, "Erro ao excluir registro: "+err.Error()).
+			Show(ctx)
 		return
 	}
 
@@ -278,12 +248,9 @@ func (d Driver) Delete(ctx *gin.Context) {
 
 	redirectUrl := driversUrl + "?search=" + search + "&offset=" + strconv.FormatInt(int64(offset), 10) + "&limit=" + strconv.FormatInt(int64(limit), 10)
 
-	d.response.WithNotification(
-		ctx,
-		response.NotificationTypeSuccess,
-		"Registro excluído com sucesso!",
-		redirectUrl,
-	)
+	d.response.NewNotification(response.NotificationTypeSuccess, "Registro excluído com sucesso!").
+		WithRedirect(redirectUrl).
+		Show(ctx)
 }
 
 func (d Driver) UpdateIrating(ctx *gin.Context) {
@@ -295,32 +262,21 @@ func (d Driver) UpdateIrating(ctx *gin.Context) {
 	err = d.serviceDriver.UpdateIratingByID(id)
 	if err != nil {
 		if err.Error() == "iracing id not found" {
-			d.response.WithNotification(
-				ctx,
-				response.NotificationTypeWarning,
-				"Não existe um ID iRacing cadastrado para este piloto.",
-				"",
-			)
+			d.response.NewNotification(response.NotificationTypeWarning, "Não existe um ID iRacing cadastrado para este piloto.").
+				Show(ctx)
 
 			return
 		}
 
-		d.response.WithNotification(
-			ctx,
-			response.NotificationTypeError,
-			"Erro ao atualizar iRating:"+err.Error(),
-			"",
-		)
+		d.response.NewNotification(response.NotificationTypeError, "Erro ao atualizar iRating: "+err.Error()).
+			Show(ctx)
 
 		return
 	}
 
 	redirectUrl := driversUrl + "/" + strconv.FormatInt(int64(id), 10)
 
-	d.response.WithNotification(
-		ctx,
-		response.NotificationTypeSuccess,
-		"Registro atualizado com sucesso!",
-		redirectUrl,
-	)
+	d.response.NewNotification(response.NotificationTypeSuccess, "Registro atualizado com sucesso!").
+		WithRedirect(redirectUrl).
+		Show(ctx)
 }
