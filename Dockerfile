@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=builder /app/main .
 
 # Copia os templates para a imagem final
-COPY --from=builder /app/internal /app/internal
+COPY --from=builder /app/internal /internal
 
 # Porta que sua aplicação usará
 EXPOSE 9090
