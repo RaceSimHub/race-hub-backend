@@ -1,0 +1,44 @@
+{{ define "content" }}
+<div class="flex items-center justify-center min-h-screen w-full">
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 class="text-2xl font-bold text-center text-gray-800">Confirmação de E-mail</h2>
+
+        <p class="mt-4 text-gray-700 text-center">
+            Um código de confirmação foi enviado para o seu e-mail. Por favor, verifique sua caixa de entrada e insira o código abaixo para confirmar seu e-mail e completar seu cadastro.
+        </p>
+
+        <form hx-post="/verify-code" hx-swap="none" hx-on::after-request="handleNotification(event)" class="mt-4">
+            <input 
+                type="hidden" 
+                name="email" 
+                value="{{.Data.Email}}"
+            />
+            <input 
+                type="text" 
+                name="token" 
+                placeholder="Digite o código recebido" 
+                class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"
+                required
+            />
+            <button 
+                type="submit" 
+                class="mt-4 w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-800">
+                Confirmar E-mail
+            </button>
+        </form>
+
+        <div id="confirmation-result" class="mt-4"></div>
+
+        <p class="mt-4 text-gray-600 text-center">
+            Se você não receber o e-mail em até 10 minutos, verifique sua caixa de spam ou <a href="/resend-confirmation" class="text-red-600 hover:text-red-800">solicite o reenvio</a>.
+        </p>
+
+        <div class="mt-6 text-center">
+            <p class="text-sm text-gray-600">
+                Já confirmou o seu e-mail? 
+                <a href="/login" class="text-red-600 hover:text-red-800">Entrar</a>
+            </p>
+        </div>
+    </div>
+</div>
+{{ end }}

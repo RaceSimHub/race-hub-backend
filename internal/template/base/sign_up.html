@@ -1,0 +1,69 @@
+{{ define "content" }}
+<div class="flex items-center justify-center min-h-screen w-full">
+    <div class="bg-white p-8 rounded-lg shadow-md w-96">
+        <h2 class="text-2xl font-bold text-center text-gray-800">Criar Conta - Race Hub</h2>
+        <br>
+        <form 
+            hx-post="/sign-up" 
+            hx-swap="none"
+            class="space-y-4"
+            hx-on::after-request="handleNotification(event)"
+            id="sign-up-form"
+        >
+            <div>
+                <label for="name" class="block text-gray-700">Nome Completo</label>
+                <input type="text" id="name" name="name" required 
+                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+            </div>
+
+            <div>
+                <label for="email" class="block text-gray-700">E-mail</label>
+                <input type="email" id="email" name="email" required 
+                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+            </div>
+
+            <div>
+                <label for="password" class="block text-gray-700">Senha</label>
+                <input type="password" id="password" name="password" required 
+                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+                
+                <!-- Barra de força da senha -->
+                <div id="password-strength" class="mt-2 h-2 w-full bg-gray-200 rounded hidden">
+                    <div id="password-bar" class="h-full w-0 bg-red-500 rounded transition-all duration-300"></div>
+                </div>
+                <p id="password-message" class="mt-1 text-sm text-gray-600"></p>
+            </div>
+
+            <div>
+                <label for="confirm_password" class="block text-gray-700">Confirmar Senha</label>
+                <input type="password" id="confirm_password" name="confirm_password" required 
+                    class="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-red-500">
+                <p id="confirm-password-message" class="mt-1 text-sm text-red-500 hidden">As senhas não coincidem.</p>
+            </div>
+            
+            <button type="submit" 
+                class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition disabled:opacity-50 relative"
+                id="submit-button"
+                disabled>
+                <span id="button-text">Criar Conta</span>
+                <!-- Ícone de loading -->
+                <svg id="loading-icon" class="w-5 h-5 absolute left-1/2 transform -translate-x-1/2 hidden text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10" stroke-width="4" class="opacity-25" stroke="currentColor" fill="none"></circle>
+                    <path fill="currentColor" d="M4 12a8 8 0 118 8 8 8 0 01-8-8zm2 0a6 6 0 106 6 6 6 0 00-6-6z"></path>
+                </svg>
+            </button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <p class="text-sm text-gray-600">
+                Já tem uma conta?
+                <a href="/login" class="text-red-600 hover:text-red-800">Entrar</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="/js/zxcvbn.js" defer></script>
+<script src="/js/sign_up.js" defer></script>
+
+{{ end }}

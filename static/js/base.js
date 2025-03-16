@@ -53,7 +53,7 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 
                 setTimeout(() => {
                     window.location.href = parsedResponse.redirect;
-                }, 300); // Tempo da transição
+                }, 300);
             }
         }
     } catch (error) {
@@ -83,19 +83,22 @@ function toggleSidebar() {
 
 window.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('sidebar');
-    const texts = document.querySelectorAll('.sidebar-text');
-    const sidebarState = localStorage.getItem('sidebarState');
+    
+    if (sidebar) {
+        const texts = document.querySelectorAll('.sidebar-text');
+        const sidebarState = localStorage.getItem('sidebarState');
 
-    if (!sidebarState) {
-        sidebar.classList.add('sidebar-expanded');
-        texts.forEach(text => text.classList.remove('hidden'));
-        localStorage.setItem('sidebarState', 'expanded');  // Grava o estado padrão
-    } else if (sidebarState === 'collapsed') {
-        sidebar.classList.add('sidebar-collapsed');
-        texts.forEach(text => text.classList.add('hidden'));
-    } else {
-        sidebar.classList.add('sidebar-expanded');
-        texts.forEach(text => text.classList.remove('hidden'));
+        if (!sidebarState) {
+            sidebar.classList.add('sidebar-expanded');
+            texts.forEach(text => text.classList.remove('hidden'));
+            localStorage.setItem('sidebarState', 'expanded');  // Grava o estado padrão
+        } else if (sidebarState === 'collapsed') {
+            sidebar.classList.add('sidebar-collapsed');
+            texts.forEach(text => text.classList.add('hidden'));
+        } else {
+            sidebar.classList.add('sidebar-expanded');
+            texts.forEach(text => text.classList.remove('hidden'));
+        }
     }
 
     const storedNotification = localStorage.getItem('notification');

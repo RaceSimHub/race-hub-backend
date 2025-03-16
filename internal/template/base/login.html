@@ -5,7 +5,8 @@
 
         <form 
             hx-post="/login" 
-            hx-swap="innerHTML"
+            hx-swap="none"
+            hx-on::after-request="handleNotification(event)"
             class="space-y-4"
         >
             <div>
@@ -25,6 +26,17 @@
                 Entrar
             </button>
         </form>
+
+        <div class="mt-4 text-center">
+            <p class="text-sm text-gray-600">
+                Não tem uma conta?
+                <a href="/sign-up" class="text-red-600 hover:text-red-800">Criar nova conta</a>
+            </p>
+            <p class="text-sm text-gray-600 mt-2">
+                Esqueceu a senha?
+                <a href="/forgot-password" class="text-red-600 hover:text-red-800">Recuperar senha</a>
+            </p>
+        </div>
     </div>
 </div>
 {{ end }}

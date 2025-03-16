@@ -41,6 +41,15 @@
             color: #d32f2f;
             font-weight: bold;
         }
+        .code-box {
+            background-color: #f8f8f8;
+            border: 2px dashed #d32f2f;
+            padding: 10px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
     </style>
 </head>
 <body>
@@ -50,9 +59,10 @@
         </div>
         <div class="content">
             <h2>Conta criada com sucesso!</h2>
-            <p>Olá, <span class="highlight">{USERNAME}</span>! Seja muito bem-vindo(a)!</p>
+            <p>Olá, <span class="highlight">{NAME}</span>! Seja muito bem-vindo(a)!</p>
             <p>Seu cadastro no <strong>Race Hub</strong> foi realizado com sucesso. Agora você pode começar a acompanhar seus campeonatos de corrida virtual.</p>
-            <p>Estamos empolgados em tê-lo conosco. Se precisar de ajuda, nossa equipe está pronta para ajudar!</p>
+            <p>Por favor, utilize o código abaixo para confirmar seu e-mail:</p>
+            <div class="code-box">{CONFIRMATION_TOKEN}</div>
             <p>Boa sorte na pista e que venham muitas vitórias!</p>
             <p>Atenciosamente,</p>
             <p>A equipe do <span class="highlight">Race Hub</span>.</p>

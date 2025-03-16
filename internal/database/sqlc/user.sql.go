@@ -7,6 +7,7 @@ package sqlc
 
 import (
 	"context"
+	"time"
 )
 
 const insertUser = `-- name: InsertUser :one
@@ -14,32 +15,79 @@ INSERT INTO "user" (
     email,
     name,
     password,
+    status,
+    email_verification_token,
+    email_verification_expires_at,
     created_date
 ) VALUES (
     $1::VARCHAR,
     $2::VARCHAR,
     $3::VARCHAR,
+    $4::VARCHAR,
+    $5::VARCHAR,
+    $6::TIMESTAMP,
     now()
 ) RETURNING id
 `
 
 type InsertUserParams struct {
-	Email    string
-	Name     string
-	Password string
+	Email                      string
+	Name                       string
+	Password                   string
+	Status                     string
+	EmailVerificationToken     string
+	EmailVerificationExpiresAt time.Time
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int64, error) {
-	row := q.queryRow(ctx, q.insertUserStmt, insertUser, arg.Email, arg.Name, arg.Password)
+	row := q.queryRow(ctx, q.insertUserStmt, insertUser,
+		arg.Email,
+		arg.Name,
+		arg.Password,
+		arg.Status,
+		arg.EmailVerificationToken,
+		arg.EmailVerificationExpiresAt,
+	)
 	var id int64
 	err := row.Scan(&id)
 	return id, err
 }
 
+const selectUserByEmailVerificationToken = `-- name: SelectUserByEmailVerificationToken :one
+SELECT
+    id::BIGINT,
+    email_verification_expires_at::TIMESTAMP
+FROM
+    "user"
+WHERE
+    email_verification_token = $1::VARCHAR
+    AND email = $2::VARCHAR
+    AND status = $3::VARCHAR
+`
+
+type SelectUserByEmailVerificationTokenParams struct {
+	EmailVerificationToken string
+	Email                  string
+	Status                 string
+}
+
+type SelectUserByEmailVerificationTokenRow struct {
+	ID                         int64
+	EmailVerificationExpiresAt time.Time
+}
+
+func (q *Queries) SelectUserByEmailVerificationToken(ctx context.Context, arg SelectUserByEmailVerificationTokenParams) (SelectUserByEmailVerificationTokenRow, error) {
+	row := q.queryRow(ctx, q.selectUserByEmailVerificationTokenStmt, selectUserByEmailVerificationToken, arg.EmailVerificationToken, arg.Email, arg.Status)
+	var i SelectUserByEmailVerificationTokenRow
+	err := row.Scan(&i.ID, &i.EmailVerificationExpiresAt)
+	return i, err
+}
+
 const selectUserIDAndPasswordByEmail = `-- name: SelectUserIDAndPasswordByEmail :one
 SELECT
     id::BIGINT,
-    password::VARCHAR
+    password::VARCHAR,
+    status::VARCHAR
 FROM
     "user"
 WHERE
@@ -49,11 +97,31 @@ WHERE
 type SelectUserIDAndPasswordByEmailRow struct {
 	ID       int64
 	Password string
+	Status   string
 }
 
 func (q *Queries) SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error) {
 	row := q.queryRow(ctx, q.selectUserIDAndPasswordByEmailStmt, selectUserIDAndPasswordByEmail, email)
 	var i SelectUserIDAndPasswordByEmailRow
-	err := row.Scan(&i.ID, &i.Password)
+	err := row.Scan(&i.ID, &i.Password, &i.Status)
 	return i, err
+}
+
+const updateUserStatus = `-- name: UpdateUserStatus :exec
+UPDATE
+    "user"
+SET
+    status = $1::VARCHAR
+WHERE
+    id = $2::BIGINT
+`
+
+type UpdateUserStatusParams struct {
+	Status string
+	ID     int64
+}
+
+func (q *Queries) UpdateUserStatus(ctx context.Context, arg UpdateUserStatusParams) error {
+	_, err := q.exec(ctx, q.updateUserStatusStmt, updateUserStatus, arg.Status, arg.ID)
+	return err
 }

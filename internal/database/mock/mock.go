@@ -279,6 +279,21 @@ func (mr *MockQuerierMockRecorder) SelectTrackById(ctx, dollar_1 any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTrackById", reflect.TypeOf((*MockQuerier)(nil).SelectTrackById), ctx, dollar_1)
 }
 
+// SelectUserByEmailVerificationToken mocks base method.
+func (m *MockQuerier) SelectUserByEmailVerificationToken(ctx context.Context, arg sqlc.SelectUserByEmailVerificationTokenParams) (sqlc.SelectUserByEmailVerificationTokenRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectUserByEmailVerificationToken", ctx, arg)
+	ret0, _ := ret[0].(sqlc.SelectUserByEmailVerificationTokenRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectUserByEmailVerificationToken indicates an expected call of SelectUserByEmailVerificationToken.
+func (mr *MockQuerierMockRecorder) SelectUserByEmailVerificationToken(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUserByEmailVerificationToken", reflect.TypeOf((*MockQuerier)(nil).SelectUserByEmailVerificationToken), ctx, arg)
+}
+
 // SelectUserIDAndPasswordByEmail mocks base method.
 func (m *MockQuerier) SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (sqlc.SelectUserIDAndPasswordByEmailRow, error) {
 	m.ctrl.T.Helper()
@@ -348,4 +363,18 @@ func (m *MockQuerier) UpdateTrack(ctx context.Context, arg sqlc.UpdateTrackParam
 func (mr *MockQuerierMockRecorder) UpdateTrack(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTrack", reflect.TypeOf((*MockQuerier)(nil).UpdateTrack), ctx, arg)
+}
+
+// UpdateUserStatus mocks base method.
+func (m *MockQuerier) UpdateUserStatus(ctx context.Context, arg sqlc.UpdateUserStatusParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserStatus", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserStatus indicates an expected call of UpdateUserStatus.
+func (mr *MockQuerierMockRecorder) UpdateUserStatus(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserStatus", reflect.TypeOf((*MockQuerier)(nil).UpdateUserStatus), ctx, arg)
 }

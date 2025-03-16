@@ -7,18 +7,20 @@ import (
 )
 
 type Email struct {
-	From     string
-	Password string
-	Host     string
-	Port     string
+	ApplicationHost string
+	From            string
+	Password        string
+	Host            string
+	Port            string
 }
 
-func NewEmail(from, password, host, port string) *Email {
+func NewEmail(applicationHost, from, password, host, port string) *Email {
 	return &Email{
-		From:     from,
-		Password: password,
-		Host:     host,
-		Port:     port,
+		ApplicationHost: applicationHost,
+		From:            from,
+		Password:        password,
+		Host:            host,
+		Port:            port,
 	}
 }
 
@@ -30,8 +32,14 @@ const (
 	EmailTemplateUserCreated EmailTemplate = "../pkg/email/template/user_created.html"
 )
 
-// Send sends an email to the specified recipient with the specified subject and body.
-func (e *Email) Send(to []string, subject string, template EmailTemplate, templateVariables map[string]string) error {
+func (e *Email) SendUserCreatedEmail(email, name, token string) error {
+	return e.send([]string{email}, "Confirme seu email", EmailTemplateUserCreated, map[string]string{
+		"{NAME}":               name,
+		"{CONFIRMATION_TOKEN}": token,
+	})
+}
+
+func (e *Email) send(to []string, subject string, template EmailTemplate, templateVariables map[string]string) error {
 	auth := smtp.PlainAuth("", e.From, e.Password, e.Host)
 
 	basePath, err := os.Getwd()

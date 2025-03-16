@@ -72,6 +72,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.selectTrackByIdStmt, err = db.PrepareContext(ctx, selectTrackById); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectTrackById: %w", err)
 	}
+	if q.selectUserByEmailVerificationTokenStmt, err = db.PrepareContext(ctx, selectUserByEmailVerificationToken); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectUserByEmailVerificationToken: %w", err)
+	}
 	if q.selectUserIDAndPasswordByEmailStmt, err = db.PrepareContext(ctx, selectUserIDAndPasswordByEmail); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectUserIDAndPasswordByEmail: %w", err)
 	}
@@ -86,6 +89,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	}
 	if q.updateTrackStmt, err = db.PrepareContext(ctx, updateTrack); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateTrack: %w", err)
+	}
+	if q.updateUserStatusStmt, err = db.PrepareContext(ctx, updateUserStatus); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUserStatus: %w", err)
 	}
 	return &q, nil
 }
@@ -172,6 +178,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing selectTrackByIdStmt: %w", cerr)
 		}
 	}
+	if q.selectUserByEmailVerificationTokenStmt != nil {
+		if cerr := q.selectUserByEmailVerificationTokenStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectUserByEmailVerificationTokenStmt: %w", cerr)
+		}
+	}
 	if q.selectUserIDAndPasswordByEmailStmt != nil {
 		if cerr := q.selectUserIDAndPasswordByEmailStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectUserIDAndPasswordByEmailStmt: %w", cerr)
@@ -195,6 +206,11 @@ func (q *Queries) Close() error {
 	if q.updateTrackStmt != nil {
 		if cerr := q.updateTrackStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing updateTrackStmt: %w", cerr)
+		}
+	}
+	if q.updateUserStatusStmt != nil {
+		if cerr := q.updateUserStatusStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserStatusStmt: %w", cerr)
 		}
 	}
 	return err
@@ -234,55 +250,59 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                                 DBTX
-	tx                                 *sql.Tx
-	deleteDriverStmt                   *sql.Stmt
-	deleteNotificationStmt             *sql.Stmt
-	deleteTrackStmt                    *sql.Stmt
-	getDriverStmt                      *sql.Stmt
-	getLastNotificationMessageStmt     *sql.Stmt
-	insertDriverStmt                   *sql.Stmt
-	insertNotificationStmt             *sql.Stmt
-	insertTrackStmt                    *sql.Stmt
-	insertUserStmt                     *sql.Stmt
-	selectCountListDriversStmt         *sql.Stmt
-	selectIDIracingByIDStmt            *sql.Stmt
-	selectListDriversStmt              *sql.Stmt
-	selectListNotificationsStmt        *sql.Stmt
-	selectListTracksStmt               *sql.Stmt
-	selectListTracksCountStmt          *sql.Stmt
-	selectTrackByIdStmt                *sql.Stmt
-	selectUserIDAndPasswordByEmailStmt *sql.Stmt
-	updateDriverStmt                   *sql.Stmt
-	updateIratingsByIDStmt             *sql.Stmt
-	updateNotificationStmt             *sql.Stmt
-	updateTrackStmt                    *sql.Stmt
+	db                                     DBTX
+	tx                                     *sql.Tx
+	deleteDriverStmt                       *sql.Stmt
+	deleteNotificationStmt                 *sql.Stmt
+	deleteTrackStmt                        *sql.Stmt
+	getDriverStmt                          *sql.Stmt
+	getLastNotificationMessageStmt         *sql.Stmt
+	insertDriverStmt                       *sql.Stmt
+	insertNotificationStmt                 *sql.Stmt
+	insertTrackStmt                        *sql.Stmt
+	insertUserStmt                         *sql.Stmt
+	selectCountListDriversStmt             *sql.Stmt
+	selectIDIracingByIDStmt                *sql.Stmt
+	selectListDriversStmt                  *sql.Stmt
+	selectListNotificationsStmt            *sql.Stmt
+	selectListTracksStmt                   *sql.Stmt
+	selectListTracksCountStmt              *sql.Stmt
+	selectTrackByIdStmt                    *sql.Stmt
+	selectUserByEmailVerificationTokenStmt *sql.Stmt
+	selectUserIDAndPasswordByEmailStmt     *sql.Stmt
+	updateDriverStmt                       *sql.Stmt
+	updateIratingsByIDStmt                 *sql.Stmt
+	updateNotificationStmt                 *sql.Stmt
+	updateTrackStmt                        *sql.Stmt
+	updateUserStatusStmt                   *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                                 tx,
-		tx:                                 tx,
-		deleteDriverStmt:                   q.deleteDriverStmt,
-		deleteNotificationStmt:             q.deleteNotificationStmt,
-		deleteTrackStmt:                    q.deleteTrackStmt,
-		getDriverStmt:                      q.getDriverStmt,
-		getLastNotificationMessageStmt:     q.getLastNotificationMessageStmt,
-		insertDriverStmt:                   q.insertDriverStmt,
-		insertNotificationStmt:             q.insertNotificationStmt,
-		insertTrackStmt:                    q.insertTrackStmt,
-		insertUserStmt:                     q.insertUserStmt,
-		selectCountListDriversStmt:         q.selectCountListDriversStmt,
-		selectIDIracingByIDStmt:            q.selectIDIracingByIDStmt,
-		selectListDriversStmt:              q.selectListDriversStmt,
-		selectListNotificationsStmt:        q.selectListNotificationsStmt,
-		selectListTracksStmt:               q.selectListTracksStmt,
-		selectListTracksCountStmt:          q.selectListTracksCountStmt,
-		selectTrackByIdStmt:                q.selectTrackByIdStmt,
-		selectUserIDAndPasswordByEmailStmt: q.selectUserIDAndPasswordByEmailStmt,
-		updateDriverStmt:                   q.updateDriverStmt,
-		updateIratingsByIDStmt:             q.updateIratingsByIDStmt,
-		updateNotificationStmt:             q.updateNotificationStmt,
-		updateTrackStmt:                    q.updateTrackStmt,
+		db:                                     tx,
+		tx:                                     tx,
+		deleteDriverStmt:                       q.deleteDriverStmt,
+		deleteNotificationStmt:                 q.deleteNotificationStmt,
+		deleteTrackStmt:                        q.deleteTrackStmt,
+		getDriverStmt:                          q.getDriverStmt,
+		getLastNotificationMessageStmt:         q.getLastNotificationMessageStmt,
+		insertDriverStmt:                       q.insertDriverStmt,
+		insertNotificationStmt:                 q.insertNotificationStmt,
+		insertTrackStmt:                        q.insertTrackStmt,
+		insertUserStmt:                         q.insertUserStmt,
+		selectCountListDriversStmt:             q.selectCountListDriversStmt,
+		selectIDIracingByIDStmt:                q.selectIDIracingByIDStmt,
+		selectListDriversStmt:                  q.selectListDriversStmt,
+		selectListNotificationsStmt:            q.selectListNotificationsStmt,
+		selectListTracksStmt:                   q.selectListTracksStmt,
+		selectListTracksCountStmt:              q.selectListTracksCountStmt,
+		selectTrackByIdStmt:                    q.selectTrackByIdStmt,
+		selectUserByEmailVerificationTokenStmt: q.selectUserByEmailVerificationTokenStmt,
+		selectUserIDAndPasswordByEmailStmt:     q.selectUserIDAndPasswordByEmailStmt,
+		updateDriverStmt:                       q.updateDriverStmt,
+		updateIratingsByIDStmt:                 q.updateIratingsByIDStmt,
+		updateNotificationStmt:                 q.updateNotificationStmt,
+		updateTrackStmt:                        q.updateTrackStmt,
+		updateUserStatusStmt:                   q.updateUserStatusStmt,
 	}
 }

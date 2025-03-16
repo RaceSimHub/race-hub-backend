@@ -26,11 +26,13 @@ type Querier interface {
 	SelectListTracks(ctx context.Context, arg SelectListTracksParams) ([]SelectListTracksRow, error)
 	SelectListTracksCount(ctx context.Context, search string) (int64, error)
 	SelectTrackById(ctx context.Context, dollar_1 int64) (SelectTrackByIdRow, error)
+	SelectUserByEmailVerificationToken(ctx context.Context, arg SelectUserByEmailVerificationTokenParams) (SelectUserByEmailVerificationTokenRow, error)
 	SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error)
 	UpdateDriver(ctx context.Context, arg UpdateDriverParams) error
 	UpdateIratingsByID(ctx context.Context, arg UpdateIratingsByIDParams) error
 	UpdateNotification(ctx context.Context, arg UpdateNotificationParams) error
 	UpdateTrack(ctx context.Context, arg UpdateTrackParams) error
+	UpdateUserStatus(ctx context.Context, arg UpdateUserStatusParams) error
 }
 
 var _ Querier = (*Queries)(nil)

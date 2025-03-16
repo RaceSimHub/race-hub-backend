@@ -64,9 +64,12 @@ type Track struct {
 }
 
 type User struct {
-	ID          int64
-	Email       string
-	Name        string
-	Password    string
-	CreatedDate time.Time
+	ID                         int64
+	Email                      string
+	Name                       string
+	Password                   string
+	CreatedDate                time.Time
+	Status                     string
+	EmailVerificationToken     sql.NullString
+	EmailVerificationExpiresAt sql.NullTime
 }

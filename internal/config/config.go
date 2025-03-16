@@ -27,4 +27,6 @@ var (
 	EmailPassword = os.Getenv("EMAIL_PASSWORD")
 	EmailHost     = os.Getenv("EMAIL_HOST")
 	EmailPort     = os.Getenv("EMAIL_PORT")
+
+	RaceHubHost = os.Getenv("RACE_HUB_HOST")
 )

@@ -9,10 +9,10 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverDriver "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver"
-	serverLogin "github.com/RaceSimHub/race-hub-backend/internal/server/routes/login"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
 	serverTemplate "github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
+	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
@@ -63,10 +63,14 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	login := serverLogin.NewLogin(*serviceUser.NewUser(database.DbQuerier))
-	router.POST("/login", login.PostLogin)
-	router.POST("/logout", login.PostLogout)
-	router.GET("/login", login.GetLogin)
+	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
+	router.POST("/login", user.PostLogin)
+	router.POST("/logout", user.PostLogout)
+	router.GET("/login", user.GetLogin)
+	router.GET("/sign-up", user.GetSignUp)
+	router.POST("/sign-up", user.PostUser)
+	router.GET("/email-confirm", user.GetEmailConfirm)
+	router.POST("/verify-code", user.PostEmailVerify)
 
 	authRouterGroup := router.Use(middleware.JWTMiddleware())
 

@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/config"
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,12 @@ var JwtSecret = []byte(config.JwtSecret)
 
 func JWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		path := c.Request.URL.Path
+		if strings.HasPrefix(path, "/js/") || strings.HasPrefix(path, "/css/") || path == "/favicon.ico" {
+			c.Next()
+			return
+		}
+
 		tokenStr, err := c.Cookie("jwt")
 		if err != nil || tokenStr == "" {
 			c.Redirect(http.StatusFound, "/login")
