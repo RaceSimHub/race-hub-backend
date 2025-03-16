@@ -64,6 +64,12 @@ func (u *User) PostUser(c *gin.Context) {
 	password := c.PostForm("password")
 	confirmPassword := c.PostForm("confirm_password")
 
+	if len(password) < 6 {
+		response.Response{}.NewNotification(response.NotificationTypeWarning, "A senha deve ter no mínimo 6 caracteres").
+			Show(c)
+		return
+	}
+
 	if password != confirmPassword {
 		response.Response{}.NewNotification(response.NotificationTypeError, "As senhas não conferem").
 			Show(c)
@@ -140,6 +146,12 @@ func (u *User) PostResetPassword(c *gin.Context) {
 	token := c.PostForm("token")
 	password := c.PostForm("password")
 	confirmPassword := c.PostForm("confirm_password")
+
+	if len(password) < 6 {
+		response.Response{}.NewNotification(response.NotificationTypeWarning, "A senha deve ter no mínimo 6 caracteres").
+			Show(c)
+		return
+	}
 
 	if password != confirmPassword {
 		response.Response{}.NewNotification(response.NotificationTypeError, "As senhas não conferem").

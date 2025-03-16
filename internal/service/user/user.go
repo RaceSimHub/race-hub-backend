@@ -138,10 +138,6 @@ func (u *User) ForgotPassword(email string) (err error) {
 		return
 	}
 
-	if model.UserStatus(user.Status) != model.UserStatusActive {
-		return errors.New("error.user.not.active")
-	}
-
 	resetPasswordToken := uuid.New().String()
 	resetPasswordToken = resetPasswordToken[:8]
 
