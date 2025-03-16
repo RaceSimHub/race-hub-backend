@@ -44,6 +44,7 @@ func (u *User) Create(email, name, password string) (id int64, err error) {
 		Status:                     string(model.UserStatusPending),
 		EmailVerificationToken:     emailVerificationToken,
 		EmailVerificationExpiresAt: time.Now().Add(time.Hour * 24),
+		Role:                       string(model.UserRoleDriver),
 	})
 	if err != nil {
 		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {

@@ -72,4 +72,5 @@ type User struct {
 	Status                     string
 	EmailVerificationToken     sql.NullString
 	EmailVerificationExpiresAt sql.NullTime
+	Role                       string
 }

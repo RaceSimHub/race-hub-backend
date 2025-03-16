@@ -1,0 +1,5 @@
+ALTER TABLE "user" ADD COLUMN role VARCHAR(50);
+
+UPDATE "user" SET role = 'ADMIN';
+
+ALTER TABLE "user" ALTER COLUMN role SET NOT NULL;

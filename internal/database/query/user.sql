@@ -16,6 +16,7 @@ INSERT INTO "user" (
     status,
     email_verification_token,
     email_verification_expires_at,
+    role,
     created_date
 ) VALUES (
     @email::VARCHAR,
@@ -24,6 +25,7 @@ INSERT INTO "user" (
     @status::VARCHAR,
     @email_verification_token::VARCHAR,
     @email_verification_expires_at::TIMESTAMP,
+    @role::VARCHAR,
     now()
 ) RETURNING id;
 

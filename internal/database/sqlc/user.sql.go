@@ -18,6 +18,7 @@ INSERT INTO "user" (
     status,
     email_verification_token,
     email_verification_expires_at,
+    role,
     created_date
 ) VALUES (
     $1::VARCHAR,
@@ -26,6 +27,7 @@ INSERT INTO "user" (
     $4::VARCHAR,
     $5::VARCHAR,
     $6::TIMESTAMP,
+    $7::VARCHAR,
     now()
 ) RETURNING id
 `
@@ -37,6 +39,7 @@ type InsertUserParams struct {
 	Status                     string
 	EmailVerificationToken     string
 	EmailVerificationExpiresAt time.Time
+	Role                       string
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int64, error) {
@@ -47,6 +50,7 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int64, 
 		arg.Status,
 		arg.EmailVerificationToken,
 		arg.EmailVerificationExpiresAt,
+		arg.Role,
 	)
 	var id int64
 	err := row.Scan(&id)

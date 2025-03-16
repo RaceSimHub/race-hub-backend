@@ -8,3 +8,11 @@ const (
 	UserStatusSuspended   UserStatus = "SUSPENDED"
 	UserStatusDeactivated UserStatus = "DEACTIVATED"
 )
+
+type UserRole string
+
+const (
+	UserRoleAdmin  UserRole = "ADMIN"
+	UserRoleStaff  UserRole = "STAFF"
+	UserRoleDriver UserRole = "DRIVER"
+)
