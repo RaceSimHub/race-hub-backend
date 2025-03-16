@@ -69,6 +69,17 @@
     width: 4rem; /* w-16 */
 }
 
+/* Sidebar escondida */
+.sidebar-hidden {
+    display: none;
+}
+
+/* Sidebar visível */
+.sidebar-visible {
+    display: block;
+}
+
+/* Esconder texto no estado colapsado */
 .sidebar-collapsed .sidebar-text {
     display: none;
 }
@@ -83,14 +94,13 @@
         display: none;
     }
 
-    /* Se o sidebar estiver expandido, vai colapsar ao redimensionar */
-    #sidebar.sidebar-expanded {
-        width: 4rem; /* w-16 */
+    /* Forçar o estado de "colapsado" no localStorage ao atingir essa largura */
+    #sidebar.sidebar-collapsed .sidebar-text {
+        display: none;
     }
 
-    /* Forçar o estado de "colapsado" no localStorage ao atingir essa largura */
-    #sidebar.sidebar-expanded .sidebar-text {
+    /* Esconde completamente o menu se colapsado */
+    #sidebar.sidebar-collapsed {
         display: none;
     }
 }
-

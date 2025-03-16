@@ -66,18 +66,33 @@ function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
     const texts = document.querySelectorAll('.sidebar-text');
 
-    if (sidebar.classList.contains('sidebar-expanded')) {
-        sidebar.classList.remove('sidebar-expanded');
-        sidebar.classList.add('sidebar-collapsed');
-        texts.forEach(text => text.classList.add('hidden'));
-
-        localStorage.setItem('sidebarState', 'collapsed');
+    // Verifica se estamos em dispositivos móveis (largura <= 768px)
+    if (window.innerWidth <= 768) {
+        // Se a sidebar estiver colapsada, mostra ela ao clicar no botão
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.classList.add('sidebar-expanded');
+            texts.forEach(text => text.classList.remove('hidden'));
+            localStorage.setItem('sidebarState', 'expanded');
+        } else {
+            sidebar.classList.add('sidebar-collapsed');
+            sidebar.classList.remove('sidebar-expanded');
+            texts.forEach(text => text.classList.add('hidden'));
+            localStorage.setItem('sidebarState', 'collapsed');
+        }
     } else {
-        sidebar.classList.remove('sidebar-collapsed');
-        sidebar.classList.add('sidebar-expanded');
-        texts.forEach(text => text.classList.remove('hidden'));
-
-        localStorage.setItem('sidebarState', 'expanded');
+        // Em dispositivos grandes (largura > 768px), alterna entre expandido e colapsado
+        if (sidebar.classList.contains('sidebar-collapsed')) {
+            sidebar.classList.remove('sidebar-collapsed');
+            sidebar.classList.add('sidebar-expanded');
+            texts.forEach(text => text.classList.remove('hidden'));
+            localStorage.setItem('sidebarState', 'expanded');
+        } else {
+            sidebar.classList.add('sidebar-collapsed');
+            sidebar.classList.remove('sidebar-expanded');
+            texts.forEach(text => text.classList.add('hidden'));
+            localStorage.setItem('sidebarState', 'collapsed');
+        }
     }
 }
 
@@ -88,16 +103,28 @@ window.addEventListener('DOMContentLoaded', () => {
         const texts = document.querySelectorAll('.sidebar-text');
         const sidebarState = localStorage.getItem('sidebarState');
 
-        if (!sidebarState) {
-            sidebar.classList.add('sidebar-expanded');
-            texts.forEach(text => text.classList.remove('hidden'));
-            localStorage.setItem('sidebarState', 'expanded');  // Grava o estado padrão
-        } else if (sidebarState === 'collapsed') {
-            sidebar.classList.add('sidebar-collapsed');
-            texts.forEach(text => text.classList.add('hidden'));
+        // Inicializa o estado da sidebar dependendo da largura da tela
+        if (window.innerWidth <= 768) {
+            if (sidebarState === 'collapsed') {
+                sidebar.classList.add('sidebar-collapsed');
+                sidebar.classList.remove('sidebar-expanded');
+                texts.forEach(text => text.classList.add('hidden'));
+            } else {
+                sidebar.classList.add('sidebar-expanded');
+                sidebar.classList.remove('sidebar-collapsed');
+                texts.forEach(text => text.classList.remove('hidden'));
+            }
         } else {
-            sidebar.classList.add('sidebar-expanded');
-            texts.forEach(text => text.classList.remove('hidden'));
+            // Em telas grandes (> 768px), a sidebar começa como expandida
+            if (sidebarState === 'collapsed') {
+                sidebar.classList.add('sidebar-collapsed');
+                sidebar.classList.remove('sidebar-expanded');
+                texts.forEach(text => text.classList.add('hidden'));
+            } else {
+                sidebar.classList.add('sidebar-expanded');
+                sidebar.classList.remove('sidebar-collapsed');
+                texts.forEach(text => text.classList.remove('hidden'));
+            }
         }
     }
 
