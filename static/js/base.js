@@ -1,24 +1,6 @@
+// Função para mostrar notificações
 function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-
-    const icon = document.createElement('span');
-    icon.className = 'icon';
-
-    switch (type) {
-        case 'success':
-            icon.innerHTML = '✅';
-            break;
-        case 'error':
-            icon.innerHTML = '❌';
-            break;
-        default:
-            icon.innerHTML = '⚠️';
-    } 
-
-    notification.appendChild(icon);
-    notification.appendChild(document.createTextNode(message));
-
+    const notification = createNotificationElement(message, type);
     document.getElementById('notifications').appendChild(notification);
 
     setTimeout(() => {
@@ -26,7 +8,118 @@ function showNotification(message, type = 'success') {
     }, 3000);
 }
 
-document.body.addEventListener('htmx:afterSwap', (event) => {
+// Função auxiliar para criar o elemento da notificação
+function createNotificationElement(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+
+    const icon = document.createElement('span');
+    icon.className = 'icon';
+    icon.innerHTML = getNotificationIcon(type);
+
+    notification.appendChild(icon);
+    notification.appendChild(document.createTextNode(message));
+
+    return notification;
+}
+
+// Função para obter o ícone com base no tipo de notificação
+function getNotificationIcon(type) {
+    switch (type) {
+        case 'success': return '✅';
+        case 'error': return '❌';
+        default: return '⚠️';
+    }
+}
+
+// Função para alternar o estado da sidebar (colapsada ou expandida)
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const texts = document.querySelectorAll('.sidebar-text');
+
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        toggleSidebarForMobile(sidebar, texts);
+    } else {
+        toggleSidebarForDesktop(sidebar, texts);
+    }
+}
+
+// Função para alternar o estado da sidebar em dispositivos móveis
+function toggleSidebarForMobile(sidebar, texts) {
+    if (sidebar.classList.contains('sidebar-collapsed')) {
+        sidebar.classList.remove('sidebar-collapsed');
+        sidebar.classList.add('sidebar-expanded');
+        texts.forEach(text => text.classList.remove('hidden'));
+        localStorage.setItem('sidebarState', 'expanded');
+    } else {
+        sidebar.classList.add('sidebar-collapsed');
+        sidebar.classList.remove('sidebar-expanded');
+        texts.forEach(text => text.classList.add('hidden'));
+        localStorage.setItem('sidebarState', 'collapsed');
+    }
+}
+
+// Função para alternar o estado da sidebar em dispositivos grandes
+function toggleSidebarForDesktop(sidebar, texts) {
+    if (sidebar.classList.contains('sidebar-collapsed')) {
+        sidebar.classList.remove('sidebar-collapsed');
+        sidebar.classList.add('sidebar-expanded');
+        texts.forEach(text => text.classList.remove('hidden'));
+        localStorage.setItem('sidebarState', 'expanded');
+    } else {
+        sidebar.classList.add('sidebar-collapsed');
+        sidebar.classList.remove('sidebar-expanded');
+        texts.forEach(text => text.classList.add('hidden'));
+        localStorage.setItem('sidebarState', 'collapsed');
+    }
+}
+
+// Função para inicializar o estado da sidebar ao carregar a página
+function initializeSidebarState() {
+    const sidebar = document.getElementById('sidebar');
+    const texts = document.querySelectorAll('.sidebar-text');
+    const sidebarState = localStorage.getItem('sidebarState');
+    const isMobile = window.innerWidth <= 768;
+
+    if (sidebar) {
+        if (isMobile) {
+            setSidebarForMobile(sidebar, texts, sidebarState);
+        } else {
+            setSidebarForDesktop(sidebar, texts, sidebarState);
+        }
+    }
+}
+
+// Função para definir o estado da sidebar em dispositivos móveis
+function setSidebarForMobile(sidebar, texts, sidebarState) {
+    if (sidebarState === 'collapsed') {
+        sidebar.classList.add('sidebar-collapsed');
+        sidebar.classList.remove('sidebar-expanded');
+        texts.forEach(text => text.classList.add('hidden'));
+    } else {
+        sidebar.classList.add('sidebar-expanded');
+        sidebar.classList.remove('sidebar-collapsed');
+        texts.forEach(text => text.classList.remove('hidden'));
+    }
+}
+
+// Função para definir o estado da sidebar em dispositivos grandes
+function setSidebarForDesktop(sidebar, texts, sidebarState) {
+    if (sidebarState === 'collapsed') {
+        sidebar.classList.add('sidebar-collapsed');
+        sidebar.classList.remove('sidebar-expanded');
+        texts.forEach(text => text.classList.add('hidden'));
+    } else {
+        sidebar.classList.add('sidebar-expanded');
+        sidebar.classList.remove('sidebar-collapsed');
+        texts.forEach(text => text.classList.remove('hidden'));
+    }
+}
+
+// Função para tratar a resposta do HTMX e exibir notificações ou redirecionamento
+function handleHTMXResponse(event) {
     const response = event.detail.xhr.response;
 
     try {
@@ -35,7 +128,7 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
         if (parsedResponse) {
             if (!parsedResponse.redirect && parsedResponse.message) {
                 showNotification(parsedResponse.message, parsedResponse.type);
-                return
+                return;
             }
 
             if (parsedResponse.message) {
@@ -47,7 +140,6 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
 
             if (parsedResponse.redirect) {
                 const contentWrapper = document.getElementById('content-wrapper');
-
                 contentWrapper.classList.remove('opacity-100');
                 contentWrapper.classList.add('opacity-0');
 
@@ -59,81 +151,20 @@ document.body.addEventListener('htmx:afterSwap', (event) => {
     } catch (error) {
         console.log("Erro ao processar a resposta:", error);
     }
-});
-
-
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const texts = document.querySelectorAll('.sidebar-text');
-
-    // Verifica se estamos em dispositivos móveis (largura <= 768px)
-    if (window.innerWidth <= 768) {
-        // Se a sidebar estiver colapsada, mostra ela ao clicar no botão
-        if (sidebar.classList.contains('sidebar-collapsed')) {
-            sidebar.classList.remove('sidebar-collapsed');
-            sidebar.classList.add('sidebar-expanded');
-            texts.forEach(text => text.classList.remove('hidden'));
-            localStorage.setItem('sidebarState', 'expanded');
-        } else {
-            sidebar.classList.add('sidebar-collapsed');
-            sidebar.classList.remove('sidebar-expanded');
-            texts.forEach(text => text.classList.add('hidden'));
-            localStorage.setItem('sidebarState', 'collapsed');
-        }
-    } else {
-        // Em dispositivos grandes (largura > 768px), alterna entre expandido e colapsado
-        if (sidebar.classList.contains('sidebar-collapsed')) {
-            sidebar.classList.remove('sidebar-collapsed');
-            sidebar.classList.add('sidebar-expanded');
-            texts.forEach(text => text.classList.remove('hidden'));
-            localStorage.setItem('sidebarState', 'expanded');
-        } else {
-            sidebar.classList.add('sidebar-collapsed');
-            sidebar.classList.remove('sidebar-expanded');
-            texts.forEach(text => text.classList.add('hidden'));
-            localStorage.setItem('sidebarState', 'collapsed');
-        }
-    }
 }
 
+// Inicializa o script ao carregar o DOM
 window.addEventListener('DOMContentLoaded', () => {
-    const sidebar = document.getElementById('sidebar');
-    
-    if (sidebar) {
-        const texts = document.querySelectorAll('.sidebar-text');
-        const sidebarState = localStorage.getItem('sidebarState');
+    initializeSidebarState();
 
-        // Inicializa o estado da sidebar dependendo da largura da tela
-        if (window.innerWidth <= 768) {
-            if (sidebarState === 'collapsed') {
-                sidebar.classList.add('sidebar-collapsed');
-                sidebar.classList.remove('sidebar-expanded');
-                texts.forEach(text => text.classList.add('hidden'));
-            } else {
-                sidebar.classList.add('sidebar-expanded');
-                sidebar.classList.remove('sidebar-collapsed');
-                texts.forEach(text => text.classList.remove('hidden'));
-            }
-        } else {
-            // Em telas grandes (> 768px), a sidebar começa como expandida
-            if (sidebarState === 'collapsed') {
-                sidebar.classList.add('sidebar-collapsed');
-                sidebar.classList.remove('sidebar-expanded');
-                texts.forEach(text => text.classList.add('hidden'));
-            } else {
-                sidebar.classList.add('sidebar-expanded');
-                sidebar.classList.remove('sidebar-collapsed');
-                texts.forEach(text => text.classList.remove('hidden'));
-            }
-        }
-    }
-
+    // Exibe a notificação armazenada, se houver
     const storedNotification = localStorage.getItem('notification');
-
     if (storedNotification) {
         const { message, type } = JSON.parse(storedNotification);
         showNotification(message, type);
-
         localStorage.removeItem('notification');
     }
+
+    // Associa o evento do HTMX
+    document.body.addEventListener('htmx:afterSwap', handleHTMXResponse);
 });
