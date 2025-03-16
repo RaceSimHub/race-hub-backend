@@ -74,13 +74,18 @@ func (Server) setupRouter() (router *gin.Engine) {
 	router.StaticFile("/favicon.ico", filepath.Join(staticPath, "favicon.ico"))
 
 	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
+	router.GET("/login", user.GetLogin)
 	router.POST("/login", user.PostLogin)
 	router.POST("/logout", user.PostLogout)
-	router.GET("/login", user.GetLogin)
 	router.GET("/sign-up", user.GetSignUp)
 	router.POST("/sign-up", user.PostUser)
 	router.GET("/email-confirm", user.GetEmailConfirm)
 	router.POST("/verify-code", user.PostEmailVerify)
+	router.GET("/forgot-password", user.GetForgotPassword)
+	router.POST("/forgot-password", user.PostForgotPassword)
+	router.GET("/reset-password", user.GetResetPassword)
+	router.POST("/reset-password", user.PostResetPassword)
+	router.POST("/resend-email-confirmation", user.PostResendEmailConfirmation)
 
 	authRouterGroup := router.Use(middleware.JWTMiddleware())
 

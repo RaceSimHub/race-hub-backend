@@ -90,6 +90,12 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.updateTrackStmt, err = db.PrepareContext(ctx, updateTrack); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateTrack: %w", err)
 	}
+	if q.updateUserEmailVerificationTokenStmt, err = db.PrepareContext(ctx, updateUserEmailVerificationToken); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUserEmailVerificationToken: %w", err)
+	}
+	if q.updateUserPasswordStmt, err = db.PrepareContext(ctx, updateUserPassword); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUserPassword: %w", err)
+	}
 	if q.updateUserStatusStmt, err = db.PrepareContext(ctx, updateUserStatus); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateUserStatus: %w", err)
 	}
@@ -208,6 +214,16 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing updateTrackStmt: %w", cerr)
 		}
 	}
+	if q.updateUserEmailVerificationTokenStmt != nil {
+		if cerr := q.updateUserEmailVerificationTokenStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserEmailVerificationTokenStmt: %w", cerr)
+		}
+	}
+	if q.updateUserPasswordStmt != nil {
+		if cerr := q.updateUserPasswordStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserPasswordStmt: %w", cerr)
+		}
+	}
 	if q.updateUserStatusStmt != nil {
 		if cerr := q.updateUserStatusStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing updateUserStatusStmt: %w", cerr)
@@ -274,6 +290,8 @@ type Queries struct {
 	updateIratingsByIDStmt                 *sql.Stmt
 	updateNotificationStmt                 *sql.Stmt
 	updateTrackStmt                        *sql.Stmt
+	updateUserEmailVerificationTokenStmt   *sql.Stmt
+	updateUserPasswordStmt                 *sql.Stmt
 	updateUserStatusStmt                   *sql.Stmt
 }
 
@@ -303,6 +321,8 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		updateIratingsByIDStmt:                 q.updateIratingsByIDStmt,
 		updateNotificationStmt:                 q.updateNotificationStmt,
 		updateTrackStmt:                        q.updateTrackStmt,
+		updateUserEmailVerificationTokenStmt:   q.updateUserEmailVerificationTokenStmt,
+		updateUserPasswordStmt:                 q.updateUserPasswordStmt,
 		updateUserStatusStmt:                   q.updateUserStatusStmt,
 	}
 }

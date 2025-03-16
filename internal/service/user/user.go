@@ -70,6 +70,10 @@ func (u *User) GenerateToken(email, password string) (token string, err error) {
 		return "", errors.New("error.invalid.credentials")
 	}
 
+	if model.UserStatus(user.Status) == model.UserStatusPending {
+		return "", errors.New("error.user.pending")
+	}
+
 	if model.UserStatus(user.Status) != model.UserStatusActive {
 		return "", errors.New("error.user.not.active")
 	}
@@ -126,4 +130,81 @@ func (u *User) hashPassword(password string) (string, error) {
 	}
 
 	return string(hashedPassword), nil
+}
+
+func (u *User) ForgotPassword(email string) (err error) {
+	user, err := u.db.SelectUserByEmail(context.Background(), email)
+	if err != nil {
+		return
+	}
+
+	if model.UserStatus(user.Status) != model.UserStatusActive {
+		return errors.New("error.user.not.active")
+	}
+
+	resetPasswordToken := uuid.New().String()
+	resetPasswordToken = resetPasswordToken[:8]
+
+	err = u.db.UpdateUserEmailVerificationToken(context.Background(), sqlc.UpdateUserEmailVerificationTokenParams{
+		ID:                         user.ID,
+		EmailVerificationToken:     resetPasswordToken,
+		EmailVerificationExpiresAt: time.Now().Add(time.Minute * 10),
+	})
+	if err != nil {
+		return
+	}
+
+	u.serviceEmail.SendForgotPasswordEmail(email, resetPasswordToken)
+
+	return
+}
+
+func (u *User) UpdatePassword(email, token, password string) (err error) {
+	user, err := u.db.SelectUserByEmailVerificationToken(context.Background(), sqlc.SelectUserByEmailVerificationTokenParams{
+		EmailVerificationToken: token,
+		Email:                  email,
+	})
+	if err != nil {
+		return
+	}
+
+	if user.EmailVerificationExpiresAt.After(time.Now()) {
+		return errors.New("error.reset.password.expired")
+	}
+
+	password, err = u.hashPassword(password)
+	if err != nil {
+		return
+	}
+
+	return u.db.UpdateUserPassword(context.Background(), sqlc.UpdateUserPasswordParams{
+		ID:       user.ID,
+		Password: password,
+		Status:   string(model.UserStatusActive),
+	})
+}
+
+func (u *User) ResendEmailConfirmation(email string) (err error) {
+	user, err := u.db.SelectUserByEmail(context.Background(), email)
+	if err != nil {
+		return
+	}
+
+	if model.UserStatus(user.Status) != model.UserStatusPending {
+		return errors.New("error.user.not.pending")
+	}
+
+	token := uuid.New().String()
+	token = token[:8]
+
+	err = u.db.UpdateUserEmailVerificationToken(context.Background(), sqlc.UpdateUserEmailVerificationTokenParams{
+		ID:                         user.ID,
+		EmailVerificationToken:     token,
+		EmailVerificationExpiresAt: time.Now().Add(time.Hour * 24),
+	})
+	if err != nil {
+		return
+	}
+
+	return u.serviceEmail.SendUserCreatedEmail(email, user.Name, token)
 }

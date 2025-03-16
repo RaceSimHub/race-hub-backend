@@ -100,13 +100,13 @@ FROM
 WHERE
     email_verification_token = $1::VARCHAR
     AND email = $2::VARCHAR
-    AND status = $3::VARCHAR
+    AND CASE WHEN $3 <> '' THEN status = $3::VARCHAR ELSE TRUE END
 `
 
 type SelectUserByEmailVerificationTokenParams struct {
 	EmailVerificationToken string
 	Email                  string
-	Status                 string
+	Status                 interface{}
 }
 
 type SelectUserByEmailVerificationTokenRow struct {
@@ -119,6 +119,48 @@ func (q *Queries) SelectUserByEmailVerificationToken(ctx context.Context, arg Se
 	var i SelectUserByEmailVerificationTokenRow
 	err := row.Scan(&i.ID, &i.EmailVerificationExpiresAt)
 	return i, err
+}
+
+const updateUserEmailVerificationToken = `-- name: UpdateUserEmailVerificationToken :exec
+UPDATE
+    "user"
+SET
+    email_verification_token = $1::VARCHAR,
+    email_verification_expires_at = $2::TIMESTAMP
+WHERE
+    id = $3::BIGINT
+`
+
+type UpdateUserEmailVerificationTokenParams struct {
+	EmailVerificationToken     string
+	EmailVerificationExpiresAt time.Time
+	ID                         int64
+}
+
+func (q *Queries) UpdateUserEmailVerificationToken(ctx context.Context, arg UpdateUserEmailVerificationTokenParams) error {
+	_, err := q.exec(ctx, q.updateUserEmailVerificationTokenStmt, updateUserEmailVerificationToken, arg.EmailVerificationToken, arg.EmailVerificationExpiresAt, arg.ID)
+	return err
+}
+
+const updateUserPassword = `-- name: UpdateUserPassword :exec
+UPDATE
+    "user"
+SET
+    password = $1::VARCHAR,
+    status = $2::VARCHAR
+WHERE
+    id = $3::BIGINT
+`
+
+type UpdateUserPasswordParams struct {
+	Password string
+	Status   string
+	ID       int64
+}
+
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
+	_, err := q.exec(ctx, q.updateUserPasswordStmt, updateUserPassword, arg.Password, arg.Status, arg.ID)
+	return err
 }
 
 const updateUserStatus = `-- name: UpdateUserStatus :exec

@@ -40,12 +40,30 @@ FROM
 WHERE
     email_verification_token = @email_verification_token::VARCHAR
     AND email = @email::VARCHAR
-    AND status = @status::VARCHAR;
+    AND CASE WHEN @status <> '' THEN status = @status::VARCHAR ELSE TRUE END;
 
 -- name: UpdateUserStatus :exec
 UPDATE
     "user"
 SET
     status = @status::VARCHAR
+WHERE
+    id = @id::BIGINT;
+
+-- name: UpdateUserPassword :exec
+UPDATE
+    "user"
+SET
+    password = @password::VARCHAR,
+    status = @status::VARCHAR
+WHERE
+    id = @id::BIGINT;
+
+-- name: UpdateUserEmailVerificationToken :exec
+UPDATE
+    "user"
+SET
+    email_verification_token = @email_verification_token::VARCHAR,
+    email_verification_expires_at = @email_verification_expires_at::TIMESTAMP
 WHERE
     id = @id::BIGINT;

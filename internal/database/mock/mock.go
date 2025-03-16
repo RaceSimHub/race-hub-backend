@@ -365,6 +365,34 @@ func (mr *MockQuerierMockRecorder) UpdateTrack(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateTrack", reflect.TypeOf((*MockQuerier)(nil).UpdateTrack), ctx, arg)
 }
 
+// UpdateUserEmailVerificationToken mocks base method.
+func (m *MockQuerier) UpdateUserEmailVerificationToken(ctx context.Context, arg sqlc.UpdateUserEmailVerificationTokenParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserEmailVerificationToken", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserEmailVerificationToken indicates an expected call of UpdateUserEmailVerificationToken.
+func (mr *MockQuerierMockRecorder) UpdateUserEmailVerificationToken(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserEmailVerificationToken", reflect.TypeOf((*MockQuerier)(nil).UpdateUserEmailVerificationToken), ctx, arg)
+}
+
+// UpdateUserPassword mocks base method.
+func (m *MockQuerier) UpdateUserPassword(ctx context.Context, arg sqlc.UpdateUserPasswordParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateUserPassword", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateUserPassword indicates an expected call of UpdateUserPassword.
+func (mr *MockQuerierMockRecorder) UpdateUserPassword(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateUserPassword", reflect.TypeOf((*MockQuerier)(nil).UpdateUserPassword), ctx, arg)
+}
+
 // UpdateUserStatus mocks base method.
 func (m *MockQuerier) UpdateUserStatus(ctx context.Context, arg sqlc.UpdateUserStatusParams) error {
 	m.ctrl.T.Helper()

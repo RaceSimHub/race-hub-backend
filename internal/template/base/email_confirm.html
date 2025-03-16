@@ -30,7 +30,7 @@
         <div id="confirmation-result" class="mt-4"></div>
 
         <p class="mt-4 text-gray-600 text-center">
-            Se você não receber o e-mail em até 10 minutos, verifique sua caixa de spam ou <a href="/resend-confirmation" class="text-red-600 hover:text-red-800">solicite o reenvio</a>.
+            Se você não receber o e-mail em até 10 minutos, verifique sua caixa de spam ou <a hx-post="/resend-email-confirmation?email={{.Data.Email}}" hx-swap="none" class="text-red-600 hover:text-red-800">solicite o reenvio</a>.
         </p>
 
         <div class="mt-6 text-center">

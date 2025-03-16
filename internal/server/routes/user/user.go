@@ -27,6 +27,13 @@ func (u *User) PostLogin(c *gin.Context) {
 
 	token, err := u.serviceUser.GenerateToken(email, password)
 	if err != nil {
+		if err.Error() == "error.user.pending" {
+			response.Response{}.NewNotification(response.NotificationTypeWarning, "Usuário não confirmado. Verifique seu e-mail").
+				WithRedirect("/email-confirm?email=" + url.QueryEscape(email)).
+				Show(c)
+			return
+		}
+
 		response.Response{}.NewNotification(response.NotificationTypeError, "Usuário não encontrado ou senha inválida").
 			Show(c)
 		return
@@ -96,5 +103,74 @@ func (u *User) PostEmailVerify(c *gin.Context) {
 
 	response.Response{}.NewNotification(response.NotificationTypeSuccess, "E-mail confirmado com sucesso").
 		WithRedirect("/login").
+		Show(c)
+}
+
+func (u *User) GetForgotPassword(c *gin.Context) {
+	template.Template{}.RenderPageMinimal(c, "Esqueci minha senha", nil, "base/forgot_password")
+}
+
+func (u *User) PostForgotPassword(c *gin.Context) {
+	email := c.PostForm("email")
+
+	err := u.serviceUser.ForgotPassword(email)
+	if err != nil {
+		logrus.Error(err)
+		response.Response{}.NewNotification(response.NotificationTypeError, "Erro ao solicitar redefinição de senha").
+			Show(c)
+		return
+	}
+
+	response.Response{}.NewNotification(response.NotificationTypeSuccess, "E-mail de redefinição de senha enviado").
+		WithRedirect("/").
+		Show(c)
+}
+
+func (u *User) GetResetPassword(c *gin.Context) {
+	data := map[string]string{
+		"Email": c.Query("email"),
+		"Token": c.Query("token"),
+	}
+
+	template.Template{}.RenderPageMinimal(c, "Redefina sua senha", data, "base/reset_password")
+}
+
+func (u *User) PostResetPassword(c *gin.Context) {
+	email := c.PostForm("email")
+	token := c.PostForm("token")
+	password := c.PostForm("password")
+	confirmPassword := c.PostForm("confirm_password")
+
+	if password != confirmPassword {
+		response.Response{}.NewNotification(response.NotificationTypeError, "As senhas não conferem").
+			Show(c)
+		return
+	}
+
+	err := u.serviceUser.UpdatePassword(email, token, password)
+	if err != nil {
+		logrus.Error(err)
+		response.Response{}.NewNotification(response.NotificationTypeError, "Erro ao redefinir senha").
+			Show(c)
+		return
+	}
+
+	response.Response{}.NewNotification(response.NotificationTypeSuccess, "Senha redefinida com sucesso").
+		WithRedirect("/login").
+		Show(c)
+}
+
+func (u *User) PostResendEmailConfirmation(c *gin.Context) {
+	email := c.Query("email")
+
+	err := u.serviceUser.ResendEmailConfirmation(email)
+	if err != nil {
+		logrus.Error(err)
+		response.Response{}.NewNotification(response.NotificationTypeError, "Erro ao reenviar e-mail de confirmação").
+			Show(c)
+		return
+	}
+
+	response.Response{}.NewNotification(response.NotificationTypeSuccess, "E-mail de confirmação reenviado").
 		Show(c)
 }

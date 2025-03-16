@@ -32,6 +32,8 @@ type Querier interface {
 	UpdateIratingsByID(ctx context.Context, arg UpdateIratingsByIDParams) error
 	UpdateNotification(ctx context.Context, arg UpdateNotificationParams) error
 	UpdateTrack(ctx context.Context, arg UpdateTrackParams) error
+	UpdateUserEmailVerificationToken(ctx context.Context, arg UpdateUserEmailVerificationTokenParams) error
+	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateUserStatus(ctx context.Context, arg UpdateUserStatusParams) error
 }
 
