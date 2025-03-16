@@ -7,20 +7,22 @@
             <span class="ml-3 sidebar-text">Home</span>
         </a>
     </li>
-    <li>
-        <a href="/drivers" 
-           class="flex items-center w-full px-4 py-2 rounded-md transition
-                  {{ if eq .CurrentPath "/drivers" }}bg-red-600 text-white border-l-4 border-white{{ else }}hover:bg-red-600 hover:shadow-md{{ end }}">
-            <i class="fas fa-id-card text-lg w-6 text-center"></i>
-            <span class="ml-3 sidebar-text">Pilotos</span>
-        </a>
-    </li>
-    <li>
-        <a href="/tracks" 
-           class="flex items-center w-full px-4 py-2 rounded-md transition
-                  {{ if eq .CurrentPath "/tracks" }}bg-red-600 text-white border-l-4 border-white{{ else }}hover:bg-red-600 hover:shadow-md{{ end }}">
-            <i class="fas fa-map-marker-alt text-lg w-6 text-center"></i>
-            <span class="ml-3 sidebar-text">Pistas</span>
-        </a>
-    </li>
+    {{ if eq .Role "ADMIN" }}
+        <li>
+            <a href="/drivers" 
+            class="flex items-center w-full px-4 py-2 rounded-md transition
+                    {{ if eq .CurrentPath "/drivers" }}bg-red-600 text-white border-l-4 border-white{{ else }}hover:bg-red-600 hover:shadow-md{{ end }}">
+                <i class="fas fa-id-card text-lg w-6 text-center"></i>
+                <span class="ml-3 sidebar-text">Pilotos</span>
+            </a>
+        </li>
+        <li>
+            <a href="/tracks" 
+            class="flex items-center w-full px-4 py-2 rounded-md transition
+                    {{ if eq .CurrentPath "/tracks" }}bg-red-600 text-white border-l-4 border-white{{ else }}hover:bg-red-600 hover:shadow-md{{ end }}">
+                <i class="fas fa-map-marker-alt text-lg w-6 text-center"></i>
+                <span class="ml-3 sidebar-text">Pistas</span>
+            </a>
+        </li>
+    {{ end }}
 </ul>

@@ -57,6 +57,40 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (int64, 
 	return id, err
 }
 
+const selectUserByEmail = `-- name: SelectUserByEmail :one
+SELECT
+    id::BIGINT,
+    name::VARCHAR,
+    password::VARCHAR,
+    status::VARCHAR,
+    role::VARCHAR
+FROM
+    "user"
+WHERE
+    email = $1::VARCHAR
+`
+
+type SelectUserByEmailRow struct {
+	ID       int64
+	Name     string
+	Password string
+	Status   string
+	Role     string
+}
+
+func (q *Queries) SelectUserByEmail(ctx context.Context, email string) (SelectUserByEmailRow, error) {
+	row := q.queryRow(ctx, q.selectUserByEmailStmt, selectUserByEmail, email)
+	var i SelectUserByEmailRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Password,
+		&i.Status,
+		&i.Role,
+	)
+	return i, err
+}
+
 const selectUserByEmailVerificationToken = `-- name: SelectUserByEmailVerificationToken :one
 SELECT
     id::BIGINT,
@@ -84,30 +118,6 @@ func (q *Queries) SelectUserByEmailVerificationToken(ctx context.Context, arg Se
 	row := q.queryRow(ctx, q.selectUserByEmailVerificationTokenStmt, selectUserByEmailVerificationToken, arg.EmailVerificationToken, arg.Email, arg.Status)
 	var i SelectUserByEmailVerificationTokenRow
 	err := row.Scan(&i.ID, &i.EmailVerificationExpiresAt)
-	return i, err
-}
-
-const selectUserIDAndPasswordByEmail = `-- name: SelectUserIDAndPasswordByEmail :one
-SELECT
-    id::BIGINT,
-    password::VARCHAR,
-    status::VARCHAR
-FROM
-    "user"
-WHERE
-    email = $1::VARCHAR
-`
-
-type SelectUserIDAndPasswordByEmailRow struct {
-	ID       int64
-	Password string
-	Status   string
-}
-
-func (q *Queries) SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (SelectUserIDAndPasswordByEmailRow, error) {
-	row := q.queryRow(ctx, q.selectUserIDAndPasswordByEmailStmt, selectUserIDAndPasswordByEmail, email)
-	var i SelectUserIDAndPasswordByEmailRow
-	err := row.Scan(&i.ID, &i.Password, &i.Status)
 	return i, err
 }
 

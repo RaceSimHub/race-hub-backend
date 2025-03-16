@@ -60,7 +60,7 @@ func (u *User) Create(email, name, password string) (id int64, err error) {
 }
 
 func (u *User) GenerateToken(email, password string) (token string, err error) {
-	user, err := u.db.SelectUserIDAndPasswordByEmail(context.Background(), email)
+	user, err := u.db.SelectUserByEmail(context.Background(), email)
 	if err != nil {
 		return
 	}
@@ -74,7 +74,7 @@ func (u *User) GenerateToken(email, password string) (token string, err error) {
 		return "", errors.New("error.user.not.active")
 	}
 
-	return u.generateToken(int(user.ID))
+	return u.generateToken(int(user.ID), user.Name, user.Role)
 }
 
 func (u *User) VerifyEmail(email, token string) (err error) {
@@ -99,10 +99,12 @@ func (u *User) VerifyEmail(email, token string) (err error) {
 	return
 }
 
-func (u *User) generateToken(userID int) (string, error) {
+func (u *User) generateToken(userID int, name, role string) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
+		"userID": userID,
+		"exp":    time.Now().Add(time.Hour * 24).Unix(),
+		"role":   role,
+		"name":   name,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 

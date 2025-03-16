@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"github.com/RaceSimHub/race-hub-backend/internal/database/sqlc"
+	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +21,7 @@ type PageData struct {
 	MinimalPage bool
 	Data        any
 	CurrentPath string
+	Role        string
 }
 
 func NewTemplate(db sqlc.Querier) *Template {
@@ -49,11 +51,19 @@ func (t Template) renderPage(c *gin.Context, title string, minimal bool, content
 		}
 	}
 
+	var role string
+	if !minimal {
+		claims := middleware.RetrieveJwtClaims(c)
+
+		role, _ = claims["role"].(string)
+	}
+
 	data := PageData{
 		Title:       title,
 		MinimalPage: minimal,
 		Data:        content,
 		CurrentPath: currentPath,
+		Role:        role,
 	}
 
 	t.render(c, data, templates...)

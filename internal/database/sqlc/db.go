@@ -72,11 +72,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.selectTrackByIdStmt, err = db.PrepareContext(ctx, selectTrackById); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectTrackById: %w", err)
 	}
+	if q.selectUserByEmailStmt, err = db.PrepareContext(ctx, selectUserByEmail); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectUserByEmail: %w", err)
+	}
 	if q.selectUserByEmailVerificationTokenStmt, err = db.PrepareContext(ctx, selectUserByEmailVerificationToken); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectUserByEmailVerificationToken: %w", err)
-	}
-	if q.selectUserIDAndPasswordByEmailStmt, err = db.PrepareContext(ctx, selectUserIDAndPasswordByEmail); err != nil {
-		return nil, fmt.Errorf("error preparing query SelectUserIDAndPasswordByEmail: %w", err)
 	}
 	if q.updateDriverStmt, err = db.PrepareContext(ctx, updateDriver); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateDriver: %w", err)
@@ -178,14 +178,14 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing selectTrackByIdStmt: %w", cerr)
 		}
 	}
+	if q.selectUserByEmailStmt != nil {
+		if cerr := q.selectUserByEmailStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectUserByEmailStmt: %w", cerr)
+		}
+	}
 	if q.selectUserByEmailVerificationTokenStmt != nil {
 		if cerr := q.selectUserByEmailVerificationTokenStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectUserByEmailVerificationTokenStmt: %w", cerr)
-		}
-	}
-	if q.selectUserIDAndPasswordByEmailStmt != nil {
-		if cerr := q.selectUserIDAndPasswordByEmailStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing selectUserIDAndPasswordByEmailStmt: %w", cerr)
 		}
 	}
 	if q.updateDriverStmt != nil {
@@ -268,8 +268,8 @@ type Queries struct {
 	selectListTracksStmt                   *sql.Stmt
 	selectListTracksCountStmt              *sql.Stmt
 	selectTrackByIdStmt                    *sql.Stmt
+	selectUserByEmailStmt                  *sql.Stmt
 	selectUserByEmailVerificationTokenStmt *sql.Stmt
-	selectUserIDAndPasswordByEmailStmt     *sql.Stmt
 	updateDriverStmt                       *sql.Stmt
 	updateIratingsByIDStmt                 *sql.Stmt
 	updateNotificationStmt                 *sql.Stmt
@@ -297,8 +297,8 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		selectListTracksStmt:                   q.selectListTracksStmt,
 		selectListTracksCountStmt:              q.selectListTracksCountStmt,
 		selectTrackByIdStmt:                    q.selectTrackByIdStmt,
+		selectUserByEmailStmt:                  q.selectUserByEmailStmt,
 		selectUserByEmailVerificationTokenStmt: q.selectUserByEmailVerificationTokenStmt,
-		selectUserIDAndPasswordByEmailStmt:     q.selectUserIDAndPasswordByEmailStmt,
 		updateDriverStmt:                       q.updateDriverStmt,
 		updateIratingsByIDStmt:                 q.updateIratingsByIDStmt,
 		updateNotificationStmt:                 q.updateNotificationStmt,

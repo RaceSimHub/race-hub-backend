@@ -63,6 +63,16 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	router.GET("/docs/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	basePath, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	staticPath := filepath.Join(basePath, "..", "static")
+
+	router.Static("/js", filepath.Join(staticPath, "js"))
+	router.Static("/css", filepath.Join(staticPath, "css"))
+	router.StaticFile("/favicon.ico", filepath.Join(staticPath, "favicon.ico"))
+
 	user := serverUser.NewUser(*serviceUser.NewUser(database.DbQuerier))
 	router.POST("/login", user.PostLogin)
 	router.POST("/logout", user.PostLogout)
@@ -75,42 +85,33 @@ func (Server) setupRouter() (router *gin.Engine) {
 	authRouterGroup := router.Use(middleware.JWTMiddleware())
 
 	template := serverTemplate.NewTemplate(database.DbQuerier)
-
-	basePath, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	staticPath := filepath.Join(basePath, "..", "static")
-
-	authRouterGroup.Static("/js", filepath.Join(staticPath, "js"))
-	authRouterGroup.Static("/css", filepath.Join(staticPath, "css"))
-	authRouterGroup.StaticFile("/favicon.ico", filepath.Join(staticPath, "favicon.ico"))
-
 	authRouterGroup.GET("/", template.Home)
 
+	authAdminRouterGroup := authRouterGroup.Use(middleware.AdminMiddleware())
+
 	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
-	authRouterGroup.GET("/drivers", driver.GetList)
-	authRouterGroup.POST("/drivers", driver.Post)
-	authRouterGroup.GET("/drivers/:id", driver.GetByID)
-	authRouterGroup.PUT("/drivers/:id", driver.Put)
-	authRouterGroup.GET("/drivers/new", driver.New)
-	authRouterGroup.DELETE("/drivers/:id", driver.Delete)
-	authRouterGroup.PUT("/drivers/:id/irating", driver.UpdateIrating)
+	authAdminRouterGroup.GET("/drivers", driver.GetList)
+	authAdminRouterGroup.POST("/drivers", driver.Post)
+	authAdminRouterGroup.GET("/drivers/:id", driver.GetByID)
+	authAdminRouterGroup.PUT("/drivers/:id", driver.Put)
+	authAdminRouterGroup.GET("/drivers/new", driver.New)
+	authAdminRouterGroup.DELETE("/drivers/:id", driver.Delete)
+	authAdminRouterGroup.PUT("/drivers/:id/irating", driver.UpdateIrating)
 
 	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
-	authRouterGroup.GET("/tracks", track.GetList)
-	authRouterGroup.POST("/tracks", track.Post)
-	authRouterGroup.GET("/tracks/:id", track.GetByID)
-	authRouterGroup.PUT("/tracks/:id", track.Put)
-	authRouterGroup.GET("/tracks/new", track.New)
-	authRouterGroup.DELETE("/tracks/:id", track.Delete)
+	authAdminRouterGroup.GET("/tracks", track.GetList)
+	authAdminRouterGroup.POST("/tracks", track.Post)
+	authAdminRouterGroup.GET("/tracks/:id", track.GetByID)
+	authAdminRouterGroup.PUT("/tracks/:id", track.Put)
+	authAdminRouterGroup.GET("/tracks/new", track.New)
+	authAdminRouterGroup.DELETE("/tracks/:id", track.Delete)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
-	authRouterGroup.POST("/notifications", notification.Post)
-	authRouterGroup.PUT("/notifications/:id", notification.Put)
-	authRouterGroup.DELETE("/notifications/:id", notification.Delete)
-	authRouterGroup.GET("/notifications/last", notification.GetLastMessage)
-	authRouterGroup.GET("/notifications", notification.GetList)
+	authAdminRouterGroup.POST("/notifications", notification.Post)
+	authAdminRouterGroup.PUT("/notifications/:id", notification.Put)
+	authAdminRouterGroup.DELETE("/notifications/:id", notification.Delete)
+	authAdminRouterGroup.GET("/notifications/last", notification.GetLastMessage)
+	authAdminRouterGroup.GET("/notifications", notification.GetList)
 
 	return
 }

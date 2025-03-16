@@ -1,8 +1,10 @@
--- name: SelectUserIDAndPasswordByEmail :one
+-- name: SelectUserByEmail :one
 SELECT
     id::BIGINT,
+    name::VARCHAR,
     password::VARCHAR,
-    status::VARCHAR
+    status::VARCHAR,
+    role::VARCHAR
 FROM
     "user"
 WHERE

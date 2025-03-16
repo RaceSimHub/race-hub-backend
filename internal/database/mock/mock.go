@@ -279,6 +279,21 @@ func (mr *MockQuerierMockRecorder) SelectTrackById(ctx, dollar_1 any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectTrackById", reflect.TypeOf((*MockQuerier)(nil).SelectTrackById), ctx, dollar_1)
 }
 
+// SelectUserByEmail mocks base method.
+func (m *MockQuerier) SelectUserByEmail(ctx context.Context, email string) (sqlc.SelectUserByEmailRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectUserByEmail", ctx, email)
+	ret0, _ := ret[0].(sqlc.SelectUserByEmailRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectUserByEmail indicates an expected call of SelectUserByEmail.
+func (mr *MockQuerierMockRecorder) SelectUserByEmail(ctx, email any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUserByEmail", reflect.TypeOf((*MockQuerier)(nil).SelectUserByEmail), ctx, email)
+}
+
 // SelectUserByEmailVerificationToken mocks base method.
 func (m *MockQuerier) SelectUserByEmailVerificationToken(ctx context.Context, arg sqlc.SelectUserByEmailVerificationTokenParams) (sqlc.SelectUserByEmailVerificationTokenRow, error) {
 	m.ctrl.T.Helper()
@@ -292,21 +307,6 @@ func (m *MockQuerier) SelectUserByEmailVerificationToken(ctx context.Context, ar
 func (mr *MockQuerierMockRecorder) SelectUserByEmailVerificationToken(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUserByEmailVerificationToken", reflect.TypeOf((*MockQuerier)(nil).SelectUserByEmailVerificationToken), ctx, arg)
-}
-
-// SelectUserIDAndPasswordByEmail mocks base method.
-func (m *MockQuerier) SelectUserIDAndPasswordByEmail(ctx context.Context, email string) (sqlc.SelectUserIDAndPasswordByEmailRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectUserIDAndPasswordByEmail", ctx, email)
-	ret0, _ := ret[0].(sqlc.SelectUserIDAndPasswordByEmailRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectUserIDAndPasswordByEmail indicates an expected call of SelectUserIDAndPasswordByEmail.
-func (mr *MockQuerierMockRecorder) SelectUserIDAndPasswordByEmail(ctx, email any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectUserIDAndPasswordByEmail", reflect.TypeOf((*MockQuerier)(nil).SelectUserIDAndPasswordByEmail), ctx, email)
 }
 
 // UpdateDriver mocks base method.
