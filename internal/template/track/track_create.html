@@ -7,7 +7,7 @@
 
     <form class="flex flex-col gap-6" 
           id="track_create_form" 
-          hx-post="/tracks" 
+          hx-post="/admin/tracks" 
           hx-swap="none" 
           hx-on::after-request="handleNotification(event)">
 
@@ -15,7 +15,7 @@
 
         <div class="flex justify-between mt-6">
             <button 
-                onclick="window.location.href='/tracks'" 
+                onclick="window.location.href='/admin/tracks'" 
                 type="button"
                 class="flex items-center bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
                 <i class="fas fa-arrow-left mr-2"></i> Voltar

@@ -51,7 +51,7 @@ func (d Driver) GetList(c *gin.Context) {
 	data := list.ListTemplateData[sqlc.SelectListDriversRow]{
 		GinContext:         c,
 		Title:              "Lista de Pilotos",
-		Template:           "drivers",
+		Template:           "admin/drivers",
 		Headers:            headers,
 		HeaderTranslations: headerTranslations,
 		Data:               drivers,
