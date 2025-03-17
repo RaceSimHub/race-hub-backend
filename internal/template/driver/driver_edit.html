@@ -1,5 +1,5 @@
 {{ define "content" }}
-<form class="mb-6 flex flex-col gap-6" id="driver_edit_form" hx-put="/drivers/{{ .Data.Driver.ID }}" hx-swap="none"
+<form class="mb-6 flex flex-col gap-6" id="driver_edit_form" hx-put="/admin/drivers/{{ .Data.Driver.ID }}" hx-swap="none"
     hx-on::after-request="handleNotification(event)">
 
     <div class="bg-white shadow-md rounded-lg p-6 mb-4">
@@ -184,7 +184,7 @@
                 </div>
             </div>
 
-            <button hx-put="/drivers/{{ .Data.Driver.ID }}/irating" type="button"
+            <button hx-put="/admin/drivers/{{ .Data.Driver.ID }}/irating" type="button"
                 class="bg-gray-700 text-white mt-6 px-4 py-2 rounded-md hover:bg-red-500 transition" hx-swap="none"
                 hx-on::after-request="handleNotification(event)">
                 Atualizar iRating
@@ -205,12 +205,12 @@
         </fieldset>
 
         <div class="flex justify-between mt-4">
-            <button onclick="window.location.href='/drivers'" type="button"
+            <button onclick="window.location.href='/admin/drivers'" type="button"
                 class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">
                 ← Voltar
             </button>
             <div class="flex space-x-1">
-                <button hx-delete="/drivers/{{ .Data.Driver.ID }}" 
+                <button hx-delete="/admin/drivers/{{ .Data.Driver.ID }}" 
                         type="button"
                         class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition"
                         hx-confirm="Tem certeza que deseja excluir este item?" 

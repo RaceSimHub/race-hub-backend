@@ -99,6 +99,21 @@ func (mr *MockQuerierMockRecorder) GetDriver(ctx, dollar_1 any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDriver", reflect.TypeOf((*MockQuerier)(nil).GetDriver), ctx, dollar_1)
 }
 
+// GetDriverLink mocks base method.
+func (m *MockQuerier) GetDriverLink(ctx context.Context, id int64) (sqlc.GetDriverLinkRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDriverLink", ctx, id)
+	ret0, _ := ret[0].(sqlc.GetDriverLinkRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDriverLink indicates an expected call of GetDriverLink.
+func (mr *MockQuerierMockRecorder) GetDriverLink(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDriverLink", reflect.TypeOf((*MockQuerier)(nil).GetDriverLink), ctx, id)
+}
+
 // GetLastNotificationMessage mocks base method.
 func (m *MockQuerier) GetLastNotificationMessage(ctx context.Context) (string, error) {
 	m.ctrl.T.Helper()
@@ -127,6 +142,21 @@ func (m *MockQuerier) InsertDriver(ctx context.Context, arg sqlc.InsertDriverPar
 func (mr *MockQuerierMockRecorder) InsertDriver(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertDriver", reflect.TypeOf((*MockQuerier)(nil).InsertDriver), ctx, arg)
+}
+
+// InsertDriverLink mocks base method.
+func (m *MockQuerier) InsertDriverLink(ctx context.Context, arg sqlc.InsertDriverLinkParams) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertDriverLink", ctx, arg)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertDriverLink indicates an expected call of InsertDriverLink.
+func (mr *MockQuerierMockRecorder) InsertDriverLink(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertDriverLink", reflect.TypeOf((*MockQuerier)(nil).InsertDriverLink), ctx, arg)
 }
 
 // InsertNotification mocks base method.
@@ -174,6 +204,21 @@ func (mr *MockQuerierMockRecorder) InsertUser(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertUser", reflect.TypeOf((*MockQuerier)(nil).InsertUser), ctx, arg)
 }
 
+// SelectCountDriverLinks mocks base method.
+func (m *MockQuerier) SelectCountDriverLinks(ctx context.Context, search string) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectCountDriverLinks", ctx, search)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectCountDriverLinks indicates an expected call of SelectCountDriverLinks.
+func (mr *MockQuerierMockRecorder) SelectCountDriverLinks(ctx, search any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCountDriverLinks", reflect.TypeOf((*MockQuerier)(nil).SelectCountDriverLinks), ctx, search)
+}
+
 // SelectCountListDrivers mocks base method.
 func (m *MockQuerier) SelectCountListDrivers(ctx context.Context, search string) (int64, error) {
 	m.ctrl.T.Helper()
@@ -187,6 +232,36 @@ func (m *MockQuerier) SelectCountListDrivers(ctx context.Context, search string)
 func (mr *MockQuerierMockRecorder) SelectCountListDrivers(ctx, search any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCountListDrivers", reflect.TypeOf((*MockQuerier)(nil).SelectCountListDrivers), ctx, search)
+}
+
+// SelectDriverLinkStatusByUserID mocks base method.
+func (m *MockQuerier) SelectDriverLinkStatusByUserID(ctx context.Context, fkUserID int64) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectDriverLinkStatusByUserID", ctx, fkUserID)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectDriverLinkStatusByUserID indicates an expected call of SelectDriverLinkStatusByUserID.
+func (mr *MockQuerierMockRecorder) SelectDriverLinkStatusByUserID(ctx, fkUserID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectDriverLinkStatusByUserID", reflect.TypeOf((*MockQuerier)(nil).SelectDriverLinkStatusByUserID), ctx, fkUserID)
+}
+
+// SelectDriverLinks mocks base method.
+func (m *MockQuerier) SelectDriverLinks(ctx context.Context, arg sqlc.SelectDriverLinksParams) ([]sqlc.SelectDriverLinksRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectDriverLinks", ctx, arg)
+	ret0, _ := ret[0].([]sqlc.SelectDriverLinksRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectDriverLinks indicates an expected call of SelectDriverLinks.
+func (mr *MockQuerierMockRecorder) SelectDriverLinks(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectDriverLinks", reflect.TypeOf((*MockQuerier)(nil).SelectDriverLinks), ctx, arg)
 }
 
 // SelectIDIracingByID mocks base method.

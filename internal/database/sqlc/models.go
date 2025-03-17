@@ -42,6 +42,14 @@ type Driver struct {
 	UpdatedDate       time.Time
 }
 
+type DriverLink struct {
+	ID         int64
+	FkUserID   sql.NullInt64
+	FkDriverID sql.NullInt64
+	Status     sql.NullString
+	CreatedAt  sql.NullTime
+}
+
 type Notification struct {
 	ID                int64
 	FkCreatedByUserID sql.NullInt64
@@ -73,4 +81,5 @@ type User struct {
 	EmailVerificationToken     sql.NullString
 	EmailVerificationExpiresAt sql.NullTime
 	Role                       string
+	FkDriverID                 sql.NullInt64
 }

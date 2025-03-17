@@ -14,7 +14,14 @@ type ListTemplateData[T any] struct {
 	Headers            []string
 	HeaderTranslations map[string]string
 	Total              int
+	LastColumnIcon     string
 	GinContext         *gin.Context
+	ShowPostAction     bool
+	ShowPutAction      bool
+	ShowDeleteAction   bool
+	CreateIcon         string
+	EditIcon           string
+	DeleteIcon         string
 }
 
 func (l ListTemplateData[T]) ColumnsCount() int {
@@ -35,10 +42,6 @@ func (l ListTemplateData[T]) DefaultURL() string {
 
 func (l ListTemplateData[T]) NewURL() string {
 	return "/" + l.Template + "/new"
-}
-
-func (l ListTemplateData[T]) DeleteURL() string {
-	return "/" + l.Template + "/delete"
 }
 
 func (l ListTemplateData[T]) Items() (rows []map[string]any) {
@@ -92,4 +95,36 @@ func (l ListTemplateData[T]) Limit() int {
 	_, _, limit := request.Request{}.DefaultListParams(l.GinContext)
 
 	return limit
+}
+
+func (l ListTemplateData[T]) ActionIcon() string {
+	if l.LastColumnIcon != "" {
+		return l.LastColumnIcon
+	}
+
+	return "fa-solid fa-pen-to-square"
+}
+
+func (l ListTemplateData[T]) PutIcon() string {
+	if l.EditIcon != "" {
+		return l.EditIcon
+	}
+
+	return "fa-solid fa-pen-to-square"
+}
+
+func (l ListTemplateData[T]) DelIcon() string {
+	if l.DeleteIcon != "" {
+		return l.DeleteIcon
+	}
+
+	return "fa-solid fa-trash"
+}
+
+func (l ListTemplateData[T]) PostIcon() string {
+	if l.CreateIcon != "" {
+		return l.CreateIcon
+	}
+
+	return "fa-solid fa-plus"
 }

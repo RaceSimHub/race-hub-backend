@@ -24,7 +24,7 @@ const (
 	driverListTemplate   = "driver/driver_list"
 	driverEditTemplate   = "driver/driver_edit"
 	driverCreateTemplate = "driver/driver_create"
-	driversUrl           = "/drivers"
+	driversUrl           = "/admin/drivers"
 )
 
 func NewDriver(serviceDriver serviceDriver.Driver) *Driver {

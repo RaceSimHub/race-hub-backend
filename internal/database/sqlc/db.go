@@ -36,11 +36,17 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getDriverStmt, err = db.PrepareContext(ctx, getDriver); err != nil {
 		return nil, fmt.Errorf("error preparing query GetDriver: %w", err)
 	}
+	if q.getDriverLinkStmt, err = db.PrepareContext(ctx, getDriverLink); err != nil {
+		return nil, fmt.Errorf("error preparing query GetDriverLink: %w", err)
+	}
 	if q.getLastNotificationMessageStmt, err = db.PrepareContext(ctx, getLastNotificationMessage); err != nil {
 		return nil, fmt.Errorf("error preparing query GetLastNotificationMessage: %w", err)
 	}
 	if q.insertDriverStmt, err = db.PrepareContext(ctx, insertDriver); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertDriver: %w", err)
+	}
+	if q.insertDriverLinkStmt, err = db.PrepareContext(ctx, insertDriverLink); err != nil {
+		return nil, fmt.Errorf("error preparing query InsertDriverLink: %w", err)
 	}
 	if q.insertNotificationStmt, err = db.PrepareContext(ctx, insertNotification); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertNotification: %w", err)
@@ -51,8 +57,17 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.insertUserStmt, err = db.PrepareContext(ctx, insertUser); err != nil {
 		return nil, fmt.Errorf("error preparing query InsertUser: %w", err)
 	}
+	if q.selectCountDriverLinksStmt, err = db.PrepareContext(ctx, selectCountDriverLinks); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectCountDriverLinks: %w", err)
+	}
 	if q.selectCountListDriversStmt, err = db.PrepareContext(ctx, selectCountListDrivers); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectCountListDrivers: %w", err)
+	}
+	if q.selectDriverLinkStatusByUserIDStmt, err = db.PrepareContext(ctx, selectDriverLinkStatusByUserID); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectDriverLinkStatusByUserID: %w", err)
+	}
+	if q.selectDriverLinksStmt, err = db.PrepareContext(ctx, selectDriverLinks); err != nil {
+		return nil, fmt.Errorf("error preparing query SelectDriverLinks: %w", err)
 	}
 	if q.selectIDIracingByIDStmt, err = db.PrepareContext(ctx, selectIDIracingByID); err != nil {
 		return nil, fmt.Errorf("error preparing query SelectIDIracingByID: %w", err)
@@ -124,6 +139,11 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getDriverStmt: %w", cerr)
 		}
 	}
+	if q.getDriverLinkStmt != nil {
+		if cerr := q.getDriverLinkStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getDriverLinkStmt: %w", cerr)
+		}
+	}
 	if q.getLastNotificationMessageStmt != nil {
 		if cerr := q.getLastNotificationMessageStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getLastNotificationMessageStmt: %w", cerr)
@@ -132,6 +152,11 @@ func (q *Queries) Close() error {
 	if q.insertDriverStmt != nil {
 		if cerr := q.insertDriverStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing insertDriverStmt: %w", cerr)
+		}
+	}
+	if q.insertDriverLinkStmt != nil {
+		if cerr := q.insertDriverLinkStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing insertDriverLinkStmt: %w", cerr)
 		}
 	}
 	if q.insertNotificationStmt != nil {
@@ -149,9 +174,24 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing insertUserStmt: %w", cerr)
 		}
 	}
+	if q.selectCountDriverLinksStmt != nil {
+		if cerr := q.selectCountDriverLinksStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectCountDriverLinksStmt: %w", cerr)
+		}
+	}
 	if q.selectCountListDriversStmt != nil {
 		if cerr := q.selectCountListDriversStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing selectCountListDriversStmt: %w", cerr)
+		}
+	}
+	if q.selectDriverLinkStatusByUserIDStmt != nil {
+		if cerr := q.selectDriverLinkStatusByUserIDStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectDriverLinkStatusByUserIDStmt: %w", cerr)
+		}
+	}
+	if q.selectDriverLinksStmt != nil {
+		if cerr := q.selectDriverLinksStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing selectDriverLinksStmt: %w", cerr)
 		}
 	}
 	if q.selectIDIracingByIDStmt != nil {
@@ -272,12 +312,17 @@ type Queries struct {
 	deleteNotificationStmt                 *sql.Stmt
 	deleteTrackStmt                        *sql.Stmt
 	getDriverStmt                          *sql.Stmt
+	getDriverLinkStmt                      *sql.Stmt
 	getLastNotificationMessageStmt         *sql.Stmt
 	insertDriverStmt                       *sql.Stmt
+	insertDriverLinkStmt                   *sql.Stmt
 	insertNotificationStmt                 *sql.Stmt
 	insertTrackStmt                        *sql.Stmt
 	insertUserStmt                         *sql.Stmt
+	selectCountDriverLinksStmt             *sql.Stmt
 	selectCountListDriversStmt             *sql.Stmt
+	selectDriverLinkStatusByUserIDStmt     *sql.Stmt
+	selectDriverLinksStmt                  *sql.Stmt
 	selectIDIracingByIDStmt                *sql.Stmt
 	selectListDriversStmt                  *sql.Stmt
 	selectListNotificationsStmt            *sql.Stmt
@@ -303,12 +348,17 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		deleteNotificationStmt:                 q.deleteNotificationStmt,
 		deleteTrackStmt:                        q.deleteTrackStmt,
 		getDriverStmt:                          q.getDriverStmt,
+		getDriverLinkStmt:                      q.getDriverLinkStmt,
 		getLastNotificationMessageStmt:         q.getLastNotificationMessageStmt,
 		insertDriverStmt:                       q.insertDriverStmt,
+		insertDriverLinkStmt:                   q.insertDriverLinkStmt,
 		insertNotificationStmt:                 q.insertNotificationStmt,
 		insertTrackStmt:                        q.insertTrackStmt,
 		insertUserStmt:                         q.insertUserStmt,
+		selectCountDriverLinksStmt:             q.selectCountDriverLinksStmt,
 		selectCountListDriversStmt:             q.selectCountListDriversStmt,
+		selectDriverLinkStatusByUserIDStmt:     q.selectDriverLinkStatusByUserIDStmt,
+		selectDriverLinksStmt:                  q.selectDriverLinksStmt,
 		selectIDIracingByIDStmt:                q.selectIDIracingByIDStmt,
 		selectListDriversStmt:                  q.selectListDriversStmt,
 		selectListNotificationsStmt:            q.selectListNotificationsStmt,

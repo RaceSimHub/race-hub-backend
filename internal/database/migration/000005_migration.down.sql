@@ -1,0 +1,1 @@
+ALTER TABLE "user" DROP COLUMN fk_driver_id;

@@ -90,9 +90,23 @@
                     <td class="p-2">{{ $value }}</td>
                     {{ end }}
                     <td class="p-2 text-right">
-                        <a href="{{ $.Data.DefaultURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
+                        {{ if $.Data.ShowPostAction }}
+                            <a hx-post="{{ $.Data.DefaultURL }}/{{ .ID }}" hx-swap="none" class="text-gray-800 hover:text-red-600">
+                                <i class="{{ $.Data.PostIcon }}"></i>
+                            </a>
+                        {{ else if $.Data.ShowPutAction }}
+                            <a hx-put="{{ $.Data.DefaultURL }}/{{ .ID }}" hx-swap="none" class="text-gray-800 hover:text-red-600">
+                                <i class="{{ $.Data.PutIcon }}"></i>
+                            </a>
+                        {{ else if $.Data.ShowDeleteAction }}
+                            <a hx-delete="{{ $.Data.DefaultURL }}/{{ .ID }}" hx-swap="none" class="text-gray-800 hover:text-red-600">
+                                <i class="{{ $.Data.DelIcon }}"></i>
+                            </a>
+                        {{ else }}
+                            <a href="{{ $.Data.DefaultURL }}/{{ .ID }}" class="text-gray-800 hover:text-red-600">
+                                <i class="{{ $.Data.ActionIcon }}"></i>
+                            </a>
+                        {{ end }}
                     </td>
                 </tr>
                 {{ else }}

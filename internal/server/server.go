@@ -9,11 +9,13 @@ import (
 	"github.com/RaceSimHub/race-hub-backend/internal/database"
 	"github.com/RaceSimHub/race-hub-backend/internal/middleware"
 	serverDriver "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver"
+	serverDriverLink "github.com/RaceSimHub/race-hub-backend/internal/server/routes/driver_link"
 	serverNotification "github.com/RaceSimHub/race-hub-backend/internal/server/routes/notification"
 	serverTemplate "github.com/RaceSimHub/race-hub-backend/internal/server/routes/template"
 	serverTrack "github.com/RaceSimHub/race-hub-backend/internal/server/routes/track"
 	serverUser "github.com/RaceSimHub/race-hub-backend/internal/server/routes/user"
 	serviceDriver "github.com/RaceSimHub/race-hub-backend/internal/service/driver"
+	serviceDriverLink "github.com/RaceSimHub/race-hub-backend/internal/service/driver_link"
 	serviceNotification "github.com/RaceSimHub/race-hub-backend/internal/service/notification"
 	serviceTrack "github.com/RaceSimHub/race-hub-backend/internal/service/track"
 	serviceUser "github.com/RaceSimHub/race-hub-backend/internal/service/user"
@@ -92,24 +94,31 @@ func (Server) setupRouter() (router *gin.Engine) {
 	template := serverTemplate.NewTemplate(database.DbQuerier)
 	authRouterGroup.GET("/", template.Home)
 
+	serviceDriver := serviceDriver.NewDriver(database.DbQuerier)
+
+	driverLink := serverDriverLink.NewDriverLink(*serviceDriverLink.NewDriverLink(database.DbQuerier), *serviceDriver)
+	authRouterGroup.GET("/driver/link", driverLink.GetDriverLink)
+	authRouterGroup.GET("/driver/link/pending", driverLink.Pending)
+	authRouterGroup.POST("/driver/link/:driverID", driverLink.Post)
+
 	authAdminRouterGroup := authRouterGroup.Use(middleware.AdminMiddleware())
 
-	driver := serverDriver.NewDriver(*serviceDriver.NewDriver(database.DbQuerier))
-	authAdminRouterGroup.GET("/drivers", driver.GetList)
-	authAdminRouterGroup.POST("/drivers", driver.Post)
-	authAdminRouterGroup.GET("/drivers/:id", driver.GetByID)
-	authAdminRouterGroup.PUT("/drivers/:id", driver.Put)
-	authAdminRouterGroup.GET("/drivers/new", driver.New)
-	authAdminRouterGroup.DELETE("/drivers/:id", driver.Delete)
-	authAdminRouterGroup.PUT("/drivers/:id/irating", driver.UpdateIrating)
+	driver := serverDriver.NewDriver(*serviceDriver)
+	authAdminRouterGroup.GET("/admin/drivers", driver.GetList)
+	authAdminRouterGroup.POST("/admin/drivers", driver.Post)
+	authAdminRouterGroup.GET("/admin/drivers/:id", driver.GetByID)
+	authAdminRouterGroup.PUT("/admin/drivers/:id", driver.Put)
+	authAdminRouterGroup.GET("/admin/drivers/new", driver.New)
+	authAdminRouterGroup.DELETE("/admin/drivers/:id", driver.Delete)
+	authAdminRouterGroup.PUT("/admin/drivers/:id/irating", driver.UpdateIrating)
 
 	track := serverTrack.NewTrack(*serviceTrack.NewTrack(database.DbQuerier))
-	authAdminRouterGroup.GET("/tracks", track.GetList)
-	authAdminRouterGroup.POST("/tracks", track.Post)
-	authAdminRouterGroup.GET("/tracks/:id", track.GetByID)
-	authAdminRouterGroup.PUT("/tracks/:id", track.Put)
-	authAdminRouterGroup.GET("/tracks/new", track.New)
-	authAdminRouterGroup.DELETE("/tracks/:id", track.Delete)
+	authAdminRouterGroup.GET("/admin/tracks", track.GetList)
+	authAdminRouterGroup.POST("/admin/tracks", track.Post)
+	authAdminRouterGroup.GET("/admin/tracks/:id", track.GetByID)
+	authAdminRouterGroup.PUT("/admin/tracks/:id", track.Put)
+	authAdminRouterGroup.GET("/admin/tracks/new", track.New)
+	authAdminRouterGroup.DELETE("/admin/tracks/:id", track.Delete)
 
 	notification := serverNotification.NewNotification(*serviceNotification.NewNotification(database.DbQuerier))
 	authAdminRouterGroup.POST("/notifications", notification.Post)

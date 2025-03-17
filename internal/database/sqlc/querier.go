@@ -14,12 +14,17 @@ type Querier interface {
 	DeleteNotification(ctx context.Context, id int64) error
 	DeleteTrack(ctx context.Context, id int64) error
 	GetDriver(ctx context.Context, dollar_1 int64) (GetDriverRow, error)
+	GetDriverLink(ctx context.Context, id int64) (GetDriverLinkRow, error)
 	GetLastNotificationMessage(ctx context.Context) (string, error)
 	InsertDriver(ctx context.Context, arg InsertDriverParams) (int64, error)
+	InsertDriverLink(ctx context.Context, arg InsertDriverLinkParams) (int64, error)
 	InsertNotification(ctx context.Context, arg InsertNotificationParams) (int64, error)
 	InsertTrack(ctx context.Context, arg InsertTrackParams) (int64, error)
 	InsertUser(ctx context.Context, arg InsertUserParams) (int64, error)
+	SelectCountDriverLinks(ctx context.Context, search string) (int64, error)
 	SelectCountListDrivers(ctx context.Context, search string) (int64, error)
+	SelectDriverLinkStatusByUserID(ctx context.Context, fkUserID int64) (string, error)
+	SelectDriverLinks(ctx context.Context, arg SelectDriverLinksParams) ([]SelectDriverLinksRow, error)
 	SelectIDIracingByID(ctx context.Context, dollar_1 int64) (sql.NullString, error)
 	SelectListDrivers(ctx context.Context, arg SelectListDriversParams) ([]SelectListDriversRow, error)
 	SelectListNotifications(ctx context.Context, arg SelectListNotificationsParams) ([]SelectListNotificationsRow, error)
