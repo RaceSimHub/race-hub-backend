@@ -51,11 +51,11 @@ func (u *User) PostLogout(c *gin.Context) {
 }
 
 func (u *User) GetLogin(c *gin.Context) {
-	template.Template{}.RenderPageMinimal(c, "Login", nil, "base/login")
+	template.Template{}.RenderPageMinimal(c, "Login", nil, "login/login")
 }
 
 func (u *User) GetSignUp(c *gin.Context) {
-	template.Template{}.RenderPageMinimal(c, "Crie sua conta", nil, "base/sign_up")
+	template.Template{}.RenderPageMinimal(c, "Crie sua conta", nil, "login/sign_up")
 }
 
 func (u *User) PostUser(c *gin.Context) {
@@ -91,7 +91,7 @@ func (u *User) GetEmailConfirm(c *gin.Context) {
 		"Email": c.Query("email"),
 	}
 
-	template.Template{}.RenderPageMinimal(c, "Confirme seu E-mail", data, "base/email_confirm")
+	template.Template{}.RenderPageMinimal(c, "Confirme seu E-mail", data, "login/email_confirm")
 
 }
 
@@ -113,7 +113,7 @@ func (u *User) PostEmailVerify(c *gin.Context) {
 }
 
 func (u *User) GetForgotPassword(c *gin.Context) {
-	template.Template{}.RenderPageMinimal(c, "Esqueci minha senha", nil, "base/forgot_password")
+	template.Template{}.RenderPageMinimal(c, "Esqueci minha senha", nil, "login/forgot_password")
 }
 
 func (u *User) PostForgotPassword(c *gin.Context) {
@@ -138,7 +138,7 @@ func (u *User) GetResetPassword(c *gin.Context) {
 		"Token": c.Query("token"),
 	}
 
-	template.Template{}.RenderPageMinimal(c, "Redefina sua senha", data, "base/reset_password")
+	template.Template{}.RenderPageMinimal(c, "Redefina sua senha", data, "login/reset_password")
 }
 
 func (u *User) PostResetPassword(c *gin.Context) {
