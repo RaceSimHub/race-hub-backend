@@ -103,6 +103,8 @@ func (Server) setupRouter() (router *gin.Engine) {
 
 	authAdminRouterGroup := authRouterGroup.Use(middleware.AdminMiddleware())
 
+	authRouterGroup.GET("/admin/driver/link", driverLink.GetList)
+
 	driver := serverDriver.NewDriver(*serviceDriver)
 	authAdminRouterGroup.GET("/admin/drivers", driver.GetList)
 	authAdminRouterGroup.POST("/admin/drivers", driver.Post)

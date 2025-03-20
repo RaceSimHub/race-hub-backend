@@ -16,7 +16,7 @@ SELECT
     driver_link.id,
     driver.name AS driver_name,
     "user".name AS user_name,
-    driver_link.status,
+    driver_link.status::VARCHAR,
     created_at
 FROM 
     driver_link

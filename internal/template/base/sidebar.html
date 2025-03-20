@@ -12,12 +12,20 @@
             <a href="/driver/link" 
                class="flex items-center w-full px-4 py-2 rounded-md transition
                       {{ if eq .CurrentPath "/driver/link" }}bg-red-600 text-white border-l-4 border-white{{ else }}hover:bg-red-600 hover:shadow-md{{ end }}">
-                <i class="fas fa-id-card text-lg w-6 text-center"></i>
+                <i class="fas fa-link text-lg w-6 text-center"></i>
                 <span class="ml-3 sidebar-text">Piloto</span>
             </a>
         </li>
     {{ end }}
     {{ if eq .Role "ADMIN" }}
+        <li>
+            <a href="/admin/driver/link" 
+            class="flex items-center w-full px-4 py-2 rounded-md transition
+                    {{ if eq .CurrentPath "/admin/driver/link" }}bg-red-600 text-white border-l-4 border-white{{ else }}hover:bg-red-600 hover:shadow-md{{ end }}">
+                <i class="fas fa-link text-lg w-6 text-center"></i>
+                <span class="ml-3 sidebar-text">Link Piloto</span>
+            </a>
+        </li>
         <li>
             <a href="/admin/drivers" 
             class="flex items-center w-full px-4 py-2 rounded-md transition

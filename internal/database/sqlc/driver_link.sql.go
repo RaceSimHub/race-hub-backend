@@ -124,7 +124,7 @@ SELECT
     driver_link.id,
     driver.name AS driver_name,
     "user".name AS user_name,
-    driver_link.status,
+    driver_link.status::VARCHAR,
     created_at
 FROM 
     driver_link
@@ -150,11 +150,11 @@ type SelectDriverLinksParams struct {
 }
 
 type SelectDriverLinksRow struct {
-	ID         int64
-	DriverName string
-	UserName   string
-	Status     sql.NullString
-	CreatedAt  sql.NullTime
+	ID               int64
+	DriverName       string
+	UserName         string
+	DriverLinkStatus string
+	CreatedAt        sql.NullTime
 }
 
 func (q *Queries) SelectDriverLinks(ctx context.Context, arg SelectDriverLinksParams) ([]SelectDriverLinksRow, error) {
@@ -170,7 +170,7 @@ func (q *Queries) SelectDriverLinks(ctx context.Context, arg SelectDriverLinksPa
 			&i.ID,
 			&i.DriverName,
 			&i.UserName,
-			&i.Status,
+			&i.DriverLinkStatus,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err

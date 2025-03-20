@@ -99,16 +99,16 @@ func (d DriverLink) GetList(c *gin.Context) {
 	headers := []string{"ID", "UserName", "DriverName", "Status"}
 
 	headerTranslations := map[string]string{
-		"ID":         "ID",
-		"UserName":   "Usuário",
-		"DriverName": "Piloto",
-		"Status":     "Status",
+		"ID":               "ID",
+		"UserName":         "Usuário",
+		"DriverName":       "Piloto",
+		"DriverLinkStatus": "Status",
 	}
 
 	data := list.ListTemplateData[sqlc.SelectDriverLinksRow]{
 		GinContext:         c,
 		Title:              "Relacionar Usuário e Piloto",
-		Template:           "driver/link",
+		Template:           "admin/driver/link",
 		Headers:            headers,
 		HeaderTranslations: headerTranslations,
 		Data:               driverLinks,
