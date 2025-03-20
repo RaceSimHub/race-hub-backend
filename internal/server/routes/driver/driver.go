@@ -21,7 +21,7 @@ type Driver struct {
 }
 
 const (
-	driverListTemplate   = "driver/driver_list"
+	driverListTemplate   = "list/list_content"
 	driverEditTemplate   = "driver/driver_edit"
 	driverCreateTemplate = "driver/driver_create"
 	driversUrl           = "/admin/drivers"

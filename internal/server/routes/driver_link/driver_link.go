@@ -22,7 +22,7 @@ type DriverLink struct {
 }
 
 const (
-	driverLinkListTemplate    = "driver_link/driver_link_list"
+	driverLinkListTemplate    = "list/list_content"
 	driverLinkPendingTemplate = "driver_link/driver_link_pending"
 	driverLinksUrl            = "/driver/link"
 	driverLinksPendingUrl     = "/driver/link/pending"

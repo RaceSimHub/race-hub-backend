@@ -16,11 +16,11 @@ type Track struct {
 }
 
 const (
-	trackListTemplate       = "track/track_list"
+	trackListTemplate       = "list/list_content"
 	trackEditTemplate       = "track/track_edit"
 	trackCreateTemplate     = "track/track_create"
 	trackFormFieldsTemplate = "track/track_form_fields"
-	tracksUrl               = "/tracks"
+	tracksUrl               = "/admin/tracks"
 )
 
 func NewTrack(serviceTrack serviceTrack.Track) *Track {
@@ -46,7 +46,7 @@ func (t Track) GetList(c *gin.Context) {
 	}
 
 	data := list.ListTemplateData[sqlc.SelectListTracksRow]{
-		Template:           "tracks",
+		Template:           "admin/tracks",
 		Headers:            headers,
 		HeaderTranslations: headerTranslations,
 		Data:               tracks,

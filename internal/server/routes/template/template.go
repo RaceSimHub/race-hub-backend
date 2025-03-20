@@ -110,7 +110,7 @@ func (Template) render(c *gin.Context, data any, templates ...string) {
 	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "header.html"))
 	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "footer.html"))
 	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "sidebar.html"))
-	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "base", "list.html"))
+	templatesPaths = append(templatesPaths, filepath.Join(parentPath, "internal", "template", "list", "list.html"))
 
 	baseTemplate, err = baseTemplate.ParseFiles(
 		templatesPaths...,
