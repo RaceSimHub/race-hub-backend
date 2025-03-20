@@ -3,29 +3,29 @@ package list
 import (
 	"reflect"
 
+	"github.com/RaceSimHub/race-hub-backend/internal/localization"
 	"github.com/RaceSimHub/race-hub-backend/pkg/request"
 	"github.com/gin-gonic/gin"
 )
 
 type ListTemplateData[T any] struct {
-	Title              string
-	Template           string
-	Data               []T
-	Headers            []string
-	HeaderTranslations map[string]string
-	Total              int
-	LastColumnIcon     string
-	GinContext         *gin.Context
-	ShowPostAction     bool
-	ShowPutAction      bool
-	ShowDeleteAction   bool
-	CreateIcon         string
-	EditIcon           string
-	DeleteIcon         string
+	Title            string
+	Template         string
+	Data             []T
+	Columns          []string
+	Total            int
+	LastColumnIcon   string
+	GinContext       *gin.Context
+	ShowPostAction   bool
+	ShowPutAction    bool
+	ShowDeleteAction bool
+	CreateIcon       string
+	EditIcon         string
+	DeleteIcon       string
 }
 
 func (l ListTemplateData[T]) ColumnsCount() int {
-	return len(l.HeaderTranslations) + 1
+	return len(l.Columns) + 1
 }
 
 func (l ListTemplateData[T]) ExtraPage() int {
@@ -44,7 +44,7 @@ func (l ListTemplateData[T]) NewURL() string {
 	return "/" + l.Template + "/new"
 }
 
-func (l ListTemplateData[T]) Items() (rows []map[string]any) {
+func (l ListTemplateData[T]) Items() (rows [][]any) {
 	listAny := make([]any, len(l.Data))
 	for i, v := range l.Data {
 		listAny[i] = v
@@ -57,20 +57,14 @@ func (l ListTemplateData[T]) Items() (rows []map[string]any) {
 			continue
 		}
 
-		row := make(map[string]any)
-
-		for field, column := range l.HeaderTranslations {
+		var row []any
+		for _, field := range l.Columns {
 			fieldValue := val.FieldByName(field)
 			if fieldValue.IsValid() {
-				row[column] = fieldValue.Interface()
+				row = append(row, fieldValue.Interface())
 			} else {
-				row[column] = nil
+				row = append(row, nil)
 			}
-		}
-
-		idField := val.FieldByName("ID")
-		if idField.IsValid() {
-			row["ID"] = idField.Interface()
 		}
 
 		rows = append(rows, row)
@@ -127,4 +121,24 @@ func (l ListTemplateData[T]) PostIcon() string {
 	}
 
 	return "fa-solid fa-plus"
+}
+
+func (l ListTemplateData[T]) ShowGet() bool {
+	return !l.ShowPostAction && !l.ShowPutAction && !l.ShowDeleteAction
+}
+
+func (l ListTemplateData[T]) HeadersTranslated() []string {
+	translations, _ := localization.LoadTranslations("pt")
+
+	headers := make([]string, len(l.Columns))
+	for i, header := range l.Columns {
+		if translations[header] == "" {
+			headers[i] = "[*]" + header
+			continue
+		}
+
+		headers[i] = translations[header]
+	}
+
+	return headers
 }

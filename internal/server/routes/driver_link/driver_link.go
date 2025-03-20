@@ -64,23 +64,15 @@ func (d DriverLink) GetDriverLink(c *gin.Context) {
 		return
 	}
 
-	headers := []string{"ID", "Name"}
-
-	headerTranslations := map[string]string{
-		"ID":   "ID",
-		"Name": "Nome",
-	}
-
 	data := list.ListTemplateData[sqlc.SelectListDriversRow]{
-		GinContext:         c,
-		Title:              "Relacionar Usuário e Piloto",
-		Template:           "driver/link",
-		Headers:            headers,
-		HeaderTranslations: headerTranslations,
-		Data:               drivers,
-		Total:              int(total),
-		ShowPostAction:     true,
-		CreateIcon:         "fas fa-link",
+		GinContext:     c,
+		Title:          "Relacionar Usuário e Piloto",
+		Template:       "driver/link",
+		Columns:        []string{"ID", "Name"},
+		Data:           drivers,
+		Total:          int(total),
+		ShowPostAction: true,
+		CreateIcon:     "fas fa-link",
 	}
 
 	template.Template{}.RenderPage(c, "Relacionar Usuário e Piloto", data, driverListTemplate)
@@ -96,23 +88,15 @@ func (d DriverLink) GetList(c *gin.Context) {
 		return
 	}
 
-	headers := []string{"ID", "UserName", "DriverName", "Status"}
-
-	headerTranslations := map[string]string{
-		"ID":               "ID",
-		"UserName":         "Usuário",
-		"DriverName":       "Piloto",
-		"DriverLinkStatus": "Status",
-	}
+	headers := []string{"ID", "UserName", "DriverName", "DriverLinkStatus"}
 
 	data := list.ListTemplateData[sqlc.SelectDriverLinksRow]{
-		GinContext:         c,
-		Title:              "Relacionar Usuário e Piloto",
-		Template:           "admin/driver/link",
-		Headers:            headers,
-		HeaderTranslations: headerTranslations,
-		Data:               driverLinks,
-		Total:              int(total),
+		GinContext: c,
+		Title:      "Relacionar Usuário e Piloto",
+		Template:   "admin/driver/link",
+		Columns:    headers,
+		Data:       driverLinks,
+		Total:      int(total),
 	}
 
 	template.Template{}.RenderPage(c, "Relacionar Usuário e Piloto", data, driverLinkListTemplate)

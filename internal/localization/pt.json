@@ -1,0 +1,9 @@
+{
+    "ID": "ID",
+    "Name": "Nome",
+    "Email": "Email",
+    "UserName": "Usuário",
+    "DriverName": "Piloto",
+    "DriverLinkStatus": "Status",
+    "Country": "País"
+  }

@@ -37,21 +37,12 @@ func (t Track) GetList(c *gin.Context) {
 		return
 	}
 
-	headers := []string{"ID", "Name", "Country"}
-
-	headerTranslations := map[string]string{
-		"ID":      "ID",
-		"Name":    "Nome",
-		"Country": "País",
-	}
-
 	data := list.ListTemplateData[sqlc.SelectListTracksRow]{
-		Template:           "admin/tracks",
-		Headers:            headers,
-		HeaderTranslations: headerTranslations,
-		Data:               tracks,
-		Total:              int(total),
-		GinContext:         c,
+		Template:   "admin/tracks",
+		Columns:    []string{"ID", "Name", "Country"},
+		Data:       tracks,
+		Total:      int(total),
+		GinContext: c,
 	}
 
 	template.Template{}.RenderPage(c, "Lista de Pistas", data, trackListTemplate)
